@@ -1,0 +1,85 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Breve explicación:
+# Un Proceso de Decisión de Markov (MDP) modela decisiones donde los resultados son inciertos.
+# Aquí simularemos un pequeño MDP donde un aventurero intenta llegar al tesoro tomando decisiones.
+# Corregimos el ciclo en el que el aventurero se quedaba atrapado en la trampa.
+
+# Importamos librerías para manejar grafos y visualizar
+import networkx as nx
+import matplotlib.pyplot as plt
+import random
+
+# Creamos el grafo dirigido
+G = nx.DiGraph()
+
+# Añadimos nodos (estados)
+G.add_nodes_from(["Inicio", "Puente", "Tesoro", "Trampa"])
+
+# Añadimos acciones posibles (transiciones) con recompensas
+G.add_edge("Inicio", "Puente", accion="Avanzar", recompensa=0)
+G.add_edge("Puente", "Tesoro", accion="Avanzar", recompensa=10)
+G.add_edge("Puente", "Trampa", accion="Retroceder", recompensa=-10)
+G.add_edge("Trampa", "Inicio", accion="Retroceder", recompensa=-5)
+
+# Definimos las probabilidades de transición
+transiciones = {
+    ("Inicio", "Avanzar"): [("Puente", 1.0)],
+    ("Puente", "Avanzar"): [("Tesoro", 0.7), ("Trampa", 0.3)],
+    ("Puente", "Retroceder"): [("Trampa", 1.0)],
+    ("Trampa", "Retroceder"): [("Inicio", 1.0)],  # Si caemos en Trampa, retrocedemos al Inicio
+    ("Trampa", "Avanzar"): [("Inicio", 1.0)]  # Agregamos esta transición: Avanzar en Trampa lleva al Inicio
+}
+
+# Función para simular un paso en el MDP
+def realizar_accion(estado_actual, accion):
+    opciones = transiciones.get((estado_actual, accion), [])
+    if not opciones:
+        return estado_actual, 0
+
+    destinos, probabilidades = zip(*opciones)
+    siguiente_estado = random.choices(destinos, weights=probabilidades)[0]
+    recompensa = G.edges[estado_actual, siguiente_estado]["recompensa"]
+
+    return siguiente_estado, recompensa
+
+# Simulamos una trayectoria en el MDP
+def simular_mdp():
+    estado = "Inicio"
+    total_recompensa = 0
+
+    print("Comienza en:", estado)
+
+    pasos = 0
+    while estado != "Tesoro" and pasos < 10:
+        if estado == "Puente":
+            accion = random.choice(["Avanzar", "Retroceder"])
+        else:
+            accion = "Avanzar"
+
+        nuevo_estado, recompensa = realizar_accion(estado, accion)
+        print(f"Desde {estado}, acción '{accion}' -> {nuevo_estado} (recompensa: {recompensa})")
+
+        estado = nuevo_estado
+        total_recompensa += recompensa
+        pasos += 1
+
+    print("\nTermina en:", estado)
+    print("Recompensa total acumulada:", total_recompensa)
+
+# Ejecutamos la simulación
+simular_mdp()
+
+# Visualizamos el grafo
+pos = nx.spring_layout(G, seed=42)
+nx.draw_networkx_nodes(G, pos, node_color='skyblue', node_size=1200)
+nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=20)
+nx.draw_networkx_labels(G, pos, font_size=10)
+
+# Dibujamos etiquetas de acciones
+edge_labels = {(u, v): f"{d['accion']} ({d['recompensa']})" for u, v, d in G.edges(data=True)}
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=8)
+
+plt.title("MDP: Camino hacia el Tesoro")
+plt.axis('off')
+plt.show()

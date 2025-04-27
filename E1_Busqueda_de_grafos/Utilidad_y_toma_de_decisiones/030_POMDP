@@ -1,0 +1,96 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Breve explicación:
+# El POMDP extiende el MDP, donde el agente no conoce su estado exacto, sino solo observaciones parciales.
+# En este ejemplo, el agente tiene que tomar decisiones basadas en información parcial sobre su ubicación.
+
+# Importamos librerías para manejar grafos y visualizar
+import networkx as nx
+import matplotlib.pyplot as plt
+import random
+
+# Creamos el grafo dirigido para representar los estados
+G = nx.DiGraph()
+
+# Añadimos los estados (nodos)
+G.add_nodes_from(["Inicio", "Cueva", "Tesoro"])
+
+# Añadimos transiciones posibles entre los estados con las recompensas
+G.add_edge("Inicio", "Cueva", accion="Explorar", recompensa=-5)
+G.add_edge("Inicio", "Tesoro", accion="Explorar", recompensa=10)
+G.add_edge("Cueva", "Inicio", accion="Retroceder", recompensa=-2)
+G.add_edge("Tesoro", "Inicio", accion="Retroceder", recompensa=0)
+
+# Definimos las probabilidades de transición y observación (en un entorno parcialmente observable)
+transiciones = {
+    ("Inicio", "Explorar"): [("Cueva", 0.6), ("Tesoro", 0.4)],  # Probabilidades de moverse
+    ("Cueva", "Retroceder"): [("Inicio", 1.0)],  # Siempre retrocede a Inicio
+    ("Tesoro", "Retroceder"): [("Inicio", 1.0)],  # Siempre retrocede a Inicio
+}
+
+# Definimos las observaciones que el agente puede hacer
+observaciones = {
+    "Inicio": "No visto",
+    "Cueva": "Visto",
+    "Tesoro": "Visto"
+}
+
+# Función para simular un paso en el POMDP
+def realizar_accion(estado_actual, accion):
+    opciones = transiciones.get((estado_actual, accion), [])
+    if not opciones:
+        return estado_actual, 0
+
+    destinos, probabilidades = zip(*opciones)
+    siguiente_estado = random.choices(destinos, weights=probabilidades)[0]
+    recompensa = G.edges[estado_actual, siguiente_estado]["recompensa"]
+    
+    # Actualizamos la observación basada en el estado del agente
+    observacion = observaciones[siguiente_estado]
+
+    return siguiente_estado, recompensa, observacion
+
+# Simulamos un episodio en el POMDP
+def simular_pomdp():
+    estado = "Inicio"  # Empezamos en el estado inicial
+    total_recompensa = 0
+
+    print("Comienza en:", estado)
+    print("Observación inicial:", observaciones[estado])
+
+    pasos = 0
+    while estado != "Tesoro" and pasos < 10:
+        # El agente toma la acción basada en su observación (simplificado)
+        if observaciones[estado] == "No visto":
+            accion = "Explorar"  # Si no ve nada, explora
+        else:
+            accion = "Retroceder"  # Si ve algo, retrocede
+
+        # Realizamos la acción y obtenemos el nuevo estado y observación
+        nuevo_estado, recompensa, observacion = realizar_accion(estado, accion)
+        print(f"Desde {estado}, acción '{accion}' -> {nuevo_estado} (recompensa: {recompensa})")
+        print("Nueva observación:", observacion)
+
+        estado = nuevo_estado
+        total_recompensa += recompensa
+        pasos += 1
+
+    print("\nTermina en:", estado)
+    print("Recompensa total acumulada:", total_recompensa)
+
+# Ejecutamos la simulación
+simular_pomdp()
+
+# Visualizamos el grafo
+pos = nx.spring_layout(G, seed=42)
+nx.draw_networkx_nodes(G, pos, node_color='skyblue', node_size=1200)
+nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=20)
+nx.draw_networkx_labels(G, pos, font_size=10)
+
+# Dibujamos etiquetas de acciones
+edge_labels = {(u, v): f"{d['accion']} ({d['recompensa']})" for u, v, d in G.edges(data=True)}
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=8)
+
+plt.title("POMDP: Camino hacia el Tesoro")
+plt.axis('off')
+plt.show()
