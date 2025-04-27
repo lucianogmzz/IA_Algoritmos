@@ -1,0 +1,78 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Importamos la librería 'networkx' para trabajar con grafos de manera sencilla.
+# networkx permite crear grafos, asignar atributos (como utilidad), y recorrer nodos/aristas.
+import networkx as nx
+
+# Importamos 'matplotlib' para visualizar el grafo en un dibujo.
+import matplotlib.pyplot as plt
+
+# Creamos un nuevo grafo dirigido (las decisiones tienen dirección, por ejemplo: de A hacia B).
+G = nx.DiGraph()
+
+# Añadimos nodos junto con su utilidad (usando el atributo 'utility').
+# Cada nodo representa un estado, y la utilidad mide qué tan bueno es ese estado.
+G.add_node('A', utility=10)
+G.add_node('B', utility=20)
+G.add_node('C', utility=30)
+G.add_node('D', utility=25)
+G.add_node('E', utility=15)
+
+# Añadimos las conexiones entre los nodos (aristas).
+# Cada arista representa que podemos pasar de un estado a otro.
+G.add_edges_from([
+    ('A', 'B'),
+    ('A', 'C'),
+    ('B', 'D'),
+    ('C', 'D'),
+    ('D', 'E')
+])
+
+# Función para encontrar la mejor ruta que maximice la utilidad total.
+def find_best_path(graph, start_node):
+    # Vamos a realizar una búsqueda donde elegimos siempre el nodo sucesor de mayor utilidad.
+    
+    path = [start_node]  # Ruta inicial (empezamos desde el nodo inicial).
+    current_node = start_node
+    
+    while True:
+        neighbors = list(graph.successors(current_node))  # Obtenemos los nodos vecinos (sucesores).
+        
+        if not neighbors:
+            # Si no hay más vecinos, hemos llegado al final del camino.
+            break
+        
+        # Elegimos el vecino con la mayor utilidad.
+        next_node = max(neighbors, key=lambda n: graph.nodes[n]['utility'])
+        
+        path.append(next_node)  # Agregamos ese nodo a la ruta.
+        current_node = next_node  # Ahora seguimos desde este nuevo nodo.
+    
+    return path
+
+# Definimos el nodo de inicio
+start = 'A'
+
+# Buscamos la mejor ruta
+best_path = find_best_path(G, start)
+
+# Mostramos la mejor ruta encontrada
+print(f"Mejor ruta basada en la máxima utilidad desde '{start}': {best_path}")
+
+# Ahora visualizamos el grafo
+pos = nx.spring_layout(G)  # Calculamos una posición para cada nodo.
+
+# Dibujamos los nodos
+nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=700)
+
+# Dibujamos las aristas
+nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=20)
+
+# Dibujamos las etiquetas de los nodos
+labels = {node: f"{node}\nU={G.nodes[node]['utility']}" for node in G.nodes()}
+nx.draw_networkx_labels(G, pos, labels, font_size=10)
+
+# Mostramos el grafo
+plt.title("Grafo con Utilidades en Nodos")
+plt.axis('off')
+plt.show()
