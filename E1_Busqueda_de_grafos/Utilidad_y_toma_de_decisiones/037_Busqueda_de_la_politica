@@ -1,0 +1,88 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2.
+
+# Breve explicación:
+# Este programa implementa una versión simple de búsqueda de la política en un grafo.
+# El agente empieza con una política aleatoria y la mejora hasta encontrar la mejor forma de llegar a la meta con máximas recompensas.
+
+# Librerías necesarias
+import networkx as nx  # Para crear y manejar grafos
+import matplotlib.pyplot as plt  # Para visualizar grafos
+import random  # Para elecciones aleatorias
+
+# Crear un grafo dirigido
+G = nx.DiGraph()
+
+# Agregar nodos (estados)
+states = ['Start', 'A', 'B', 'Goal']
+G.add_nodes_from(states)
+
+# Agregar aristas (acciones posibles) con recompensas
+G.add_edge('Start', 'A', reward=2)
+G.add_edge('Start', 'B', reward=1)
+G.add_edge('A', 'Goal', reward=5)
+G.add_edge('B', 'Goal', reward=2)
+
+# Visualizar el grafo
+pos = nx.spring_layout(G)
+edge_labels = nx.get_edge_attributes(G, 'reward')
+nx.draw(G, pos, with_labels=True, node_color='lightgreen', node_size=2000, font_size=10)
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+plt.title("Grafo para Búsqueda de la Política")
+plt.show()
+
+# Inicializar política aleatoria (para cada estado, elegir una acción válida al azar)
+policy = {state: random.choice(list(G.successors(state))) if list(G.successors(state)) else None for state in G.nodes()}
+
+# Inicializar valores de estados en 0
+V = {state: 0 for state in G.nodes()}
+
+# Parámetros
+gamma = 0.9  # Factor de descuento
+theta = 0.01  # Umbral para determinar si hay cambios pequeños
+
+# Función para evaluar la política actual
+def policy_evaluation(policy, V):
+    while True:
+        delta = 0
+        for state in G.nodes():
+            if policy[state] is not None:
+                action = policy[state]
+                reward = G[state][action]['reward']
+                new_v = reward + gamma * V[action]
+                delta = max(delta, abs(new_v - V[state]))
+                V[state] = new_v
+        if delta < theta:
+            break
+    return V
+
+# Función para mejorar la política
+def policy_improvement(V):
+    policy_stable = True
+    for state in G.nodes():
+        actions = list(G.successors(state))
+        if actions:
+            best_action = None
+            best_value = float('-inf')
+            for action in actions:
+                reward = G[state][action]['reward']
+                value = reward + gamma * V[action]
+                if value > best_value:
+                    best_value = value
+                    best_action = action
+            if policy[state] != best_action:
+                policy_stable = False
+            policy[state] = best_action
+    return policy_stable
+
+# Iterar para encontrar la política óptima
+while True:
+    V = policy_evaluation(policy, V)
+    stable = policy_improvement(V)
+    if stable:
+        break
+
+# Mostrar la política final
+print("\nPolítica óptima encontrada:")
+for state in policy:
+    if policy[state] is not None:
+        print(f"Desde {state} ir hacia {policy[state]}")

@@ -1,0 +1,81 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2.
+
+# Breve explicación:
+# Este programa implementa el algoritmo Q-Learning en un entorno de grafos más grande.
+# El agente explora caminos para encontrar el mejor recorrido desde el estado A al estado F, maximizando la recompensa obtenida.
+
+# Librerías necesarias
+import networkx as nx  # Para crear grafos
+import matplotlib.pyplot as plt  # Para visualizar grafos
+import random  # Para decisiones aleatorias
+
+# Creamos el entorno: un grafo dirigido
+G = nx.DiGraph()
+
+# Agregamos nodos (estados)
+states = ['A', 'B', 'C', 'D', 'E', 'F']
+G.add_nodes_from(states)
+
+# Agregamos aristas (acciones) y recompensas
+G.add_edge('A', 'B', reward=0)
+G.add_edge('A', 'C', reward=0)
+G.add_edge('B', 'D', reward=0)
+G.add_edge('C', 'D', reward=0)
+G.add_edge('C', 'E', reward=0)
+G.add_edge('D', 'F', reward=1)  # Estado objetivo
+G.add_edge('E', 'F', reward=1)  # Otro camino alternativo
+
+# Visualizamos el grafo
+pos = nx.spring_layout(G)
+edge_labels = nx.get_edge_attributes(G, 'reward')
+nx.draw(G, pos, with_labels=True, node_color='lightyellow', node_size=2000, font_size=10)
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+plt.title("Entorno de Grafos para Q-Learning")
+plt.show()
+
+# Inicializamos la Q-table (matriz de estados y acciones)
+Q = {state: {neighbor: 0 for neighbor in G.successors(state)} for state in G.nodes()}
+
+# Parámetros de Q-Learning
+alpha = 0.5  # Tasa de aprendizaje
+gamma = 0.8  # Factor de descuento
+epsilon = 0.2  # Probabilidad de exploración
+episodes = 1000  # Número de episodios de entrenamiento
+
+# Función para elegir acción usando epsilon-greedy
+def choose_action(state):
+    if random.uniform(0, 1) < epsilon:
+        return random.choice(list(Q[state].keys()))  # Explorar
+    else:
+        max_q = max(Q[state].values())
+        best_actions = [action for action, value in Q[state].items() if value == max_q]
+        return random.choice(best_actions)  # Explotar
+
+# Entrenamiento del agente
+for episode in range(episodes):
+    state = random.choice(['A', 'B', 'C'])  # Empezamos en un estado aleatorio inicial
+    while state != 'F':  # Hasta llegar al estado objetivo
+        action = choose_action(state)
+        reward = G[state][action]['reward']
+        next_state = action
+        old_q = Q[state][action]
+        if Q.get(next_state):
+            max_future_q = max(Q[next_state].values(), default=0)
+        else:
+            max_future_q = 0
+        # Actualizamos la Q-table
+        Q[state][action] = old_q + alpha * (reward + gamma * max_future_q - old_q)
+        state = next_state
+
+# Mostrar la Q-table final
+print("\nQ-Table aprendida:")
+for state in Q:
+    for action in Q[state]:
+        print(f"Desde {state} hacia {action}: {Q[state][action]:.2f}")
+
+# Mostrar la política final aprendida
+print("\nPolítica óptima encontrada:")
+for state in Q:
+    if Q[state]:  # Si hay acciones disponibles
+        best_action = max(Q[state], key=Q[state].get)
+        print(f"Desde {state} ir hacia {best_action}")

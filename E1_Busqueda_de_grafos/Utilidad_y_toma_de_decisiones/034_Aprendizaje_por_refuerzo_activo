@@ -1,0 +1,86 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Breve explicación:
+# Este código implementa un algoritmo de Aprendizaje por Refuerzo Activo usando Q-Learning.
+# El agente explora un grafo donde los nodos son estados y las aristas son acciones posibles.
+# Aprende cuál es la mejor acción en cada estado para llegar al objetivo recibiendo recompensas máximas.
+
+# Librerías necesarias
+import networkx as nx  # Para crear y manejar grafos
+import matplotlib.pyplot as plt  # Para visualizar el grafo
+import random  # Para seleccionar acciones de forma aleatoria
+
+# Creamos un grafo dirigido (acciones tienen dirección)
+G = nx.DiGraph()
+
+# Añadimos nodos (estados)
+G.add_nodes_from(['A', 'B', 'C', 'D', 'E'])  # 'E' será el estado objetivo
+
+# Añadimos aristas (acciones) con sus recompensas
+G.add_edge('A', 'B', reward=0)
+G.add_edge('A', 'C', reward=0)
+G.add_edge('B', 'D', reward=0)
+G.add_edge('C', 'D', reward=0)
+G.add_edge('D', 'E', reward=1)  # Llegar a E da recompensa
+
+# Visualizamos el grafo
+pos = nx.spring_layout(G)  # Calcula posiciones automáticas
+edge_labels = nx.get_edge_attributes(G, 'reward')  # Obtiene etiquetas de recompensa
+nx.draw(G, pos, with_labels=True, node_color='lightgreen', node_size=2000, font_size=10)
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+plt.title("Entorno para Aprendizaje por Refuerzo Activo")
+plt.show()
+
+# Inicializamos la tabla Q (Q-table)
+# Será un diccionario donde Q[state][action] = valor de la acción
+Q = {}
+for state in G.nodes():
+    Q[state] = {}
+    for neighbor in G.successors(state):  # Solo acciones posibles
+        Q[state][neighbor] = 0.0
+
+# Parámetros del algoritmo
+alpha = 0.1  # Tasa de aprendizaje
+gamma = 0.9  # Factor de descuento
+epsilon = 0.3  # Probabilidad de explorar
+episodes = 500  # Número de episodios de entrenamiento
+
+# Función para elegir acción con estrategia epsilon-greedy
+def choose_action(state):
+    if random.uniform(0, 1) < epsilon:
+        # Exploración: elegimos una acción aleatoria
+        return random.choice(list(Q[state].keys()))
+    else:
+        # Explotación: elegimos la mejor acción conocida
+        max_q = max(Q[state].values())
+        best_actions = [action for action, q_value in Q[state].items() if q_value == max_q]
+        return random.choice(best_actions)
+
+# Entrenamiento con Q-Learning
+for episode in range(episodes):
+    state = 'A'  # Siempre empezamos en A
+    while state != 'E':  # Hasta llegar al objetivo
+        action = choose_action(state)
+        reward = G[state][action]['reward']
+        next_state = action
+        # Actualizamos la Q-table
+        old_q = Q[state][action]
+        if Q.get(next_state):
+            max_future_q = max(Q[next_state].values(), default=0)
+        else:
+            max_future_q = 0
+        Q[state][action] = old_q + alpha * (reward + gamma * max_future_q - old_q)
+        state = next_state  # Mover al siguiente estado
+
+# Mostrar la Q-table resultante
+print("\nQ-Table aprendida:")
+for state in Q:
+    for action in Q[state]:
+        print(f"Desde {state} hacia {action}: {Q[state][action]:.2f}")
+
+# Mostrar la política final aprendida
+print("\nPolítica óptima aprendida:")
+for state in Q:
+    if Q[state]:  # Si hay acciones disponibles
+        best_action = max(Q[state], key=Q[state].get)
+        print(f"En estado {state} ir a {best_action}")
