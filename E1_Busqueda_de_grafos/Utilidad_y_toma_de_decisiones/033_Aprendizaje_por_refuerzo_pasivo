@@ -1,0 +1,77 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Breve explicación:
+# Este código implementa el Aprendizaje por Refuerzo Pasivo en un entorno representado como un grafo.
+# El agente sigue una política fija y estima el valor de cada estado basándose en las recompensas obtenidas.
+
+# Importamos las librerías necesarias
+import networkx as nx  # Para crear y manejar grafos
+import matplotlib.pyplot as plt  # Para visualizar el grafo
+import random  # Para seleccionar acciones aleatorias
+import numpy as np  # Para manejar arreglos numéricos
+
+# Definimos el entorno como un grafo dirigido
+G = nx.DiGraph()
+
+# Añadimos nodos (estados) al grafo
+G.add_node('A')
+G.add_node('B')
+G.add_node('C')
+G.add_node('D')
+G.add_node('E')  # Estado terminal
+
+# Añadimos aristas (acciones) con sus respectivas recompensas
+G.add_edge('A', 'B', reward=0)
+G.add_edge('A', 'C', reward=0)
+G.add_edge('B', 'D', reward=0)
+G.add_edge('C', 'D', reward=0)
+G.add_edge('D', 'E', reward=1)  # Recompensa al alcanzar el estado terminal
+
+# Visualizamos el grafo
+pos = nx.spring_layout(G)  # Calcula posiciones para los nodos
+edge_labels = nx.get_edge_attributes(G, 'reward')  # Obtiene las recompensas de las aristas
+nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=2000, font_size=10)
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+plt.title("Entorno Representado como Grafo")
+plt.show()
+
+# Definimos la política fija como un diccionario: estado -> acción
+policy = {
+    'A': 'B',
+    'B': 'D',
+    'C': 'D',
+    'D': 'E'
+    # 'E' es un estado terminal, no requiere acción
+}
+
+# Inicializamos los valores de los estados en cero
+V = {state: 0 for state in G.nodes()}
+
+# Parámetros del algoritmo
+gamma = 0.9  # Factor de descuento
+theta = 0.0001  # Umbral para la convergencia
+
+# Función para realizar la evaluación de la política
+def policy_evaluation(G, policy, V, gamma, theta):
+    while True:
+        delta = 0
+        for state in G.nodes():
+            if state not in policy:
+                continue  # Saltamos los estados terminales
+            action = policy[state]
+            next_state = action
+            reward = G[state][next_state]['reward']
+            v = V[state]
+            V[state] = reward + gamma * V[next_state]
+            delta = max(delta, abs(v - V[state]))
+        if delta < theta:
+            break
+    return V
+
+# Ejecutamos la evaluación de la política
+V = policy_evaluation(G, policy, V, gamma, theta)
+
+# Mostramos los valores estimados de los estados
+print("Valores estimados de los estados:")
+for state in V:
+    print(f"Estado {state}: {V[state]:.2f}")

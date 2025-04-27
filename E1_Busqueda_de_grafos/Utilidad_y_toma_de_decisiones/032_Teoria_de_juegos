@@ -1,0 +1,78 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Breve explicación:
+# Este código modela un juego simple entre dos jugadores usando un grafo.
+# Cada jugador elige un nodo (estrategia) y recibe una recompensa.
+# Buscaremos un equilibrio donde ninguno tenga incentivos para cambiar de estrategia.
+
+# Importamos la librería networkx para crear y manejar grafos
+import networkx as nx
+
+# Importamos matplotlib para visualizar el grafo
+import matplotlib.pyplot as plt
+
+# Creamos un grafo dirigido (las decisiones tienen dirección)
+G = nx.DiGraph()
+
+# Añadimos nodos que representan combinaciones de estrategias (jugador1, jugador2)
+# Cada nodo tendrá como atributo el pago (recompensa) para cada jugador
+G.add_node("A", payoff=(3, 2))  # Nodo A: si ambos eligen estrategia 1
+G.add_node("B", payoff=(0, 0))  # Nodo B: ambos pierden
+G.add_node("C", payoff=(5, 1))  # Nodo C: jugador 1 gana más
+G.add_node("D", payoff=(1, 4))  # Nodo D: jugador 2 gana más
+
+# Añadimos aristas que representan cambios de estrategia
+G.add_edges_from([
+    ("A", "B"),
+    ("A", "C"),
+    ("A", "D"),
+    ("B", "A"),
+    ("B", "C"),
+    ("B", "D"),
+    ("C", "A"),
+    ("C", "B"),
+    ("C", "D"),
+    ("D", "A"),
+    ("D", "B"),
+    ("D", "C"),
+])
+
+# Dibujamos el grafo para visualizarlo
+pos = nx.spring_layout(G)  # Calcula posiciones automáticas para que el grafo sea claro
+nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=2000, font_size=10)
+labels = nx.get_node_attributes(G, 'payoff')
+nx.draw_networkx_edge_labels(G, pos)
+nx.draw_networkx_labels(G, pos, labels={k: f"{k}\n{v}" for k, v in labels.items()}, font_size=8)
+plt.title("Juego de decisiones en grafo")
+plt.show()
+
+# Definimos una función para buscar un equilibrio
+def find_nash_equilibrium(graph):
+    equilibria = []
+    for node in graph.nodes(data=True):
+        name, attributes = node
+        current_payoff = attributes['payoff']
+        
+        better_for_player1 = False
+        better_for_player2 = False
+        
+        # Revisamos si algún jugador puede mejorar cambiando de nodo
+        for neighbor in graph.neighbors(name):
+            neighbor_payoff = graph.nodes[neighbor]['payoff']
+            
+            if neighbor_payoff[0] > current_payoff[0]:
+                better_for_player1 = True
+            if neighbor_payoff[1] > current_payoff[1]:
+                better_for_player2 = True
+        
+        # Si ningún jugador puede mejorar, es un equilibrio
+        if not better_for_player1 and not better_for_player2:
+            equilibria.append((name, current_payoff))
+    
+    return equilibria
+
+# Buscamos y mostramos el equilibrio de Nash
+equilibria = find_nash_equilibrium(G)
+print("Equilibrios de Nash encontrados:")
+for eq in equilibria:
+    print(f"Nodo: {eq[0]}, Recompensas: {eq[1]}")
