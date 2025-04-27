@@ -1,0 +1,78 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Iteración de Valores busca encontrar el mejor valor (o utilidad) de cada estado en un entorno modelado como un grafo,
+# actualizando los valores hasta que cambien muy poco. 
+# Así, podemos saber cuál es el mejor camino o decisión a tomar desde cualquier punto.
+
+# Importamos 'networkx' para modelar el mapa como grafo
+import networkx as nx
+
+# Creamos el grafo dirigido
+G = nx.DiGraph()
+
+# Añadimos nodos (estados)
+G.add_node("A")
+G.add_node("B")
+G.add_node("C")  # C será el estado objetivo con recompensa alta
+
+# Añadimos aristas (acciones), cada una con una recompensa
+G.add_edge("A", "B", recompensa=-1)
+G.add_edge("B", "A", recompensa=-1)
+G.add_edge("B", "C", recompensa=10)
+
+# Definimos parámetros de la iteración de valores
+gamma = 0.9  # Factor de descuento (futuro importante)
+theta = 0.01  # Umbral de convergencia
+
+# Inicializamos valores de todos los estados
+V = {estado: 0 for estado in G.nodes()}
+
+# Algoritmo de Iteración de Valores
+def iteracion_de_valores(grafo, V, gamma, theta):
+    while True:
+        delta = 0
+        V_nuevo = V.copy()
+
+        for estado in grafo.nodes():
+            # Para cada estado, calcular el máximo valor esperado
+            valores_acciones = []
+            for vecino in grafo.successors(estado):
+                recompensa = grafo.edges[estado, vecino]['recompensa']
+                valor = recompensa + gamma * V[vecino]
+                valores_acciones.append(valor)
+            
+            if valores_acciones:
+                mejor_valor = max(valores_acciones)
+                delta = max(delta, abs(mejor_valor - V[estado]))
+                V_nuevo[estado] = mejor_valor
+
+        V = V_nuevo
+
+        if delta < theta:
+            break
+
+    return V
+
+# Ejecutamos la iteración de valores
+V_optimo = iteracion_de_valores(G, V, gamma, theta)
+
+# Mostramos los valores óptimos
+print("Valores óptimos de los estados:")
+for estado, valor in V_optimo.items():
+    print(f"Estado {estado}: {valor:.2f}")
+
+# Dibujamos el grafo
+import matplotlib.pyplot as plt
+
+pos = nx.spring_layout(G, seed=42)
+nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=1200)
+nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=20)
+nx.draw_networkx_labels(G, pos, font_size=10)
+
+# Etiquetas de recompensas en las aristas
+edge_labels = {(u, v): f"{d['recompensa']}" for u, v, d in G.edges(data=True)}
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=9)
+
+plt.title("Grafo de Estados y Recompensas")
+plt.axis('off')
+plt.show()

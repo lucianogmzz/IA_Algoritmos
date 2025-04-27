@@ -1,0 +1,74 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Importamos 'networkx' para trabajar con grafos.
+import networkx as nx
+
+# Importamos 'matplotlib' para graficar.
+import matplotlib.pyplot as plt
+
+# Creamos un grafo dirigido para representar el árbol de decisión.
+G = nx.DiGraph()
+
+# Agregamos nodos representando preguntas y decisiones
+G.add_node("¿Está lloviendo?", type="pregunta")
+G.add_node("¿Está enfermo?", type="pregunta")
+G.add_node("Quedarse en casa", type="decision")
+G.add_node("Ir a trabajar", type="decision")
+
+# Agregamos las ramas (aristas) que representan las respuestas posibles
+G.add_edge("¿Está lloviendo?", "¿Está enfermo?", respuesta="No")  # No llueve, preguntamos salud
+G.add_edge("¿Está lloviendo?", "Quedarse en casa", respuesta="Sí")  # Llueve → quedarse
+
+G.add_edge("¿Está enfermo?", "Quedarse en casa", respuesta="Sí")  # Enfermo → quedarse
+G.add_edge("¿Está enfermo?", "Ir a trabajar", respuesta="No")  # Sano → trabajar
+
+# Función para recorrer el árbol según respuestas del usuario
+def tomar_decision(grafo, nodo_actual):
+    while True:
+        tipo = grafo.nodes[nodo_actual]['type']
+        
+        if tipo == "decision":
+            # Si llegamos a una hoja (decisión), devolvemos la acción
+            return nodo_actual
+        
+        # Si estamos en una pregunta, hacemos la pregunta
+        respuesta = input(f"{nodo_actual} (Sí/No): ").capitalize()
+        
+        # Buscar el siguiente nodo basado en la respuesta
+        encontrado = False
+        for vecino in grafo.successors(nodo_actual):
+            if grafo.edges[nodo_actual, vecino]['respuesta'] == respuesta:
+                nodo_actual = vecino
+                encontrado = True
+                break
+        
+        if not encontrado:
+            print("Respuesta inválida. Responde 'Sí' o 'No'.")
+
+# Ejecutamos el sistema de decisiones
+# Comenzamos desde la raíz: "¿Está lloviendo?"
+# Nota: para automatizar en ejemplos, podríamos modificar para no pedir input.
+# Ahora será manual.
+# decision = tomar_decision(G, "¿Está lloviendo?")
+# print(f"Decisión final: {decision}")
+
+# Ahora dibujamos el árbol para entenderlo visualmente
+pos = nx.spring_layout(G, seed=42)  # Posiciones para cada nodo
+
+# Dibujamos los nodos
+node_colors = ['lightgreen' if G.nodes[n]['type'] == 'decision' else 'lightblue' for n in G.nodes()]
+nx.draw_networkx_nodes(G, pos, node_color=node_colors, node_size=1200)
+
+# Dibujamos las aristas
+nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=20)
+
+# Dibujamos etiquetas de los nodos
+nx.draw_networkx_labels(G, pos, font_size=9)
+
+# Dibujamos etiquetas de las aristas (Sí/No)
+edge_labels = {(u, v): d['respuesta'] for u, v, d in G.edges(data=True)}
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=8)
+
+plt.title("Árbol de Decisión: Salir o Quedarse en Casa")
+plt.axis('off')
+plt.show()

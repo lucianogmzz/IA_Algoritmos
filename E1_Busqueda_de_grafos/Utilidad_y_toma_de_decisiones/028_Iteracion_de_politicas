@@ -1,0 +1,124 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Breve explicación:
+# El algoritmo de Iteración de Políticas alterna entre evaluar una política (cuánto vale seguirla)
+# y mejorarla (cambiándola si hay una mejor acción), hasta encontrar la mejor forma de actuar.
+
+# Importamos networkx para modelar el grafo
+import networkx as nx
+
+# Importamos matplotlib para dibujar el grafo
+import matplotlib.pyplot as plt
+
+# Creamos el grafo dirigido
+G = nx.DiGraph()
+
+# Añadimos nodos (estados)
+G.add_nodes_from(["A", "B", "C", "D"])
+
+# Añadimos conexiones (acciones) entre estados con recompensas
+G.add_edge("A", "B", recompensa=-1)
+G.add_edge("A", "C", recompensa=-2)
+G.add_edge("B", "D", recompensa=10)
+G.add_edge("C", "D", recompensa=8)
+
+# Inicializamos la política: para cada estado elegimos una acción arbitraria
+politica = {
+    "A": "B",
+    "B": "D",
+    "C": "D",
+    "D": None  # No hay acción en el estado final
+}
+
+# Parámetros
+gamma = 0.9  # Factor de descuento
+theta = 0.01  # Umbral para convergencia
+
+# Inicializamos los valores de los estados en 0
+V = {estado: 0 for estado in G.nodes()}
+
+# Función para evaluar la política actual
+def evaluar_politica(grafo, politica, V, gamma, theta):
+    while True:
+        delta = 0
+        V_nuevo = V.copy()
+
+        for estado in grafo.nodes():
+            accion = politica.get(estado)
+
+            if accion is not None:
+                recompensa = grafo.edges[estado, accion]["recompensa"]
+                V_estado = recompensa + gamma * V[accion]
+                delta = max(delta, abs(V_estado - V[estado]))
+                V_nuevo[estado] = V_estado
+
+        V = V_nuevo
+
+        if delta < theta:
+            break
+
+    return V
+
+# Función para mejorar la política actual
+def mejorar_politica(grafo, politica, V, gamma):
+    politica_estable = True
+
+    for estado in grafo.nodes():
+        if estado == "D":
+            continue  # No mejoramos en estado final
+
+        mejor_accion = None
+        mejor_valor = float("-inf")
+
+        # Evaluamos todas las acciones posibles desde este estado
+        for vecino in grafo.successors(estado):
+            recompensa = grafo.edges[estado, vecino]["recompensa"]
+            valor = recompensa + gamma * V[vecino]
+
+            if valor > mejor_valor:
+                mejor_valor = valor
+                mejor_accion = vecino
+
+        # Si encontramos una mejor acción, actualizamos
+        if mejor_accion != politica[estado]:
+            politica_estable = False
+            politica[estado] = mejor_accion
+
+    return politica, politica_estable
+
+# Función principal: iteración de políticas
+def iteracion_de_politicas(grafo, politica, V, gamma, theta):
+    while True:
+        V = evaluar_politica(grafo, politica, V, gamma, theta)
+        politica, estable = mejorar_politica(grafo, politica, V, gamma)
+
+        if estable:
+            break
+
+    return politica, V
+
+# Ejecutamos el algoritmo
+politica_optima, V_optimo = iteracion_de_politicas(G, politica, V, gamma, theta)
+
+# Mostramos resultados
+print("Política óptima encontrada:")
+for estado, accion in politica_optima.items():
+    print(f"Desde estado {estado}: ir a {accion}")
+
+print("\nValores óptimos de los estados:")
+for estado, valor in V_optimo.items():
+    print(f"Estado {estado}: {valor:.2f}")
+
+# Visualizamos el grafo
+pos = nx.spring_layout(G, seed=42)
+nx.draw_networkx_nodes(G, pos, node_color='lightgreen', node_size=1200)
+nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=20)
+nx.draw_networkx_labels(G, pos, font_size=10)
+
+# Dibujamos etiquetas de recompensas
+edge_labels = {(u, v): f"{d['recompensa']}" for u, v, d in G.edges(data=True)}
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=9)
+
+plt.title("Grafo de Estados y Acciones")
+plt.axis('off')
+plt.show()

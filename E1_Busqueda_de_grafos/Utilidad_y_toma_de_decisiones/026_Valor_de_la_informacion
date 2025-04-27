@@ -1,0 +1,69 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Importamos 'networkx' para representar las decisiones y consecuencias como un grafo
+import networkx as nx
+
+# Importamos 'matplotlib' para visualizar el grafo
+import matplotlib.pyplot as plt
+
+# Creamos el grafo dirigido
+G = nx.DiGraph()
+
+# Definimos los nodos: estados y decisiones
+G.add_node("Inicio", tipo="decision")
+G.add_node("Actuar sin información", tipo="accion", utilidad=50)  # Baja utilidad por incertidumbre
+G.add_node("Explorar", tipo="decision")
+G.add_node("Buen camino descubierto", tipo="accion", utilidad=100)  # Mejor resultado tras explorar
+G.add_node("Mal camino descubierto", tipo="accion", utilidad=30)   # Resultado pobre tras explorar
+
+# Añadimos las conexiones
+G.add_edge("Inicio", "Actuar sin información", accion="Actuar")
+G.add_edge("Inicio", "Explorar", accion="Explorar")
+G.add_edge("Explorar", "Buen camino descubierto", probabilidad=0.7)  # 70% buen camino
+G.add_edge("Explorar", "Mal camino descubierto", probabilidad=0.3)   # 30% mal camino
+
+# Calcular utilidad esperada sin información
+utilidad_sin_info = G.nodes["Actuar sin información"]["utilidad"]
+
+# Calcular utilidad esperada con información
+# Usamos probabilidad para ponderar los resultados
+utilidad_con_info = (
+    G.nodes["Buen camino descubierto"]["utilidad"] * 0.7 +
+    G.nodes["Mal camino descubierto"]["utilidad"] * 0.3
+)
+
+# Costo de explorar
+costo_exploracion = 10
+
+# Utilidad neta considerando el costo
+utilidad_con_info_neta = utilidad_con_info - costo_exploracion
+
+# Valor de la Información
+valor_informacion = utilidad_con_info_neta - utilidad_sin_info
+
+# Imprimimos resultados
+print(f"Utilidad sin información: {utilidad_sin_info}")
+print(f"Utilidad con información (neto después de explorar): {utilidad_con_info_neta}")
+print(f"Valor de la Información: {valor_informacion}")
+
+# Dibujamos el grafo
+pos = nx.spring_layout(G, seed=42)
+
+node_colors = ['lightblue' if G.nodes[n]['tipo'] == 'decision' else 'lightgreen' for n in G.nodes()]
+nx.draw_networkx_nodes(G, pos, node_color=node_colors, node_size=1200)
+nx.draw_networkx_edges(G, pos, arrowstyle='->', arrowsize=20)
+nx.draw_networkx_labels(G, pos, font_size=9)
+
+# Etiquetas de las aristas
+edge_labels = {}
+for u, v, d in G.edges(data=True):
+    if "accion" in d:
+        edge_labels[(u, v)] = d['accion']
+    if "probabilidad" in d:
+        edge_labels[(u, v)] = f"{d['probabilidad']*100:.0f}%"
+
+nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=8)
+
+plt.title("Grafo: Decisión con y sin Exploración")
+plt.axis('off')
+plt.show()
