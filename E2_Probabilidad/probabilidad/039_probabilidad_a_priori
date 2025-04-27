@@ -1,0 +1,36 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2.
+
+# Breve explicación:
+# Este programa simula la probabilidad a priori de sacar una bola roja o azul de una bolsa
+# antes de realizar cualquier experimento (es decir, antes de sacar una bola).
+# Asumimos que las probabilidades a priori de sacar una bola roja o azul son conocidas.
+
+# Librerías necesarias
+import random  # Para realizar selecciones aleatorias (simulación)
+
+# Definir las probabilidades a priori
+prob_roja_a_priori = 0.7  # Probabilidad a priori de que la bola sea roja
+prob_azul_a_priori = 0.3  # Probabilidad a priori de que la bola sea azul
+
+# Función para realizar el experimento (sacar una bola)
+def sacar_bola(prob_roja, prob_azul):
+    # Selección aleatoria con las probabilidades a priori
+    resultado = random.choices(['Roja', 'Azul'], [prob_roja, prob_azul])
+    return resultado[0]
+
+# Simulación del experimento 10 veces
+resultados = {'Roja': 0, 'Azul': 0}
+
+for _ in range(10):
+    bola = sacar_bola(prob_roja_a_priori, prob_azul_a_priori)
+    resultados[bola] += 1
+
+# Imprimir los resultados
+print("Resultados de 10 experimentos:")
+print(f"Bolas rojas: {resultados['Roja']}")
+print(f"Bolas azules: {resultados['Azul']}")
+
+# Mostrar las probabilidades a priori
+print("\nProbabilidades a priori:")
+print(f"Probabilidad a priori de bola roja: {prob_roja_a_priori}")
+print(f"Probabilidad a priori de bola azul: {prob_azul_a_priori}")

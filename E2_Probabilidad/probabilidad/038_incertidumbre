@@ -1,0 +1,63 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2.
+
+# Breve explicación:
+# Este programa simula un agente que se mueve en un grafo con incertidumbre.
+# Cada vez que intenta ir de un nodo a otro, existe una probabilidad de que falle y termine en otro nodo vecino.
+
+# Librerías necesarias
+import networkx as nx  # Para crear y visualizar grafos
+import matplotlib.pyplot as plt  # Para mostrar el grafo
+import random  # Para manejar la aleatoriedad (incertidumbre)
+
+# Crear un grafo dirigido
+G = nx.DiGraph()
+
+# Agregar nodos (estados)
+nodes = ['Start', 'A', 'B', 'C', 'Goal']
+G.add_nodes_from(nodes)
+
+# Agregar aristas (acciones posibles)
+G.add_edge('Start', 'A')
+G.add_edge('Start', 'B')
+G.add_edge('A', 'C')
+G.add_edge('B', 'C')
+G.add_edge('C', 'Goal')
+
+# Visualizar el grafo
+pos = nx.spring_layout(G)
+nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=2000, font_size=12)
+plt.title("Grafo con Incertidumbre en Movimiento")
+plt.show()
+
+# Función que simula moverse con incertidumbre
+def move_with_uncertainty(G, current_node):
+    neighbors = list(G.successors(current_node))  # Obtener los nodos a los que puede ir
+    if not neighbors:
+        return current_node  # Si no hay a dónde ir, quedarse
+
+    intended_move = random.choice(neighbors)  # Acción deseada
+    # Existe una probabilidad de 80% de ir a donde quiere, 20% de fallar
+    if random.random() < 0.8:
+        print(f"Movimiento exitoso hacia {intended_move}")
+        return intended_move
+    else:
+        # Si falla, se mueve a otro vecino al azar
+        alternative_moves = [n for n in neighbors if n != intended_move]
+        if alternative_moves:
+            mistake_move = random.choice(alternative_moves)
+            print(f"¡Falló! Movimiento no intencional hacia {mistake_move}")
+            return mistake_move
+        else:
+            print(f"¡Falló! Pero no hay alternativa, se mantiene en {intended_move}")
+            return intended_move
+
+# Simulación del agente moviéndose desde 'Start' hasta 'Goal'
+current_node = 'Start'
+path = [current_node]
+
+while current_node != 'Goal':
+    current_node = move_with_uncertainty(G, current_node)
+    path.append(current_node)
+
+print("\nRuta tomada por el agente considerando la incertidumbre:")
+print(" -> ".join(path))
