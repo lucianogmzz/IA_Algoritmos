@@ -1,0 +1,60 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Algoritmo: Independencia Condicional
+# Descripción breve:
+# Este código simula un ejemplo sencillo para verificar si dos eventos A y B son independientes condicionalmente dado un evento C.
+# Calcula probabilidades y verifica la igualdad que define la independencia condicional.
+
+# Importamos la librería necesaria
+import pandas as pd  # pandas nos permite manejar tablas de datos fácilmente (estructuras tipo DataFrame)
+
+# Crear un conjunto de datos simulado
+# Simularemos eventos A, B y C
+# En este ejemplo, C determina A y B, y A y B deberían ser independientes dado C
+
+data = {
+    'C': ['positivo', 'positivo', 'negativo', 'negativo', 'positivo', 'negativo', 'positivo', 'negativo'],
+    'A': ['sí', 'no', 'sí', 'no', 'sí', 'no', 'no', 'sí'],
+    'B': ['sí', 'sí', 'no', 'no', 'sí', 'no', 'sí', 'no']
+}
+
+# Convertimos los datos en un DataFrame para manipularlos mejor
+df = pd.DataFrame(data)
+
+# Mostrar la tabla de datos
+print("Tabla de datos:")
+print(df)
+print()
+
+# Función para calcular probabilidad condicional
+def prob_condicional(df, evento1, valor1, evento2=None, valor2=None):
+    """
+    Calcula P(evento1 = valor1 | evento2 = valor2)
+    Si evento2 es None, calcula la probabilidad simple P(evento1 = valor1)
+    """
+    if evento2 is None:
+        # Probabilidad simple
+        total = len(df)
+        casos_favorables = len(df[df[evento1] == valor1])
+        return casos_favorables / total
+    else:
+        # Probabilidad condicional
+        df_condicionado = df[df[evento2] == valor2]
+        if len(df_condicionado) == 0:
+            return 0
+        casos_favorables = len(df_condicionado[df_condicionado[evento1] == valor1])
+        return casos_favorables / len(df_condicionado)
+
+# Calculamos las probabilidades necesarias
+p_A_given_C = prob_condicional(df, 'A', 'sí', 'C', 'positivo')
+p_A_given_BC = prob_condicional(df[df['B'] == 'sí'], 'A', 'sí', 'C', 'positivo')
+
+print(f"P(A = 'sí' | C = 'positivo') = {p_A_given_C:.2f}")
+print(f"P(A = 'sí' | B = 'sí', C = 'positivo') = {p_A_given_BC:.2f}")
+
+# Verificamos si son aproximadamente iguales
+# Dado errores por redondeo, no pedimos igualdad exacta, solo que la diferencia sea muy pequeña
+
+if abs(p_A_given_C - p_A_given_BC) < 0.05:
+    print("\nConclusión: A y B son independientes condicionalmente dado C.")
+else:
+    print("\nConclusión: A y B NO son independientes condicionalmente dado C.")

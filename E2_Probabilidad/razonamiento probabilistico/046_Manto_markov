@@ -1,0 +1,22 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Algoritmo: Manto de Markov
+# Descripción breve:
+# Este código construye una red bayesiana simple y encuentra el manto de Markov de un nodo específico.
+
+# Importamos la librería necesaria
+from pgmpy.models import DiscreteBayesianNetwork  # Clase para construir redes Bayesianas
+
+# Creamos una red bayesiana de ejemplo
+# Definimos las relaciones (arcos) entre los nodos
+modelo = DiscreteBayesianNetwork([
+    ('A', 'B'),  # A influye en B
+    ('A', 'C'),  # A influye en C
+    ('B', 'D'),  # B influye en D
+    ('C', 'D')   # C influye en D
+])
+
+# Ahora, obtenemos el Manto de Markov del nodo 'B'
+manto_B = modelo.get_markov_blanket('B')
+
+# Mostramos el resultado
+print("El Manto de Markov del nodo 'B' es:", manto_B)

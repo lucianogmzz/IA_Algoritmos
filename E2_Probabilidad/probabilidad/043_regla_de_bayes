@@ -1,0 +1,35 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Algoritmo: Regla de Bayes
+# Descripción breve:
+# Este programa calcula la probabilidad de un evento A dado que ha ocurrido un evento B usando la Regla de Bayes.
+# Se piden los valores necesarios al usuario y se realiza el cálculo paso por paso.
+
+# No necesitamos librerías especiales en este ejemplo básico
+
+# Función que calcula la probabilidad usando la Regla de Bayes
+def regla_de_bayes(prob_A, prob_B_dado_A, prob_B):
+    """
+    Calcula la probabilidad P(A|B) usando la fórmula de Bayes:
+    P(A|B) = (P(B|A) * P(A)) / P(B)
+    """
+    prob_A_dado_B = (prob_B_dado_A * prob_A) / prob_B
+    return prob_A_dado_B
+
+# Pedimos los valores al usuario
+print("Bienvenido al cálculo de la Regla de Bayes")
+print("Por favor ingresa los siguientes valores como números decimales (por ejemplo, 0.6 para 60%)")
+
+# P(A): probabilidad de A
+prob_A = float(input("Ingresa la probabilidad de A (P(A)): "))
+
+# P(B|A): probabilidad de B dado A
+prob_B_dado_A = float(input("Ingresa la probabilidad de B dado A (P(B|A)): "))
+
+# P(B): probabilidad de B
+prob_B = float(input("Ingresa la probabilidad de B (P(B)): "))
+
+# Llamamos a la función para calcular la probabilidad
+prob_A_dado_B = regla_de_bayes(prob_A, prob_B_dado_A, prob_B)
+
+# Mostramos el resultado
+print(f"\nLa probabilidad de A dado B (P(A|B)) es: {prob_A_dado_B:.4f}")

@@ -1,0 +1,33 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2.
+
+# Breve explicación:
+# Este programa simula una distribución de probabilidad discreta para el lanzamiento de un dado de 6 caras.
+# Calcula la probabilidad de obtener cada uno de los resultados posibles (1, 2, 3, 4, 5, 6).
+# La probabilidad es uniforme, ya que todos los resultados tienen la misma probabilidad de ocurrir.
+
+import random  # Para simular el lanzamiento del dado
+
+# Definir las probabilidades de los resultados posibles de un dado
+probabilidades_dado = {1: 1/6, 2: 1/6, 3: 1/6, 4: 1/6, 5: 1/6, 6: 1/6}
+
+# Función para simular el lanzamiento de un dado
+def lanzar_dado():
+    # Elegimos aleatoriamente un número entre 1 y 6, con igual probabilidad para cada uno
+    return random.choices([1, 2, 3, 4, 5, 6], [probabilidades_dado[i] for i in range(1, 7)])[0]
+
+# Simular el lanzamiento del dado 10 veces
+resultados = {i: 0 for i in range(1, 7)}  # Diccionario para contar las ocurrencias de cada resultado
+
+for _ in range(10):
+    resultado = lanzar_dado()  # Llamamos a la función que simula el lanzamiento
+    resultados[resultado] += 1  # Contamos cuántas veces salió cada número
+
+# Mostrar los resultados
+print("Resultados de 10 lanzamientos:")
+for cara, cantidad in resultados.items():
+    print(f"El número {cara} salió {cantidad} veces.")
+    
+# Mostrar las probabilidades de cada cara
+print("\nProbabilidades de cada cara del dado:")
+for cara, probabilidad in probabilidades_dado.items():
+    print(f"Probabilidad de sacar un {cara}: {probabilidad:.2f}")

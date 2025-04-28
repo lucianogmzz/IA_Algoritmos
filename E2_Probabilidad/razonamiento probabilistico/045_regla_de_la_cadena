@@ -1,0 +1,22 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Algoritmo: Regla de la Cadena
+# Descripción breve:
+# Este código implementa la Regla de la Cadena para calcular la probabilidad conjunta
+# de tres eventos dependientes: A, B y C.
+
+# Definimos las probabilidades dadas
+# P(A) es la probabilidad de que ocurra A
+P_A = 0.6  # 60% de probabilidad de A
+
+# P(B|A) es la probabilidad de que ocurra B dado que ocurrió A
+P_B_given_A = 0.7  # 70% de probabilidad de B si A ocurrió
+
+# P(C|A,B) es la probabilidad de que ocurra C dado que ocurrieron A y B
+P_C_given_A_B = 0.8  # 80% de probabilidad de C si A y B ocurrieron
+
+# Aplicamos la Regla de la Cadena
+# Calculamos la probabilidad conjunta de A, B y C
+P_A_B_C = P_A * P_B_given_A * P_C_given_A_B
+
+# Mostramos el resultado
+print("La probabilidad conjunta P(A, B, C) es:", P_A_B_C)

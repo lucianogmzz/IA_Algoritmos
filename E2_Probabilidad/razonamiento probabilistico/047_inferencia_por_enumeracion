@@ -1,0 +1,48 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Algoritmo: Inferencia por Enumeración
+# Descripción breve:
+# Este código realiza inferencia por enumeración en una red bayesiana simple,
+# calculando la probabilidad de un evento dado cierta evidencia.
+
+# Importamos librerías necesarias
+from pgmpy.models import DiscreteBayesianNetwork  # Crear redes bayesianas
+from pgmpy.inference import VariableElimination  # Algoritmo de inferencia
+
+# Definimos la estructura de la red
+modelo = DiscreteBayesianNetwork([
+    ('Clima', 'Paraguas')  # El Clima afecta si llevamos Paraguas
+])
+
+# Definimos las Tablas de Probabilidad (CPTs)
+from pgmpy.factors.discrete import TabularCPD
+
+# Definimos la probabilidad del Clima
+cpd_clima = TabularCPD(
+    variable='Clima', variable_card=2,  # 2 estados: Soleado (0) o Lluvioso (1)
+    values=[[0.7], [0.3]]  # 70% soleado, 30% lluvioso
+)
+
+# Definimos la probabilidad de llevar paraguas dado el clima
+cpd_paraguas = TabularCPD(
+    variable='Paraguas', variable_card=2,  # 2 estados: No (0) o Sí (1)
+    values=[[0.9, 0.2], [0.1, 0.8]],  # columnas: Soleado | Lluvioso
+    evidence=['Clima'], evidence_card=[2]
+)
+
+# Asociamos las tablas al modelo
+modelo.add_cpds(cpd_clima, cpd_paraguas)
+
+# Verificamos que el modelo sea válido
+assert modelo.check_model()
+
+# Ahora realizamos la inferencia
+inferencia = VariableElimination(modelo)
+
+# Calculamos la probabilidad de que esté lloviendo dado que llevamos paraguas
+resultado = inferencia.query(
+    variables=['Clima'],
+    evidence={'Paraguas': 1}  # 1 significa "sí llevamos paraguas"
+)
+
+# Mostramos el resultado
+print(resultado)

@@ -1,0 +1,42 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Algoritmo: Red Bayesiana
+# Descripción breve:
+# Este código construye una red bayesiana simple usando librerías de Python.
+# Simulamos el problema de si alguien lleva paraguas dependiendo de si llueve o no.
+
+# Importamos las librerías necesarias
+from pgmpy.models import DiscreteBayesianNetwork  # Nueva clase correcta para construir la red
+from pgmpy.factors.discrete import TabularCPD  # Definir las tablas de probabilidad condicional
+from pgmpy.inference import VariableElimination  # Para hacer inferencia
+
+# Construimos la red
+# Definimos que "Lluvia" influye en "Paraguas"
+modelo = DiscreteBayesianNetwork([('Lluvia', 'Paraguas')])
+
+# Definimos las tablas de probabilidad condicional (CPT)
+# Probabilidad de lluvia
+cpd_lluvia = TabularCPD(variable='Lluvia', variable_card=2, values=[[0.7], [0.3]])
+
+# Probabilidad de llevar paraguas dado que llueve o no
+cpd_paraguas = TabularCPD(variable='Paraguas', variable_card=2,
+                          values=[[0.9, 0.2],  # No lleva paraguas
+                                  [0.1, 0.8]],  # Lleva paraguas
+                          evidence=['Lluvia'],
+                          evidence_card=[2])
+
+# Asociamos las CPTs al modelo
+modelo.add_cpds(cpd_lluvia, cpd_paraguas)
+
+# Verificamos que la red esté bien construida
+print("¿La red es válida?:", modelo.check_model())
+
+# Hacemos inferencias: calcular la probabilidad de que lleve paraguas
+# Creamos el objeto de inferencia
+inferencia = VariableElimination(modelo)
+
+# Consultamos: ¿Cuál es la probabilidad de llevar paraguas?
+consulta = inferencia.query(variables=['Paraguas'])
+
+# Mostramos el resultado
+print("\nProbabilidad de que una persona lleve paraguas:")
+print(consulta)
