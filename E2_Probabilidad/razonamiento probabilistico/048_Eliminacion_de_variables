@@ -1,0 +1,46 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Algoritmo: Eliminación de Variables
+# Descripción breve:
+# Este código construye una red bayesiana simple y realiza inferencia
+# utilizando el algoritmo de eliminación de variables para calcular probabilidades condicionales.
+
+# Importamos las librerías necesarias
+from pgmpy.models import DiscreteBayesianNetwork  # Para crear redes bayesianas
+from pgmpy.factors.discrete import TabularCPD    # Para definir tablas de probabilidad
+from pgmpy.inference import VariableElimination  # Para realizar inferencia con eliminación de variables
+
+# Definimos la estructura de la red bayesiana
+modelo = DiscreteBayesianNetwork([
+    ('Clima', 'Paraguas')  # El Clima afecta la decisión de llevar un paraguas
+])
+
+# Definimos la Tabla de Probabilidad Condicional (CPT) para el nodo 'Clima'
+cpd_clima = TabularCPD(
+    variable='Clima', variable_card=2,  # 2 estados: Soleado (0) o Lluvioso (1)
+    values=[[0.7], [0.3]]  # 70% soleado, 30% lluvioso
+)
+
+# Definimos la CPT para el nodo 'Paraguas' condicionado al 'Clima'
+cpd_paraguas = TabularCPD(
+    variable='Paraguas', variable_card=2,  # 2 estados: No (0) o Sí (1)
+    values=[[0.9, 0.2], [0.1, 0.8]],  # columnas: Clima=soleado | Clima=lluvioso
+    evidence=['Clima'], evidence_card=[2]
+)
+
+# Asociamos las tablas de probabilidad a la red
+modelo.add_cpds(cpd_clima, cpd_paraguas)
+
+# Verificamos que el modelo esté bien construido
+assert modelo.check_model()
+
+# Realizamos inferencia usando Eliminación de Variables
+inferencia = VariableElimination(modelo)
+
+# Consultamos: ¿Cuál es la probabilidad de Clima dado que llevamos Paraguas?
+resultado = inferencia.query(
+    variables=['Clima'],       # Variable de interés
+    evidence={'Paraguas': 1}   # Evidencia: llevamos paraguas
+)
+
+# Mostramos el resultado
+print(resultado)

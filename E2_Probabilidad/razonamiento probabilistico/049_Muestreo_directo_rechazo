@@ -1,0 +1,48 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Algoritmo: Muestreo Directo y por Rechazo
+# Descripción breve:
+# Este código implementa el muestreo directo y el muestreo por rechazo
+# para obtener muestras de una distribución de probabilidad dada.
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Función de la distribución objetivo (por ejemplo, una distribución normal)
+def p(x):
+    return 0.3 * np.exp(-0.5 * (x - 2)**2) + 0.7 * np.exp(-0.5 * (x + 2)**2)
+
+# Función de la distribución propuesta (por ejemplo, una distribución normal)
+def q(x):
+    return np.exp(-0.5 * x**2)
+
+# Muestreo directo
+def muestreo_directo(n):
+    muestras = np.random.randn(n)  # Muestras de una normal estándar
+    return muestras
+
+# Muestreo por rechazo
+def muestreo_por_rechazo(n):
+    muestras_aceptadas = []
+    while len(muestras_aceptadas) < n:
+        x = np.random.randn()  # Muestra de la distribución propuesta
+        u = np.random.rand()  # Número aleatorio entre 0 y 1
+        if u <= p(x) / q(x):  # Aceptamos la muestra con probabilidad p(x)/q(x)
+            muestras_aceptadas.append(x)
+    return np.array(muestras_aceptadas)
+
+# Generar muestras con muestreo directo
+n = 10000
+muestras_directas = muestreo_directo(n)
+
+# Generar muestras con muestreo por rechazo
+muestras_rechazo = muestreo_por_rechazo(n)
+
+# Graficar los resultados
+x = np.linspace(-5, 5, 1000)
+plt.figure(figsize=(10, 6))
+plt.plot(x, p(x), label='Distribución objetivo p(x)', color='blue')
+plt.hist(muestras_directas, bins=50, density=True, alpha=0.5, label='Muestreo Directo', color='red')
+plt.hist(muestras_rechazo, bins=50, density=True, alpha=0.5, label='Muestreo por Rechazo', color='green')
+plt.legend()
+plt.title("Muestreo Directo y por Rechazo")
+plt.show()
