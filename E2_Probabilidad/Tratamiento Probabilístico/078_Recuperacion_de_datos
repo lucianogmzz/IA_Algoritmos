@@ -1,0 +1,48 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa un sistema simple de recuperación de datos utilizando un modelo probabilístico.
+
+from collections import Counter
+import math
+
+# Función para calcular la frecuencia de términos en los documentos
+def calculate_term_frequencies(documents):
+    term_frequencies = {}
+    for doc_id, doc in enumerate(documents):
+        term_frequencies[doc_id] = Counter(doc.split())
+    return term_frequencies
+
+# Función para calcular el TF-IDF de los términos
+def calculate_tfidf(term_frequencies, documents):
+    tfidf = {}
+    num_docs = len(documents)
+    for doc_id, freqs in term_frequencies.items():
+        tfidf[doc_id] = {}
+        for term, freq in freqs.items():
+            df = sum(1 for doc in term_frequencies.values() if term in doc)
+            idf = math.log(num_docs / (1 + df))
+            tfidf[doc_id][term] = freq * idf
+    return tfidf
+
+# Función para calcular la relevancia de un documento dado una consulta
+def calculate_relevance(query, tfidf):
+    query_terms = query.split()
+    relevance = {}
+    for doc_id, scores in tfidf.items():
+        relevance[doc_id] = sum(scores.get(term, 0) for term in query_terms)
+    return relevance
+
+# Ejemplo de uso
+documents = [
+    "el gato está sobre la mesa",
+    "el perro está bajo la mesa",
+    "el gato y el perro son amigos"
+]
+
+term_frequencies = calculate_term_frequencies(documents)
+tfidf = calculate_tfidf(term_frequencies, documents)
+
+# Calcular la relevancia de los documentos para una consulta
+query = "gato mesa"
+relevance = calculate_relevance(query, tfidf)
+print("Relevancia de los documentos para la consulta:", relevance)

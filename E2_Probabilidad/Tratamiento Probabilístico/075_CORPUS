@@ -1,0 +1,52 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa un modelo probabilístico del lenguaje simple utilizando un corpus.
+
+from collections import defaultdict, Counter
+import numpy as np
+
+# Función para entrenar el modelo de lenguaje
+def train_language_model(corpus):
+    # Contar la frecuencia de los unigramas y bigramas
+    unigram_counts = Counter()
+    bigram_counts = defaultdict(Counter)
+    total_words = 0
+
+    for sentence in corpus:
+        words = sentence.split()
+        unigram_counts.update(words)
+        total_words += len(words)
+        for i in range(len(words) - 1):
+            bigram_counts[words[i]][words[i + 1]] += 1
+
+    # Calcular las probabilidades
+    unigram_probs = {word: count / total_words for word, count in unigram_counts.items()}
+    bigram_probs = {word1: {word2: count / unigram_counts[word1] for word2, count in word_counts.items()}
+                    for word1, word_counts in bigram_counts.items()}
+
+    return unigram_probs, bigram_probs
+
+# Función para calcular la probabilidad de una frase
+def calculate_probability(sentence, unigram_probs, bigram_probs):
+    words = sentence.split()
+    probability = 1.0
+    for i in range(len(words) - 1):
+        if words[i] in bigram_probs and words[i + 1] in bigram_probs[words[i]]:
+            probability *= bigram_probs[words[i]][words[i + 1]]
+        else:
+            probability *= unigram_probs.get(words[i + 1], 1e-10)  # Suavizado para palabras no vistas
+    return probability
+
+# Ejemplo de uso
+corpus = [
+    "el gato está sobre la mesa",
+    "el perro está bajo la mesa",
+    "el gato y el perro son amigos"
+]
+
+unigram_probs, bigram_probs = train_language_model(corpus)
+
+# Calcular la probabilidad de una frase
+sentence = "el gato está sobre la mesa"
+probability = calculate_probability(sentence, unigram_probs, bigram_probs)
+print("Probabilidad de la frase:", probability)

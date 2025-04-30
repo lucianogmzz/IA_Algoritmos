@@ -1,0 +1,35 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa un sistema simple de extracción de información utilizando un modelo probabilístico.
+
+import re
+from collections import Counter
+
+# Función para extraer entidades de un texto
+def extract_entities(text):
+    # Patrones simples para entidades (nombres propios y fechas)
+    name_pattern = r'\b[A-Z][a-z]+\b'
+    date_pattern = r'\b\d{2}/\d{2}/\d{4}\b'
+
+    names = re.findall(name_pattern, text)
+    dates = re.findall(date_pattern, text)
+
+    return names, dates
+
+# Función para calcular la frecuencia de entidades en un corpus
+def calculate_entity_frequencies(corpus):
+    entity_frequencies = Counter()
+    for text in corpus:
+        names, dates = extract_entities(text)
+        entity_frequencies.update(names + dates)
+    return entity_frequencies
+
+# Ejemplo de uso
+corpus = [
+    "Juan fue a la tienda el 12/05/2023.",
+    "María celebró su cumpleaños el 20/08/2023.",
+    "Juan y María son amigos desde el 01/01/2020."
+]
+
+entity_frequencies = calculate_entity_frequencies(corpus)
+print("Frecuencia de entidades en el corpus:", entity_frequencies)

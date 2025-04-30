@@ -1,0 +1,37 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa una gramática probabilística independiente del contexto simple.
+
+import random
+
+# Definir una gramática simple
+grammar = {
+    "S": [("NP", "VP"), ("VP",)],
+    "NP": [("Det", "N"), ("N",)],
+    "VP": [("V", "NP"), ("V",)],
+    "Det": [("el",), ("un",)],
+    "N": [("gato",), ("perro",), ("mesa",)],
+    "V": [("está",), ("come",)]
+}
+
+# Definir probabilidades para cada regla de producción
+probabilities = {
+    "S": [0.6, 0.4],
+    "NP": [0.7, 0.3],
+    "VP": [0.5, 0.5],
+    "Det": [0.5, 0.5],
+    "N": [0.4, 0.3, 0.3],
+    "V": [0.6, 0.4]
+}
+
+# Función para generar una oración
+def generate_sentence(grammar, probabilities, start_symbol="S"):
+    if start_symbol not in grammar:
+        return start_symbol
+
+    production = random.choices(grammar[start_symbol], probabilities[start_symbol], k=1)[0]
+    return " ".join(generate_sentence(grammar, probabilities, symbol) for symbol in production)
+
+# Generar una oración aleatoria
+sentence = generate_sentence(grammar, probabilities)
+print("Oración generada:", sentence)

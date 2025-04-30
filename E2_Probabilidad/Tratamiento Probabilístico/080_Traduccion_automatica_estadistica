@@ -1,0 +1,50 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa un sistema simple de traducción automática estadística.
+
+from collections import defaultdict
+import numpy as np
+
+# Datos de entrenamiento (parejas de oraciones en dos idiomas)
+training_data = [
+    ("hello world", "hola mundo"),
+    ("goodbye world", "adiós mundo")
+]
+
+# Función para entrenar el modelo de traducción
+def train_translation_model(training_data):
+    translation_probs = defaultdict(lambda: defaultdict(float))
+    for en_sentence, es_sentence in training_data:
+        en_words = en_sentence.split()
+        es_words = es_sentence.split()
+        for en_word, es_word in zip(en_words, es_words):
+            translation_probs[en_word][es_word] += 1
+
+    # Normalizar las probabilidades
+    for en_word in translation_probs:
+        total = sum(translation_probs[en_word].values())
+        for es_word in translation_probs[en_word]:
+            translation_probs[en_word][es_word] /= total
+
+    return translation_probs
+
+# Función para traducir una oración
+def translate_sentence(sentence, translation_probs):
+    words = sentence.split()
+    translation = []
+    for word in words:
+        if word in translation_probs:
+            # Seleccionar la traducción más probable
+            best_translation = max(translation_probs[word], key=translation_probs[word].get)
+            translation.append(best_translation)
+        else:
+            translation.append(word)  # Mantener la palabra si no se conoce la traducción
+    return " ".join(translation)
+
+# Entrenar el modelo de traducción
+translation_probs = train_translation_model(training_data)
+
+# Traducir una oración
+sentence = "hello world"
+translated_sentence = translate_sentence(sentence, translation_probs)
+print("Traducción de la oración:", translated_sentence)
