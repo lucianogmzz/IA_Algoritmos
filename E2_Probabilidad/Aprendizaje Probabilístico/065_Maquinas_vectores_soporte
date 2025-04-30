@@ -1,0 +1,35 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa una Máquina de Vectores Soporte (SVM) con kernel.
+
+from sklearn.datasets import make_circles
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+
+# Generar datos de ejemplo
+X, y = make_circles(n_samples=300, noise=0.1, random_state=42)
+
+# Dividir los datos en conjuntos de entrenamiento y prueba
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Inicializar el modelo SVM con kernel RBF
+svm = SVC(kernel='rbf', random_state=42)
+
+# Entrenar el modelo
+svm.fit(X_train, y_train)
+
+# Hacer predicciones
+y_pred = svm.predict(X_test)
+
+# Evaluar el modelo
+accuracy = accuracy_score(y_test, y_pred)
+print("Precisión del modelo SVM:", accuracy)
+
+# Graficar los resultados
+plt.scatter(X[:, 0], X[:, 1], c=y, s=40, cmap='viridis', marker='o')
+plt.title('Clasificación utilizando SVM con Kernel RBF')
+plt.xlabel('Característica 1')
+plt.ylabel('Característica 2')
+plt.show()

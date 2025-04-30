@@ -1,0 +1,26 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa el algoritmo EM utilizando un modelo de mezcla gaussiana.
+
+from sklearn.datasets import make_blobs
+from sklearn.mixture import GaussianMixture
+import matplotlib.pyplot as plt
+
+# Generar datos de ejemplo
+X, _ = make_blobs(n_samples=300, centers=4, random_state=42)
+
+# Inicializar el modelo de mezcla gaussiana
+gmm = GaussianMixture(n_components=4, random_state=42)
+
+# Ajustar el modelo a los datos
+gmm.fit(X)
+
+# Predecir las etiquetas de los clusters
+labels = gmm.predict(X)
+
+# Graficar los resultados
+plt.scatter(X[:, 0], X[:, 1], c=labels, s=40, cmap='viridis', marker='o')
+plt.title('Clustering utilizando el Algoritmo EM')
+plt.xlabel('Característica 1')
+plt.ylabel('Característica 2')
+plt.show()

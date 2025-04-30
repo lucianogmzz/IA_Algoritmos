@@ -1,0 +1,38 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa k-NN, k-Medias y Clustering utilizando datos de ejemplo.
+
+from sklearn.datasets import make_blobs, load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.cluster import KMeans
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+
+# Datos para k-NN
+iris = load_iris()
+X, y = iris.data, iris.target
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# k-NN
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X_train, y_train)
+y_pred_knn = knn.predict(X_test)
+print("Precisión de k-NN:", accuracy_score(y_test, y_pred_knn))
+
+# Datos para k-Medias
+X_clustering, _ = make_blobs(n_samples=300, centers=4, random_state=42)
+
+# k-Medias
+kmeans = KMeans(n_clusters=4, random_state=42)
+kmeans.fit(X_clustering)
+labels_kmeans = kmeans.labels_
+
+# Graficar resultados de k-Medias
+plt.scatter(X_clustering[:, 0], X_clustering[:, 1], c=labels_kmeans, s=40, cmap='viridis', marker='o')
+centers = kmeans.cluster_centers_
+plt.scatter(centers[:, 0], centers[:, 1], c='red', s=200, alpha=0.75, marker='X')
+plt.title('Clustering utilizando k-Medias')
+plt.xlabel('Característica 1')
+plt.ylabel('Característica 2')
+plt.show()

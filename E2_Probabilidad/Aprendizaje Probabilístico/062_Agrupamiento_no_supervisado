@@ -1,0 +1,28 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa un algoritmo de agrupamiento no supervisado utilizando K-medias.
+
+from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# Generar datos de ejemplo
+X, _ = make_blobs(n_samples=300, centers=4, random_state=42)
+
+# Inicializar el modelo K-medias
+kmeans = KMeans(n_clusters=4, random_state=42)
+
+# Ajustar el modelo a los datos
+kmeans.fit(X)
+
+# Predecir las etiquetas de los clusters
+labels = kmeans.labels_
+
+# Graficar los resultados
+plt.scatter(X[:, 0], X[:, 1], c=labels, s=40, cmap='viridis', marker='o')
+centers = kmeans.cluster_centers_
+plt.scatter(centers[:, 0], centers[:, 1], c='red', s=200, alpha=0.75, marker='X')
+plt.title('Agrupamiento No Supervisado utilizando K-medias')
+plt.xlabel('Característica 1')
+plt.ylabel('Característica 2')
+plt.show()

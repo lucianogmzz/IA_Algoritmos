@@ -1,0 +1,33 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa una red neuronal simple utilizando Keras.
+
+from keras.datasets import mnist
+from keras.models import Sequential
+from keras.layers import Dense, Flatten
+from keras.utils import to_categorical
+
+# Cargar datos de ejemplo (conjunto de datos MNIST)
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+
+# Preprocesar los datos
+X_train = X_train.astype('float32') / 255
+X_test = X_test.astype('float32') / 255
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
+
+# Inicializar el modelo
+model = Sequential()
+model.add(Flatten(input_shape=(28, 28)))
+model.add(Dense(128, activation='relu'))
+model.add(Dense(10, activation='softmax'))
+
+# Compilar el modelo
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Entrenar el modelo
+model.fit(X_train, y_train, epochs=5, batch_size=32, validation_split=0.2)
+
+# Evaluar el modelo
+test_loss, test_accuracy = model.evaluate(X_test, y_test)
+print("Precisión del modelo en el conjunto de prueba:", test_accuracy)

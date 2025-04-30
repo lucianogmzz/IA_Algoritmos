@@ -1,0 +1,28 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa un clasificador Naïve-Bayes utilizando un ejemplo simple de clasificación.
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
+
+# Cargar datos de ejemplo (conjunto de datos Iris)
+data = load_iris()
+X, y = data.data, data.target
+
+# Dividir los datos en conjuntos de entrenamiento y prueba
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Inicializar el modelo Naive Bayes
+model = GaussianNB()
+
+# Entrenar el modelo
+model.fit(X_train, y_train)
+
+# Hacer predicciones
+y_pred = model.predict(X_test)
+
+# Evaluar el modelo
+accuracy = accuracy_score(y_test, y_pred)
+print("Precisión del modelo Naïve-Bayes:", accuracy)
