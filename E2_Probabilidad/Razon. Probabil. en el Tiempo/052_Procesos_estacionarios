@@ -1,0 +1,31 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Algoritmo: Procesos Estacionarios
+# Descripción breve:
+# Este código genera una serie temporal que sigue un proceso estacionario utilizando ruido blanco. 
+# Un proceso estacionario tiene propiedades estadísticas constantes a lo largo del tiempo.
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Definimos el proceso estacionario usando ruido blanco
+def generar_proceso_estacionario(tamaño_muestra, media=0, desviacion_estandar=1):
+    # Generamos ruido blanco (un proceso estacionario de media 0 y varianza 1)
+    # np.random.normal genera una muestra de una distribución normal
+    return np.random.normal(media, desviacion_estandar, tamaño_muestra)
+
+# Parámetros del proceso
+tamaño_muestra = 1000  # Número de puntos en la serie temporal
+
+# Generamos el proceso estacionario
+proceso = generar_proceso_estacionario(tamaño_muestra)
+
+# Graficamos la serie temporal
+plt.figure(figsize=(10, 6))
+plt.plot(proceso, label="Proceso Estacionario", color='b')
+plt.title("Simulación de un Proceso Estacionario (Ruido Blanco)")
+plt.xlabel("Tiempo")
+plt.ylabel("Valor")
+plt.legend()
+plt.grid(True)
+plt.show()
+

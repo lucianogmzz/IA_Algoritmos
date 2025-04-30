@@ -1,0 +1,38 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa el algoritmo Hacia Delante-Atrás para un Modelo Oculto de Markov (HMM).
+
+import numpy as np
+
+# Definir las probabilidades del HMM
+initial_prob = np.array([0.6, 0.4])  # Probabilidades iniciales
+transition_prob = np.array([[0.7, 0.3], [0.4, 0.6]])  # Probabilidades de transición
+emission_prob = np.array([[0.5, 0.5], [0.1, 0.9]])  # Probabilidades de emisión
+
+# Observaciones
+observations = [0, 1, 0]
+
+# Número de estados
+n_states = 2
+
+# Paso Hacia Delante
+alpha = np.zeros((len(observations), n_states))
+alpha[0] = initial_prob * emission_prob[:, observations[0]]
+
+for t in range(1, len(observations)):
+    for j in range(n_states):
+        alpha[t, j] = alpha[t-1].dot(transition_prob[:, j]) * emission_prob[j, observations[t]]
+
+# Paso Hacia Atrás
+beta = np.zeros((len(observations), n_states))
+beta[-1] = 1
+
+for t in range(len(observations)-2, -1, -1):
+    for j in range(n_states):
+        beta[t, j] = (beta[t+1] * emission_prob[:, observations[t+1]]).dot(transition_prob[j, :])
+
+# Probabilidad de los estados dadas las observaciones
+gamma = alpha * beta
+gamma /= gamma.sum(axis=1, keepdims=True)
+
+print("Probabilidades de los estados dadas las observaciones:\n", gamma)

@@ -1,0 +1,22 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa un sistema básico de reconocimiento del habla utilizando la librería speech_recognition.
+
+import speech_recognition as sr
+
+# Inicializar el reconocedor
+recognizer = sr.Recognizer()
+
+# Capturar audio desde el micrófono
+with sr.Microphone() as source:
+    print("Di algo...")
+    audio = recognizer.listen(source)
+
+# Reconocer el habla utilizando el reconocedor de Google
+try:
+    text = recognizer.recognize_google(audio, language="es-ES")
+    print("Texto reconocido:", text)
+except sr.UnknownValueError:
+    print("No se pudo entender el audio")
+except sr.RequestError as e:
+    print("Error en la solicitud al servicio de reconocimiento; {0}".format(e))

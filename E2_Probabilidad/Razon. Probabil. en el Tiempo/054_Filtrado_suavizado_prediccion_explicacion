@@ -1,0 +1,77 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Definir el modelo de espacio de estado
+F = np.array([[1, 1], [0, 1]])           # Matriz de transición de estado
+H = np.array([[1, 0]])                   # Matriz de observación
+Q = np.array([[0.1, 0], [0, 0.1]])       # Covarianza del ruido del proceso
+R = np.array([[1]])                     # Covarianza del ruido de medición
+
+# Estado inicial
+x = np.array([0, 1]).reshape(-1, 1)      # Estado inicial como columna
+P = np.array([[1, 0], [0, 1]])           # Covarianza inicial
+
+# Número de pasos de tiempo
+n_steps = 50
+
+# Almacenamiento
+states = []
+measurements = []
+predictions = []
+P_list = []  # Guardar matrices P para el suavizado
+
+for _ in range(n_steps):
+    # Predicción
+    x_pred = F @ x
+    P_pred = F @ P @ F.T + Q
+    predictions.append(x_pred.copy())
+
+    # Medición simulada
+    z = H @ x_pred + np.random.normal(0, np.sqrt(R[0, 0]), size=(1, 1))
+    measurements.append(z.item())
+
+    # Filtrado (actualización)
+    y = z - H @ x_pred
+    S = H @ P_pred @ H.T + R
+    K = P_pred @ H.T @ np.linalg.inv(S)
+    x = x_pred + K @ y
+    P = (np.eye(2) - K @ H) @ P_pred
+
+    states.append(x.copy())
+    P_list.append(P.copy())
+
+# Añadir estado inicial al principio
+states = [np.array([[0], [1]])] + states
+predictions = [np.array([[0], [1]])] + predictions
+P_list = [np.array([[1, 0], [0, 1]])] + P_list
+
+# Suavizado (Rauch-Tung-Striebel)
+smoothed_states = states.copy()
+for t in reversed(range(n_steps)):
+    P_curr = P_list[t]
+    P_next = P_list[t+1]
+    x_curr = states[t]
+    x_next_smooth = smoothed_states[t+1]
+
+    C = P_curr @ F.T @ np.linalg.inv(F @ P_curr @ F.T + Q)
+    smoothed_states[t] = x_curr + C @ (x_next_smooth - F @ x_curr)
+
+# Convertir a arrays para graficar
+states = np.hstack(states)
+predictions = np.hstack(predictions)
+smoothed_states = np.hstack(smoothed_states)
+measurements = np.array(measurements)
+
+# Graficar resultados
+plt.figure(figsize=(12, 6))
+plt.plot(states[0], label='Estado Filtrado (Posición)', marker='o')
+plt.plot(measurements, label='Mediciones', linestyle='None', marker='x', color='red')
+plt.plot(predictions[0], label='Predicciones', linestyle='--', marker='s', color='green')
+plt.plot(smoothed_states[0], label='Estado Suavizado', linestyle='-.', marker='d', color='purple')
+
+plt.title('Filtrado, Predicción y Suavizado')
+plt.xlabel('Paso de tiempo')
+plt.ylabel('Posición')
+plt.legend()
+plt.grid(True)
+plt.show()

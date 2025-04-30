@@ -1,0 +1,72 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Definir el modelo de espacio de estado
+def transition_model(x, noise=0.1):
+    return x + np.random.normal(0, noise)
+
+def observation_model(x):
+    return x  # Sin ruido aquí; el ruido se agrega una vez en la medición real
+
+# Parámetros
+n_particles = 100
+n_steps = 50
+process_noise = 0.1
+observation_noise = 1.0
+
+# Estado real inicial (escalar)
+x_real = 0.0
+
+# Inicializar partículas
+particles = np.random.normal(x_real, 1.0, n_particles)
+weights = np.ones(n_particles) / n_particles
+
+# Almacenamiento de resultados
+true_states = [x_real]
+measurements = []
+estimates = []
+
+for _ in range(n_steps):
+    # Evolución del estado real
+    x_real = transition_model(x_real, noise=process_noise)
+    true_states.append(x_real)
+
+    # Medición observada (con ruido)
+    z = observation_model(x_real) + np.random.normal(0, observation_noise)
+    measurements.append(z)
+
+    # Predicción de partículas
+    particles = np.array([transition_model(p, noise=process_noise) for p in particles])
+
+    # Actualización de pesos
+    likelihoods = np.exp(-0.5 * ((z - observation_model(particles)) / observation_noise) ** 2)
+    weights *= likelihoods
+    weights += 1e-300  # evitar underflow
+    weights /= np.sum(weights)
+
+    # Estimación del estado
+    x_est = np.sum(particles * weights)
+    estimates.append(x_est)
+
+    # Re-muestreo (estratificado opcionalmente)
+    indices = np.random.choice(np.arange(n_particles), size=n_particles, p=weights)
+    particles = particles[indices]
+    weights = np.ones(n_particles) / n_particles  # reiniciar pesos
+
+# Convertir listas a arrays para graficar
+true_states = np.array(true_states)
+measurements = np.array(measurements)
+estimates = np.array(estimates)
+
+# Graficar resultados
+plt.figure(figsize=(12, 6))
+plt.plot(true_states[1:], label='Estado Verdadero', color='black', linewidth=2)
+plt.plot(measurements, label='Mediciones', linestyle='None', marker='x', color='red')
+plt.plot(estimates, label='Estimaciones (Partículas)', linestyle='--', marker='o', color='blue')
+
+plt.title('Filtrado de Partículas: Estado Real vs Estimación')
+plt.xlabel('Paso de tiempo')
+plt.ylabel('Posición')
+plt.legend()
+plt.grid(True)
+plt.show()

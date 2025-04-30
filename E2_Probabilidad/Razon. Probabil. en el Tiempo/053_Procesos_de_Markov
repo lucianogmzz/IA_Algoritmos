@@ -1,0 +1,43 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código simula un proceso de Markov, donde la probabilidad de transición entre estados
+# se define mediante una matriz de transición. El estado inicial se propaga a través del tiempo
+# utilizando esta matriz para calcular la probabilidad de estar en cada estado en cada paso de tiempo.
+
+import matplotlib.pyplot as plt  # Librería para graficar
+import numpy as np  # Librería para manejo de matrices y operaciones numéricas
+
+# Definir la matriz de transición para un proceso de Markov simple
+# Cada fila representa un estado y cada columna representa la probabilidad de transición a otro estado
+transition_matrix = np.array([[0.7, 0.2, 0.1],
+                              [0.3, 0.4, 0.3],
+                              [0.2, 0.3, 0.5]])
+
+# Definir el estado inicial (distribución inicial)
+# Comenzamos en el estado 0 con probabilidad 1
+initial_state = np.array([1, 0, 0])
+
+# Número de pasos de tiempo
+steps = 10
+
+# Simulación del proceso de Markov
+states = [initial_state]  # Lista para almacenar la evolución de los estados
+for _ in range(steps):
+    # Calcular el siguiente estado multiplicando el estado actual por la matriz de transición
+    next_state = np.dot(states[-1], transition_matrix)
+    states.append(next_state)  # Agregar el nuevo estado a la lista
+
+# Convertir la lista de estados a una matriz numpy para facilitar el trazado
+states = np.array(states)
+
+# Graficar la evolución de los estados
+plt.figure(figsize=(10, 6))
+for i in range(states.shape[1]):
+    plt.plot(states[:, i], marker='o', label=f'Estado {i}')  # Graficar cada estado
+
+plt.title('Evolución de los estados en un Proceso de Markov')
+plt.xlabel('Paso de tiempo')
+plt.ylabel('Probabilidad')
+plt.legend()  # Mostrar leyenda
+plt.grid(True)  # Mostrar cuadrícula
+plt.show()  # Mostrar gráfica
