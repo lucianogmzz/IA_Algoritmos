@@ -1,0 +1,39 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código ilustra la aplicación de texturas y sombras utilizando matplotlib.
+
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.patches import Circle
+
+# Definir una función para aplicar una textura simple
+def apply_texture(ax, texture_image):
+    ax.imshow(texture_image, extent=[0, 10, 0, 10], alpha=0.5)
+
+# Definir una función para aplicar sombras
+def apply_shadow(ax, obj):
+    shadow = Circle((obj.center[0] + 1, obj.center[1] - 1), obj.radius, color='gray', alpha=0.5)
+    ax.add_patch(shadow)
+
+# Crear una figura y un eje
+fig, ax = plt.subplots(figsize=(8, 8))
+ax.set_xlim(0, 10)
+ax.set_ylim(0, 10)
+
+# Crear un círculo con textura y sombra
+circle = Circle((5, 5), 2, color='blue')
+ax.add_patch(circle)
+
+# Aplicar textura
+texture_image = np.random.rand(100, 100)  # Textura aleatoria
+apply_texture(ax, texture_image)
+
+# Aplicar sombra
+apply_shadow(ax, circle)
+
+# Mostrar el gráfico
+plt.title('Texturas y Sombras: Círculo con Textura y Sombra')
+plt.xlabel('Eje X')
+plt.ylabel('Eje Y')
+plt.grid(True)
+plt.show()

@@ -1,0 +1,57 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa un sistema simple de detección de movimiento utilizando OpenCV.
+
+import cv2
+import numpy as np
+
+# Inicializar la cámara
+cap = cv2.VideoCapture(0)
+
+# Leer el primer fotograma
+ret, frame1 = cap.read()
+if not ret:
+    print("Error al leer el video")
+    exit()
+
+# Convertir el primer fotograma a escala de grises
+prev_gray = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
+
+while True:
+    # Leer el siguiente fotograma
+    ret, frame2 = cap.read()
+    if not ret:
+        break
+
+    # Convertir el siguiente fotograma a escala de grises
+    gray = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
+
+    # Calcular la diferencia absoluta entre el fotograma actual y el anterior
+    frame_diff = cv2.absdiff(prev_gray, gray)
+
+    # Aplicar un umbral para obtener una imagen binaria
+    _, thresh = cv2.threshold(frame_diff, 25, 255, cv2.THRESH_BINARY)
+
+    # Encontrar contornos en la imagen binaria
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Dibujar contornos en el fotograma original
+    for contour in contours:
+        if cv2.contourArea(contour) < 500:  # Ignorar contornos pequeños
+            continue
+        (x, y, w, h) = cv2.boundingRect(contour)
+        cv2.rectangle(frame2, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+    # Mostrar el fotograma con los contornos dibujados
+    cv2.imshow('Movimiento Detectado', frame2)
+
+    # Actualizar el fotograma anterior
+    prev_gray = gray
+
+    # Salir si se presiona la tecla 'q'
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Liberar la cámara y cerrar las ventanas
+cap.release()
+cv2.destroyAllWindows()

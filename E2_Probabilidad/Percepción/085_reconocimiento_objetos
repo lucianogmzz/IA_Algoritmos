@@ -1,0 +1,46 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa un sistema simple de reconocimiento de objetos utilizando OpenCV y una imagen de ejemplo de skimage.
+
+import cv2
+import matplotlib.pyplot as plt
+from skimage import data
+import numpy as np
+
+# Cargar una imagen de ejemplo desde skimage y convertirla al formato OpenCV
+from skimage import img_as_ubyte
+image_sk = img_as_ubyte(data.astronaut())  # Imagen RGB
+image = cv2.cvtColor(image_sk, cv2.COLOR_RGB2BGR)  # Convertir a BGR para OpenCV
+image_rgb = image_sk.copy()  # Mantener una copia en RGB para graficar con matplotlib
+
+# Convertir la imagen a escala de grises
+gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Aplicar un filtro Gaussiano para suavizar la imagen
+blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
+
+# Detectar bordes utilizando el algoritmo de Canny
+edges = cv2.Canny(blurred_image, 50, 150)
+
+# Encontrar contornos en la imagen
+contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+# Dibujar contornos en la imagen original
+output_image = image_rgb.copy()
+cv2.drawContours(output_image, contours, -1, (0, 255, 0), 2)
+
+# Mostrar las imágenes originales y procesadas
+plt.figure(figsize=(12, 6))
+
+plt.subplot(1, 2, 1)
+plt.title('Imagen Original')
+plt.imshow(image_rgb)
+plt.axis('off')
+
+plt.subplot(1, 2, 2)
+plt.title('Contornos Detectados')
+plt.imshow(output_image)
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()

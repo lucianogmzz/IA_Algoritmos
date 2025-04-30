@@ -1,0 +1,58 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa un Mapa Autoorganizado de Kohonen (SOM) simple.
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Definir la clase SOM
+class SOM:
+    def __init__(self, x, y, input_len, learning_rate=0.5):
+        self.x = x
+        self.y = y
+        self.learning_rate = learning_rate
+        self.weights = np.random.rand(x, y, input_len)
+
+    def train(self, data, epochs):
+        for epoch in range(epochs):
+            for sample in data:
+                bmu = self.best_matching_unit(sample)
+                self.update_weights(sample, bmu, epoch)
+
+    def best_matching_unit(self, sample):
+        bmu_idx = np.array([0, 0])
+        min_dist = np.inf
+        for i in range(self.x):
+            for j in range(self.y):
+                w = self.weights[i, j, :]
+                d = np.linalg.norm(w - sample)
+                if d < min_dist:
+                    min_dist = d
+                    bmu_idx = np.array([i, j])
+        return bmu_idx
+
+    def update_weights(self, sample, bmu, epoch):
+        for i in range(self.x):
+            for j in range(self.y):
+                w = self.weights[i, j, :]
+                dist = np.linalg.norm(np.array([i, j]) - bmu)
+                if dist <= 1:
+                    influence = np.exp(-dist) * self.learning_rate * np.exp(-epoch / 1000)
+                    new_w = w + influence * (sample - w)
+                    self.weights[i, j, :] = new_w
+
+# Datos de ejemplo
+data = np.random.rand(100, 3)
+
+# Entrenar el SOM
+som = SOM(5, 5, 3, learning_rate=0.5)
+som.train(data, epochs=100)
+
+# Visualizar los pesos del SOM
+plt.figure(figsize=(10, 10))
+for i in range(som.x):
+    for j in range(som.y):
+        plt.subplot(som.x, som.y, i * som.y + j + 1)
+        plt.imshow(som.weights[i, j, :].reshape(1, 3), cmap='viridis')
+        plt.axis('off')
+plt.show()

@@ -1,0 +1,35 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código ilustra la creación de gráficos básicos por computador utilizando matplotlib.
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Definir una función para dibujar un círculo
+def draw_circle(center, radius, color='blue'):
+    circle = plt.Circle(center, radius, color=color, fill=False)
+    plt.gca().add_patch(circle)
+
+# Definir una función para dibujar un rectángulo
+def draw_rectangle(bottom_left, width, height, color='red'):
+    rectangle = plt.Rectangle(bottom_left, width, height, linewidth=1, edgecolor=color, facecolor='none')
+    plt.gca().add_patch(rectangle)
+
+# Configuración del gráfico
+plt.figure(figsize=(8, 8))
+plt.xlim(0, 10)
+plt.ylim(0, 10)
+plt.gca().set_aspect('equal', adjustable='box')
+
+# Dibujar un círculo
+draw_circle((5, 5), 2, 'blue')
+
+# Dibujar un rectángulo
+draw_rectangle((2, 2), 4, 3, 'red')
+
+# Mostrar el gráfico
+plt.title('Gráficos por Computador: Círculo y Rectángulo')
+plt.xlabel('Eje X')
+plt.ylabel('Eje Y')
+plt.grid(True)
+plt.show()
