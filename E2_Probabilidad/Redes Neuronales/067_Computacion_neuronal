@@ -1,0 +1,28 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código ilustra un modelo simple de computación neuronal.
+
+import numpy as np
+
+# Definir una función de activación simple (sigmoide)
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+# Definir una neurona simple
+class SimpleNeuron:
+    def __init__(self, input_size):
+        # Inicializar pesos aleatoriamente
+        self.weights = np.random.randn(input_size)
+        self.bias = np.random.randn()
+
+    def activate(self, inputs):
+        # Calcular la suma ponderada de las entradas
+        weighted_sum = np.dot(inputs, self.weights) + self.bias
+        # Aplicar la función de activación
+        return sigmoid(weighted_sum)
+
+# Ejemplo de uso
+inputs = np.array([0.5, 0.8])
+neuron = SimpleNeuron(input_size=2)
+output = neuron.activate(inputs)
+print("Salida de la neurona:", output)

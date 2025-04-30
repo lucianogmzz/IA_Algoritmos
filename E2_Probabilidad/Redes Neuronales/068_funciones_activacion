@@ -1,0 +1,31 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa varias funciones de activación comunes.
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Definir funciones de activación
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def tanh(x):
+    return np.tanh(x)
+
+def relu(x):
+    return np.maximum(0, x)
+
+# Graficar las funciones de activación
+x = np.linspace(-10, 10, 100)
+plt.figure(figsize=(12, 6))
+
+plt.plot(x, sigmoid(x), label='Sigmoide', linestyle='--')
+plt.plot(x, tanh(x), label='Tanh', linestyle='-')
+plt.plot(x, relu(x), label='ReLU', linestyle='-.')
+
+plt.title('Funciones de Activación')
+plt.xlabel('Entrada')
+plt.ylabel('Salida')
+plt.legend()
+plt.grid(True)
+plt.show()

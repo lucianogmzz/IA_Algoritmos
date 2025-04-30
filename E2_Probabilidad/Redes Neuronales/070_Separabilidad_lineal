@@ -1,0 +1,49 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código ilustra la separabilidad lineal utilizando un perceptrón.
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Definir la clase Perceptrón
+class Perceptron:
+    def __init__(self, input_size, learning_rate=0.1):
+        self.weights = np.zeros(input_size)
+        self.bias = 0.0
+        self.learning_rate = learning_rate
+
+    def activate(self, inputs):
+        weighted_sum = np.dot(inputs, self.weights) + self.bias
+        return 1 if weighted_sum >= 0 else 0
+
+    def train(self, training_inputs, labels, epochs):
+        for _ in range(epochs):
+            for inputs, label in zip(training_inputs, labels):
+                prediction = self.activate(inputs)
+                self.weights += self.learning_rate * (label - prediction) * inputs
+                self.bias += self.learning_rate * (label - prediction)
+
+# Datos de ejemplo (AND lógico)
+training_inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+labels = np.array([0, 0, 0, 1])
+
+# Entrenar el perceptrón
+perceptron = Perceptron(input_size=2, learning_rate=0.1)
+perceptron.train(training_inputs, labels, epochs=10)
+
+# Graficar los datos y la línea de decisión
+plt.figure(figsize=(8, 6))
+for i, input in enumerate(training_inputs):
+    plt.scatter(input[0], input[1], c='blue' if labels[i] == 0 else 'red')
+
+# Graficar la línea de decisión
+x = np.linspace(-0.5, 1.5, 100)
+y = (-perceptron.weights[0] * x - perceptron.bias) / perceptron.weights[1]
+plt.plot(x, y, '-g', label='Línea de Decisión')
+
+plt.title('Separabilidad Lineal con Perceptrón')
+plt.xlabel('Entrada 1')
+plt.ylabel('Entrada 2')
+plt.legend()
+plt.grid(True)
+plt.show()

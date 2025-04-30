@@ -1,0 +1,49 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa la retropropagación del error en una red neuronal simple.
+
+import numpy as np
+
+# Definir una función de activación simple (sigmoide)
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+# Definir la derivada de la función de activación
+def sigmoid_derivative(x):
+    return x * (1 - x)
+
+# Datos de entrada y salida esperada (AND lógico)
+inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+expected_output = np.array([[0], [0], [0], [1]])
+
+# Inicializar pesos aleatoriamente
+np.random.seed(42)
+weights_input_hidden = np.random.rand(2, 2)
+weights_hidden_output = np.random.rand(2, 1)
+
+# Tasa de aprendizaje
+learning_rate = 0.5
+
+# Entrenamiento de la red utilizando retropropagación
+for epoch in range(10000):
+    # Propagación hacia adelante
+    hidden_layer_input = np.dot(inputs, weights_input_hidden)
+    hidden_layer_output = sigmoid(hidden_layer_input)
+    final_layer_input = np.dot(hidden_layer_output, weights_hidden_output)
+    final_output = sigmoid(final_layer_input)
+
+    # Cálculo del error
+    error = expected_output - final_output
+    final_output_delta = error * sigmoid_derivative(final_output)
+
+    # Retropropagación del error
+    hidden_layer_error = final_output_delta.dot(weights_hidden_output.T)
+    hidden_layer_delta = hidden_layer_error * sigmoid_derivative(hidden_layer_output)
+
+    # Actualización de pesos
+    weights_hidden_output += hidden_layer_output.T.dot(final_output_delta) * learning_rate
+    weights_input_hidden += inputs.T.dot(hidden_layer_delta) * learning_rate
+
+# Prueba de la red
+print("Salida de la red después del entrenamiento:")
+print(final_output)

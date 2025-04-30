@@ -1,0 +1,45 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa una red de Hopfield simple.
+
+import numpy as np
+
+# Definir la clase Red de Hopfield
+class HopfieldNetwork:
+    def __init__(self, size):
+        self.size = size
+        self.weights = np.zeros((size, size))
+
+    def train(self, patterns):
+        for pattern in patterns:
+            pattern = np.array(pattern).flatten()
+            for i in range(self.size):
+                for j in range(self.size):
+                    if i != j:
+                        self.weights[i, j] += pattern[i] * pattern[j]
+
+    def predict(self, pattern, steps=5):
+        pattern = np.array(pattern).flatten()
+        for _ in range(steps):
+            for i in range(self.size):
+                sum_ = np.dot(self.weights[i, :], pattern)
+                pattern[i] = 1 if sum_ >= 0 else -1
+        return pattern.reshape((int(np.sqrt(self.size)), int(np.sqrt(self.size))))
+
+# Patrones de entrenamiento (3x3 píxeles)
+patterns = [
+    np.array([[1, -1, 1], [-1, -1, -1], [1, -1, 1]]),
+    np.array([[-1, 1, -1], [-1, 1, -1], [-1, 1, -1]])
+]
+
+# Entrenar la red de Hopfield
+hopfield = HopfieldNetwork(size=9)
+hopfield.train(patterns)
+
+# Patrón de prueba (ruidoso)
+test_pattern = np.array([[1, -1, 1], [-1, 1, -1], [1, -1, -1]])
+
+# Predecir el patrón más cercano
+predicted_pattern = hopfield.predict(test_pattern)
+print("Patrón predicho:")
+print(predicted_pattern)
