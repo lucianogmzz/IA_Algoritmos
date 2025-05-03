@@ -1,0 +1,23 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Inferencia lógica proposicional simple (sin entails)
+
+from sympy import symbols, Implies, And, Not
+from sympy.logic.inference import satisfiable
+
+# Definir proposiciones
+P, Q, R = symbols('P Q R')
+
+# Base de conocimiento: P ∧ (P ⇒ Q) ∧ (Q ⇒ R)
+knowledge_base = And(P, Implies(P, Q), Implies(Q, R))
+
+# Objetivo: R
+goal = R
+
+# Para probar que KB ⊨ R, verificamos si KB ∧ ¬R es insatisfacible
+formula = And(knowledge_base, Not(goal))
+
+# Si la fórmula es insatisfacible, entonces R se deduce de KB
+if not satisfiable(formula):
+    print(f"La proposición objetivo '{goal}' se puede inferir del conjunto de proposiciones.")
+else:
+    print(f"La proposición objetivo '{goal}' NO se puede inferir del conjunto de proposiciones.")

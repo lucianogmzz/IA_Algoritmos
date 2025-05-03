@@ -1,0 +1,19 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+from sympy import symbols, And, Or, Not, to_cnf
+
+# Definir proposiciones simbólicas
+P, Q, R = symbols('P Q R')
+
+# Definir expresiones lógicas
+expr1 = And(P, Or(Q, R))
+expr2 = Or(Not(P), R)
+
+# Convertir a forma normal conjuntiva (FNC)
+cnf_expr1 = to_cnf(expr1, simplify=True)
+cnf_expr2 = to_cnf(expr2, simplify=True)
+
+print(f"FNC de expr1: {cnf_expr1}")
+print(f"FNC de expr2: {cnf_expr2}")
+
+# Puedes luego analizar manualmente si hay contradicción o resolverlo externamente

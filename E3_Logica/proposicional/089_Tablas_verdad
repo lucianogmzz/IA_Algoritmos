@@ -1,0 +1,33 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código construye una tabla de verdad para una expresión lógica simple.
+
+from itertools import product
+
+# Definir una función para construir una tabla de verdad
+def truth_table(expression):
+    # Obtener todas las variables en la expresión
+    variables = sorted(set(expression.replace(' ', '').replace('(', '').replace(')', '').replace('~', '').replace('&', '').replace('|', '').replace('>', '')))
+
+    # Generar todas las combinaciones posibles de valores de verdad para las variables
+    combinations = list(product([False, True], repeat=len(variables)))
+
+    # Evaluar la expresión para cada combinación de valores de verdad
+    results = []
+    for combination in combinations:
+        # Crear un diccionario de variables y sus valores de verdad
+        env = dict(zip(variables, combination))
+        # Evaluar la expresión en el entorno actual
+        result = eval(expression, {}, env)
+        results.append(result)
+
+    # Imprimir la tabla de verdad
+    print("Tabla de Verdad:")
+    print(f"{' '.join(variables)} | {expression}")
+    print("-" * (len(variables) * 2 + len(expression) + 3))
+    for combination, result in zip(combinations, results):
+        print(f"{' '.join('T' if val else 'F' for val in combination)} | {'T' if result else 'F'}")
+
+# Ejemplo de uso
+expression = "(P & Q) | ~R"
+truth_table(expression)
