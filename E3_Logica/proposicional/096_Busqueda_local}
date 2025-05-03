@@ -1,0 +1,47 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa un algoritmo de búsqueda local simple para resolver un problema de optimización.
+
+import random
+
+# Definir una función objetivo simple (por ejemplo, minimizar la suma de los cuadrados de los elementos)
+def objective_function(solution):
+    return sum(x**2 for x in solution)
+
+# Definir una función para generar una solución inicial aleatoria
+def generate_initial_solution(size):
+    return [random.uniform(-10, 10) for _ in range(size)]
+
+# Definir una función para generar el vecindario de una solución
+def get_neighbors(solution):
+    neighbors = []
+    for i in range(len(solution)):
+        neighbor = solution.copy()
+        neighbor[i] += random.uniform(-1, 1)  # Pequeña perturbación
+        neighbors.append(neighbor)
+    return neighbors
+
+# Definir el algoritmo de búsqueda local
+def local_search(initial_solution, max_iterations):
+    current_solution = initial_solution
+    current_value = objective_function(current_solution)
+
+    for _ in range(max_iterations):
+        neighbors = get_neighbors(current_solution)
+        best_neighbor = min(neighbors, key=objective_function)
+        best_neighbor_value = objective_function(best_neighbor)
+
+        if best_neighbor_value < current_value:
+            current_solution = best_neighbor
+            current_value = best_neighbor_value
+
+    return current_solution, current_value
+
+# Ejemplo de uso
+solution_size = 5
+initial_solution = generate_initial_solution(solution_size)
+max_iterations = 1000
+
+best_solution, best_value = local_search(initial_solution, max_iterations)
+print("Mejor solución encontrada:", best_solution)
+print("Valor de la función objetivo:", best_value)

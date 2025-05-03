@@ -1,0 +1,56 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código implementa el encadenamiento hacia delante y hacia atrás.
+
+from pyke import knowledge_engine, bc_rule
+
+# Crear una instancia del motor de conocimiento
+engine = knowledge_engine.engine(__name__)
+
+# Definir la estructura de la base de conocimiento
+engine.reset()
+engine.activate('facts')
+
+# Definir hechos
+engine.add_fact('padre', ('Juan', 'Maria'))
+engine.add_fact('padre', ('Juan', 'Pedro'))
+engine.add_fact('madre', ('Ana', 'Maria'))
+engine.add_fact('madre', ('Ana', 'Pedro'))
+
+# Definir reglas para encadenamiento hacia delante
+@bc_rule
+def es_hermano(engine, hermano1, hermano2):
+    engine.add_fact('hermano', (hermano1, hermano2))
+
+@bc_rule
+def es_hermano(engine, persona1, persona2):
+    engine.has_fact('padre', (padre, persona1))
+    engine.has_fact('padre', (padre, persona2))
+    engine.has_fact('madre', (madre, persona1))
+    engine.has_fact('madre', (madre, persona2))
+    if persona1 != persona2:
+        engine.add_fact('hermano', (persona1, persona2))
+
+# Activar las reglas para encadenamiento hacia delante
+engine.activate('facts')
+
+# Consultar la base de conocimiento
+print("Hechos en la base de conocimiento (encadenamiento hacia delante):")
+for fact in engine.facts:
+    print(fact)
+
+# Definir reglas para encadenamiento hacia atrás
+@bc_rule
+def es_hermano_backward(engine, persona1, persona2):
+    engine.has_fact('hermano', (persona1, persona2))
+    engine.has_fact('padre', (padre, persona1))
+    engine.has_fact('padre', (padre, persona2))
+    engine.has_fact('madre', (madre, persona1))
+    engine.has_fact('madre', (madre, persona2))
+    if persona1 != persona2:
+        engine.add_fact('hermano', (persona1, persona2))
+
+# Consultar la base de conocimiento con encadenamiento hacia atrás
+print("\nHechos en la base de conocimiento (encadenamiento hacia atrás):")
+for fact in engine.facts:
+    print(fact)
