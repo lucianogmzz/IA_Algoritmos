@@ -1,0 +1,30 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+from pydatalog import pyDatalog
+
+pyDatalog.clear()  # Limpia cualquier definición anterior
+pyDatalog.create_terms('X, Y, Z, P, Q, f, skolem_func')
+
+# Hechos (simulan proposiciones)
++P('a', 'b')     # P(a, b) es verdadero
++Q('b')          # Q(b) es verdadero
+
+# Skolem function f (simulada como una función determinista)
+def skolem_func(y):
+    return 'sk_' + str(y)
+
+# Podemos usar la función skolem en una regla
+# Ejemplo de regla usando skolem_func: si Q(Y) entonces P(f(Y), Y)
+pyDatalog.create_terms('SkY')
+
+# Regla lógica: si Q(Y) es verdadera, entonces P(f(Y), Y) debe ser verdadera
+# f(Y) se simula con SkY == skolem_func(Y)
+SkY = lambda Y: skolem_func(Y)
+P(SkY(Y), Y) <= Q(Y)
+
+# Consultamos los hechos generados
+print("\nHechos derivados:")
+print(P(X, Y))
+
+print("\nHechos originales de Q:")
+print(Q(Y))

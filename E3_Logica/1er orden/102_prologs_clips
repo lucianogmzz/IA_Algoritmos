@@ -1,0 +1,44 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Simulación de programación lógica con "experta"
+
+from experta import *
+
+# Hechos base
+class Padre(Fact):
+    """Relación padre-hijo"""
+    pass
+
+class Madre(Fact):
+    """Relación madre-hijo"""
+    pass
+
+class Hermano(Fact):
+    """Relación hermano-hermano"""
+    pass
+
+# Motor de reglas
+class MotorDeConocimiento(KnowledgeEngine):
+    
+    @Rule(
+        Padre(padre=MATCH.p, hijo=MATCH.h1),
+        Padre(padre=MATCH.p, hijo=MATCH.h2),
+        Madre(madre=MATCH.m, hijo=MATCH.h1),
+        Madre(madre=MATCH.m, hijo=MATCH.h2),
+        TEST(lambda h1, h2: h1 != h2)
+    )
+    def son_hermanos(self, h1, h2):
+        print(f"{h1} y {h2} son hermanos.")
+        self.declare(Hermano(persona1=h1, persona2=h2))
+
+# Crear instancia del motor
+motor = MotorDeConocimiento()
+motor.reset()
+
+# Insertar hechos
+motor.declare(Padre(padre="Juan", hijo="Maria"))
+motor.declare(Padre(padre="Juan", hijo="Pedro"))
+motor.declare(Madre(madre="Ana", hijo="Maria"))
+motor.declare(Madre(madre="Ana", hijo="Pedro"))
+
+# Ejecutar reglas
+motor.run()

@@ -1,0 +1,29 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+from experta import *
+
+class Paciente(Fact):
+    """Hechos sobre los síntomas del paciente"""
+    pass
+
+class DiagnosticoAgente(KnowledgeEngine):
+    @Rule(Paciente(sintoma='fiebre'),
+          Paciente(sintoma='dolor_de_cabeza'))
+    def diagnosticar_gripe(self):
+        print("Diagnóstico: Gripe")
+        self.declare(Fact(diagnostico='gripe'))
+
+    @Rule(Fact(diagnostico='gripe'))
+    def recomendar_tratamiento(self):
+        print("Recomendación: Reposo y buena hidratación.")
+
+# Crear instancia del agente
+engine = DiagnosticoAgente()
+
+# Insertar hechos
+engine.reset()
+engine.declare(Paciente(sintoma='fiebre'))
+engine.declare(Paciente(sintoma='dolor_de_cabeza'))
+
+# Ejecutar reglas
+engine.run()
