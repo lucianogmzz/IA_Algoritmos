@@ -1,0 +1,42 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Este código ilustra la ingeniería del conocimiento utilizando un motor de inferencia con experta.
+
+from experta import *
+
+# Definición de hechos
+class Sintoma(Fact):
+    """Hecho que representa un síntoma en un paciente."""
+    pass
+
+class Diagnostico(Fact):
+    """Hecho que representa un diagnóstico médico."""
+    pass
+
+class Causa(Fact):
+    """Hecho que representa la causa de un diagnóstico."""
+    pass
+
+# Motor de inferencia
+class MotorMedico(KnowledgeEngine):
+
+    @Rule(Sintoma(nombre='fiebre', paciente='paciente1'),
+          Sintoma(nombre='dolor_de_cabeza', paciente='paciente1'))
+    def diagnosticar_gripe(self):
+        print("✔ Diagnóstico: El paciente1 tiene gripe.")
+        self.declare(Diagnostico(nombre='gripe', paciente='paciente1'))
+
+    @Rule(Diagnostico(nombre='gripe', paciente='paciente1'))
+    def determinar_causa(self):
+        print("✔ Causa: El virus de la gripe es la causa.")
+        self.declare(Causa(origen='virus_de_gripe', paciente='paciente1'))
+
+# Ejecutar motor
+engine = MotorMedico()
+engine.reset()
+
+# Declarar síntomas del paciente
+engine.declare(Sintoma(nombre='fiebre', paciente='paciente1'))
+engine.declare(Sintoma(nombre='dolor_de_cabeza', paciente='paciente1'))
+
+# Ejecutar inferencia
+engine.run()

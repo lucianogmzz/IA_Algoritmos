@@ -1,0 +1,19 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Este código ilustra el proceso de unificación en lógica de primer orden (simulado).
+
+from sympy import symbols, Function, Eq
+from sympy.unify import unify
+
+# Definir variables simbólicas
+x, y = symbols('x y')
+P = Function('P')
+
+# Definir expresiones lógicas
+expr1 = P(x, y)
+expr2 = P(y, x)
+
+# Realizar la unificación
+unification_result = unify(expr1, expr2)
+
+# Mostrar resultado
+print(f"Unificación de '{expr1}' y '{expr2}': {unification_result}")

@@ -1,0 +1,39 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Implementa reglas de diagnóstico y causales con un motor de inferencia basado en Experta.
+
+from experta import *
+
+# Definición de hechos
+class Sintoma(Fact):
+    """Hecho que representa un síntoma del paciente"""
+    pass
+
+class Diagnostico(Fact):
+    """Hecho que representa un diagnóstico del paciente"""
+    pass
+
+class Causa(Fact):
+    """Hecho que representa una causa médica"""
+    pass
+
+# Motor de reglas
+class MotorDiagnostico(KnowledgeEngine):
+    
+    @Rule(Sintoma(nombre='fiebre', paciente='paciente1'),
+          Sintoma(nombre='dolor_de_cabeza', paciente='paciente1'))
+    def diagnosticar_gripe(self):
+        print("📋 Diagnóstico: Gripe para paciente1")
+        self.declare(Diagnostico(nombre='gripe', paciente='paciente1'))
+
+    @Rule(Diagnostico(nombre='gripe', paciente='paciente1'))
+    def causa_de_fiebre(self):
+        print("🦠 Causa: Virus de gripe detectado en paciente1")
+        self.declare(Causa(origen='virus_de_gripe', paciente='paciente1'))
+
+# Ejecutar el motor
+motor = MotorDiagnostico()
+motor.reset()
+motor.declare(Sintoma(nombre='fiebre', paciente='paciente1'))
+motor.declare(Sintoma(nombre='dolor_de_cabeza', paciente='paciente1'))
+motor.run()

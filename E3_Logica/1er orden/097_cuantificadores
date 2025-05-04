@@ -1,0 +1,19 @@
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# Este código ilustra cómo construir expresiones con cuantificadores en lógica de primer orden con SymPy.
+
+from sympy import symbols, Function, ForAll, Exists, Implies
+
+# Definir variables
+x, y = symbols('x y')
+
+# Definir predicados como funciones simbólicas
+P = Function('P')
+Q = Function('Q')
+
+# Construir la proposición: ∀x (P(x) ⇒ ∃y Q(x, y))
+proposition = ForAll(x, Implies(P(x), Exists(y, Q(x, y))))
+
+# Mostrar la proposición
+print("Proposición lógica con cuantificadores:")
+print(proposition)
