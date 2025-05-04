@@ -1,0 +1,21 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+"""
+Este código ejemplifica la lógica temporal utilizando una secuencia de estados.
+Se verifica si una condición se mantiene siempre en el futuro (operador 'G' de LTL).
+"""
+
+# Definimos una secuencia de estados en el tiempo
+states = [
+    {'p': True, 'q': False},
+    {'p': True, 'q': True},
+    {'p': True, 'q': True}
+]
+
+# Función para evaluar si 'p' es siempre verdadero en el futuro
+def always_p(states):
+    return all(state['p'] for state in states)
+
+# Evaluamos la condición
+print("¿'p' es siempre verdadero en el futuro?")
+print(always_p(states))

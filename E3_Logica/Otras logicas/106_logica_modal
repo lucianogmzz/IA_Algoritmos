@@ -1,0 +1,31 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+"""
+Este código simula una lógica modal básica utilizando estructuras de datos en Python.
+Se modelan mundos posibles y relaciones de accesibilidad para evaluar la validez de proposiciones modales.
+"""
+
+# Definimos los mundos posibles
+worlds = ['w1', 'w2', 'w3']
+
+# Definimos la relación de accesibilidad entre mundos
+accessibility = {
+    'w1': ['w2', 'w3'],
+    'w2': ['w2'],
+    'w3': ['w3']
+}
+
+# Definimos las proposiciones verdaderas en cada mundo
+truths = {
+    'w1': {'p'},
+    'w2': {'p', 'q'},
+    'w3': {'q'}
+}
+
+# Función para evaluar la necesidad (□p) en un mundo dado
+def is_necessary(world, proposition):
+    return all(proposition in truths[w] for w in accessibility[world])
+
+# Evaluamos si 'p' es necesario en 'w1'
+print("¿Es 'p' necesario en 'w1'?")
+print(is_necessary('w1', 'p'))

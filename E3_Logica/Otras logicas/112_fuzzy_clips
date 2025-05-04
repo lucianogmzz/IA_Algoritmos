@@ -1,0 +1,38 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+"""
+Este código simula un sistema de inferencia difusa similar a Fuzzy CLIPS.
+Se define un conjunto de reglas y se evalúa una entrada para determinar la salida difusa.
+"""
+
+# Definimos funciones de membresía
+def low(x):
+    if x <= 20:
+        return 1.0
+    elif 20 < x < 50:
+        return (50 - x) / 30
+    else:
+        return 0.0
+
+def medium(x):
+    if 30 < x < 50:
+        return (x - 30) / 20
+    elif 50 <= x <= 70:
+        return 1.0
+    elif 70 < x < 90:
+        return (90 - x) / 20
+    else:
+        return 0.0
+
+def high(x):
+    if x <= 70:
+        return 0.0
+    elif 70 < x < 90:
+        return (x - 70) / 20
+    else:
+        return 1.0
+
+# Entrada
+temperature = 65
+
+

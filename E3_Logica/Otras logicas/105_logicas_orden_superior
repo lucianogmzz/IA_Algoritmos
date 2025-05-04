@@ -1,0 +1,45 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Este código simula una lógica de orden superior en Python utilizando funciones
+# y estructuras de control. Como SymPy no soporta totalmente ForAll o Exists 
+# en lógica de orden superior, usamos funciones y cuantificación manual.
+
+# --------------------------------------------
+# Simulación de lógica de orden superior:
+# Queremos representar: ∀x (P(x) → ∃y Q(x, y))
+# En lenguaje natural: "Para todo x, si se cumple P(x), entonces existe un y tal que Q(x, y)"
+# --------------------------------------------
+
+# Definimos dos predicados como funciones:
+def P(x):
+    # Simulamos una condición sobre x
+    return x % 2 == 0  # P(x): x es par
+
+def Q(x, y):
+    # Simulamos una relación entre x e y
+    return x + y > 10  # Q(x, y): la suma es mayor que 10
+
+# Lista de valores para los dominios de x e y (cuantificadores sobre conjuntos finitos)
+dominio_x = range(1, 6)  # {1, 2, 3, 4, 5}
+dominio_y = range(1, 11) # {1, 2, ..., 10}
+
+# Simulamos la fórmula: ∀x (P(x) → ∃y Q(x, y))
+proposicion_es_verdadera = True
+
+for x in dominio_x:
+    if P(x):  # Si se cumple P(x)
+        existe_y = False
+        for y in dominio_y:
+            if Q(x, y):
+                existe_y = True
+                break
+        if not existe_y:
+            proposicion_es_verdadera = False
+            print(f"No se cumple Q({x}, y) para ningún y. Por lo tanto, la implicación falla.")
+            break  # Ya no es necesario seguir verificando
+
+# Resultado final
+if proposicion_es_verdadera:
+    print("La proposición ∀x (P(x) → ∃y Q(x, y)) es verdadera.")
+else:
+    print("La proposición ∀x (P(x) → ∃y Q(x, y)) es falsa.")
