@@ -1,0 +1,66 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Espacio de Versiones - Algoritmo de Mitchell (Versión S y G)
+
+# Este código implementa un ejemplo básico del algoritmo de espacio de versiones.
+# El objetivo es encontrar las hipótesis más específicas (S) y más generales (G)
+# que explican un conjunto de ejemplos positivos y negativos.
+
+# Características del problema: [Color, Forma, Tamaño]
+# Valores posibles: Color = {Rojo, Azul}, Forma = {Redonda, Cuadrada}, Tamaño = {Grande, Pequeño}
+
+# Un ejemplo positivo: ['Rojo', 'Redonda', 'Grande']
+# Un ejemplo negativo: ['Azul', 'Redonda', 'Grande']
+
+# Importamos deepcopy para clonar listas sin referencias
+from copy import deepcopy
+
+# Definimos el conjunto de entrenamiento
+ejemplos = [
+    (['Rojo', 'Redonda', 'Grande'], True),   # Positivo
+    (['Rojo', 'Redonda', 'Pequeño'], True),  # Positivo
+    (['Azul', 'Redonda', 'Grande'], False),  # Negativo
+]
+
+# Inicializamos hipótesis más específica S y más general G
+S = ['∅', '∅', '∅']  # Nada aún aprendido (vacío)
+G = [['?', '?', '?']]  # Todo es posible (general)
+
+# Función auxiliar para verificar consistencia
+def consistente(h, x):
+    return all(h[i] == '?' or h[i] == x[i] for i in range(len(h)))
+
+# Algoritmo de espacio de versiones (simplificado)
+for x, es_positivo in ejemplos:
+    if es_positivo:
+        # Actualizar S
+        for i in range(len(S)):
+            if S[i] == '∅':
+                S[i] = x[i]
+            elif S[i] != x[i]:
+                S[i] = '?'
+        # Filtrar G para que sea consistente con x
+        G = [g for g in G if consistente(g, x)]
+    else:
+        # Para ejemplos negativos, eliminar hipótesis en G que clasifican positivamente
+        G_temp = []
+        for g in G:
+            if consistente(g, x):
+                for i in range(len(g)):
+                    if g[i] == '?':
+                        for val in ['Rojo', 'Azul', 'Redonda', 'Cuadrada', 'Grande', 'Pequeño']:
+                            if val != x[i]:
+                                g_new = deepcopy(g)
+                                g_new[i] = val
+                                G_temp.append(g_new)
+            else:
+                G_temp.append(g)
+        G = G_temp
+
+# Resultados finales
+print("Hipótesis más específica S:")
+print(S)
+
+print("\nHipótesis más generales G:")
+for g in G:
+    print(g)

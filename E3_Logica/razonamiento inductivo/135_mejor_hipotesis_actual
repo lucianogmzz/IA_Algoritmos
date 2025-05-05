@@ -1,0 +1,14 @@
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import load_iris
+
+# Cargar el conjunto de datos
+X, y = load_iris(return_X_y=True)
+
+# Crear el modelo
+model = RandomForestClassifier(random_state=42)
+
+# Evaluar el modelo utilizando validación cruzada
+scores = cross_val_score(model, X, y, cv=5)
+print(f"Puntajes de validación cruzada: {scores}")
+print(f"Precisión promedio: {scores.mean()}")

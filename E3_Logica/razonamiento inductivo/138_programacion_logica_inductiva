@@ -1,0 +1,43 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Programación Lógica Inductiva (PLI) - FOIL (First Order Inductive Learner)
+# Este ejemplo simula el comportamiento básico de FOIL para inducir una regla lógica a partir de ejemplos.
+
+# FOIL genera reglas en forma de lógica de primer orden. Aquí simulamos una inducción de la regla:
+#   "Una persona es madre si es mujer y es padre de alguien"
+
+# Datos simulados: hechos positivos y negativos
+positivos = [
+    {'nombre': 'Ana', 'es_mujer': True, 'padre_de': True},
+    {'nombre': 'Elena', 'es_mujer': True, 'padre_de': True}
+]
+
+negativos = [
+    {'nombre': 'Luis', 'es_mujer': False, 'padre_de': True},
+    {'nombre': 'Sofía', 'es_mujer': True, 'padre_de': False},
+    {'nombre': 'Carlos', 'es_mujer': False, 'padre_de': False}
+]
+
+# Función que representa la inducción de reglas (simulación de FOIL)
+def inducir_regla(positivos, negativos):
+    # Queremos encontrar condiciones comunes en los positivos que no estén en los negativos
+    regla = []
+
+    # Condiciones candidatas
+    condiciones = ['es_mujer', 'padre_de']
+
+    for cond in condiciones:
+        # Si todos los positivos tienen esta condición en True
+        if all(p[cond] for p in positivos):
+            # Y al menos un negativo la tiene en False
+            if any(not n[cond] for n in negativos):
+                regla.append(cond)
+
+    return regla
+
+# Inducimos la regla
+regla_inducida = inducir_regla(positivos, negativos)
+
+# Mostramos la regla lógica aprendida
+print("Regla lógica inducida (simulación FOIL):")
+print("madre(X) :-", " ∧ ".join([f"{cond}(X)" for cond in regla_inducida]))

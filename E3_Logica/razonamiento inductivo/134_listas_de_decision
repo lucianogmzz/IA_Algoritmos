@@ -1,0 +1,12 @@
+def k_decision_list(x):
+    if x['feature1'] > 5 and x['feature2'] == 'A':
+        return 'Clase 1'
+    elif x['feature3'] < 10:
+        return 'Clase 2'
+    else:
+        return 'Clase 3'
+
+# Ejemplo de uso
+ejemplo = {'feature1': 6, 'feature2': 'A', 'feature3': 8}
+resultado = k_decision_list(ejemplo)
+print(f"Resultado de la clasificación: {resultado}")

@@ -1,0 +1,40 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Árbol de regresión: M5 (conjunto de datos California Housing)
+
+# Este script muestra cómo aplicar un modelo de árbol de regresión usando el algoritmo M5.
+# Se utiliza un conjunto de datos de precios de viviendas en California y se entrena el modelo
+# para predecir precios basados en características numéricas.
+# El algoritmo M5 combina árboles de decisión con regresión lineal para ajustar valores continuos.
+
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+
+# Instala m5py si no lo tienes:
+# pip install m5py
+
+from m5py import M5Prime  # Importamos el modelo M5
+
+# Cargamos el dataset de California Housing
+housing = fetch_california_housing()
+X = housing.data  # Características (features)
+y = housing.target  # Etiqueta (target): precio medio de las casas
+
+# Dividimos los datos en entrenamiento y prueba (80% - 20%)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Creamos el modelo M5
+modelo = M5Prime()
+
+# Entrenamos el modelo con los datos de entrenamiento
+modelo.fit(X_train, y_train)
+
+# Predecimos los valores para los datos de prueba
+y_pred = modelo.predict(X_test)
+
+# Calculamos el error cuadrático medio (MSE)
+mse = mean_squared_error(y_test, y_pred)
+
+# Mostramos el resultado
+print(f"Error cuadrático medio del modelo M5: {mse:.4f}")

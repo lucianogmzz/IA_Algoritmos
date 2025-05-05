@@ -1,0 +1,90 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Implementación simplificada del algoritmo ID3 en Python
+
+import math
+from collections import Counter
+
+# Función para calcular la entropía de un conjunto de datos
+def calcular_entropia(datos):
+    total = len(datos)
+    etiquetas = [fila[-1] for fila in datos]
+    conteo = Counter(etiquetas)
+    entropia = 0.0
+    for etiqueta in conteo:
+        probabilidad = conteo[etiqueta] / total
+        entropia -= probabilidad * math.log2(probabilidad)
+    return entropia
+
+# Función para dividir el conjunto de datos según un atributo y su valor
+def dividir_conjunto(datos, indice_atributo, valor):
+    subconjunto = []
+    for fila in datos:
+        if fila[indice_atributo] == valor:
+            nueva_fila = fila[:indice_atributo] + fila[indice_atributo+1:]
+            subconjunto.append(nueva_fila)
+    return subconjunto
+
+# Función para encontrar el mejor atributo para dividir los datos
+def mejor_atributo_para_dividir(datos):
+    num_atributos = len(datos[0]) - 1
+    entropia_base = calcular_entropia(datos)
+    mejor_ganancia = 0.0
+    mejor_indice = -1
+    for i in range(num_atributos):
+        valores = set([fila[i] for fila in datos])
+        nueva_entropia = 0.0
+        for valor in valores:
+            subconjunto = dividir_conjunto(datos, i, valor)
+            probabilidad = len(subconjunto) / len(datos)
+            nueva_entropia += probabilidad * calcular_entropia(subconjunto)
+        ganancia = entropia_base - nueva_entropia
+        if ganancia > mejor_ganancia:
+            mejor_ganancia = ganancia
+            mejor_indice = i
+    return mejor_indice
+
+# Función principal para construir el árbol de decisión
+def construir_arbol(datos, etiquetas):
+    etiquetas_clase = [fila[-1] for fila in datos]
+    if etiquetas_clase.count(etiquetas_clase[0]) == len(etiquetas_clase):
+        return etiquetas_clase[0]
+    if len(datos[0]) == 1:
+        return Counter(etiquetas_clase).most_common(1)[0][0]
+    mejor_indice = mejor_atributo_para_dividir(datos)
+    mejor_etiqueta = etiquetas[mejor_indice]
+    arbol = {mejor_etiqueta: {}}
+    del etiquetas[mejor_indice]
+    valores = set([fila[mejor_indice] for fila in datos])
+    for valor in valores:
+        subconjunto = dividir_conjunto(datos, mejor_indice, valor)
+        sub_etiquetas = etiquetas[:]
+        arbol[mejor_etiqueta][valor] = construir_arbol(subconjunto, sub_etiquetas)
+    return arbol
+
+# Conjunto de datos de ejemplo
+# Cada fila representa un ejemplo con atributos y la clase al final
+datos = [
+    ['Soleado', 'Caliente', 'Alta', 'Falsa', 'No'],
+    ['Soleado', 'Caliente', 'Alta', 'Verdadera', 'No'],
+    ['Nublado', 'Caliente', 'Alta', 'Falsa', 'Sí'],
+    ['Lluvia', 'Templado', 'Alta', 'Falsa', 'Sí'],
+    ['Lluvia', 'Fría', 'Normal', 'Falsa', 'Sí'],
+    ['Lluvia', 'Fría', 'Normal', 'Verdadera', 'No'],
+    ['Nublado', 'Fría', 'Normal', 'Verdadera', 'Sí'],
+    ['Soleado', 'Templado', 'Alta', 'Falsa', 'No'],
+    ['Soleado', 'Fría', 'Normal', 'Falsa', 'Sí'],
+    ['Lluvia', 'Templado', 'Normal', 'Falsa', 'Sí'],
+    ['Soleado', 'Templado', 'Normal', 'Verdadera', 'Sí'],
+    ['Nublado', 'Templado', 'Alta', 'Verdadera', 'Sí'],
+    ['Nublado', 'Caliente', 'Normal', 'Falsa', 'Sí'],
+    ['Lluvia', 'Templado', 'Alta', 'Verdadera', 'No']
+]
+
+# Etiquetas de los atributos
+etiquetas = ['Clima', 'Temperatura', 'Humedad', 'Viento']
+
+# Construir el árbol de decisión
+arbol = construir_arbol(datos, etiquetas)
+print("Árbol de decisión construido:")
+print(arbol)
