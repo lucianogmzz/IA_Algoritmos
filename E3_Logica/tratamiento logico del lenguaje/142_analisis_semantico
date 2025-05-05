@@ -1,0 +1,15 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Análisis semántico utilizando spaCy
+
+import spacy
+
+# Cargamos el modelo de lenguaje en español
+nlp = spacy.load("es_core_news_sm")
+
+# Procesamos una oración
+doc = nlp("El gato negro se sentó en la alfombra.")
+
+# Mostramos los tokens y sus etiquetas semánticas
+for token in doc:
+    print(f"{token.text}: {token.pos_} - {token.dep_}")

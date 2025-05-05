@@ -1,0 +1,23 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Demostración de ambigüedad en una gramática utilizando Lark
+
+from lark import Lark
+
+# Definimos una gramática ambigua
+gramatica = """
+    start: expr
+    expr: expr "+" expr
+        | expr "*" expr
+        | NUMBER
+    %import common.NUMBER
+    %import common.WS
+    %ignore WS
+"""
+
+# Creamos el analizador con el parser Earley y opción de ambigüedad
+analizador = Lark(gramatica, parser='earley', ambiguity='explicit')
+
+# Analizamos una expresión ambigua
+arbol = analizador.parse("2 + 3 * 4")
+print(arbol.pretty())

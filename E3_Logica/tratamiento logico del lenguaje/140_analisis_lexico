@@ -1,0 +1,44 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Analizador léxico simple para expresiones matemáticas
+
+import re
+
+# Definimos los patrones para los tokens
+token_specification = [
+    ('NUMERO',   r'\d+(\.\d*)?'),  # Números enteros o decimales
+    ('SUMA',     r'\+'),           # Operador suma
+    ('RESTA',    r'-'),            # Operador resta
+    ('MULT',     r'\*'),           # Operador multiplicación
+    ('DIV',      r'/'),            # Operador división
+    ('LPAREN',   r'\('),           # Paréntesis izquierdo
+    ('RPAREN',   r'\)'),           # Paréntesis derecho
+    ('ESPACIO',  r'\s+'),          # Espacios en blanco
+    ('OTRO',     r'.'),            # Cualquier otro carácter
+]
+
+# Compilamos los patrones en una expresión regular
+tok_regex = '|'.join(f'(?P<{nombre}>{patron})' for nombre, patron in token_specification)
+get_token = re.compile(tok_regex).match
+
+# Función para tokenizar una expresión
+def tokenize(codigo):
+    pos = 0
+    tokens = []
+    match = get_token(codigo)
+    while match is not None:
+        tipo = match.lastgroup
+        if tipo != 'ESPACIO':
+            valor = match.group(tipo)
+            tokens.append((tipo, valor))
+        pos = match.end()
+        match = get_token(codigo, pos)
+    if pos != len(codigo):
+        raise RuntimeError(f'Error de tokenización en el carácter {codigo[pos]}')
+    return tokens
+
+# Ejemplo de uso
+expresion = "3 + 4 * (2 - 1)"
+tokens = tokenize(expresion)
+for token in tokens:
+    print(token)
