@@ -1,0 +1,31 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Representación de un espacio de estados simple
+
+from collections import deque
+
+# Definición del grafo de estados
+grafo = {
+    'A': ['B', 'C'],
+    'B': ['D'],
+    'C': ['D'],
+    'D': ['E'],
+    'E': []
+}
+
+def buscar_camino(estado_inicial, estado_objetivo, grafo):
+    # Búsqueda en anchura
+    frontera = deque()
+    frontera.append((estado_inicial, [estado_inicial]))
+    while frontera:
+        estado_actual, camino = frontera.popleft()
+        if estado_actual == estado_objetivo:
+            return camino
+        for vecino in grafo[estado_actual]:
+            if vecino not in camino:
+                frontera.append((vecino, camino + [vecino]))
+    return None
+
+# Ejecución de la búsqueda
+camino = buscar_camino('A', 'E', grafo)
+print("Camino encontrado:", camino)

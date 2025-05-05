@@ -1,0 +1,53 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Representación de acciones y estados en STRIPS
+
+class Accion:
+    def __init__(self, nombre, precondiciones, efectos_positivos, efectos_negativos):
+        self.nombre = nombre
+        self.precondiciones = precondiciones
+        self.efectos_positivos = efectos_positivos
+        self.efectos_negativos = efectos_negativos
+
+    def es_aplicable(self, estado):
+        # Verifica si todas las precondiciones están en el estado actual
+        return all(p in estado for p in self.precondiciones)
+
+    def aplicar(self, estado):
+        # Aplica los efectos de la acción al estado
+        nuevo_estado = estado.copy()
+        for efecto in self.efectos_negativos:
+            nuevo_estado.discard(efecto)
+        for efecto in self.efectos_positivos:
+            nuevo_estado.add(efecto)
+        return nuevo_estado
+
+# Definición del problema
+estado_inicial = {"en(A, mesa)", "en(B, A)", "libre(B)", "libre(mesa)"}
+estado_objetivo = {"en(B, mesa)", "en(A, B)"}
+
+# Definición de acciones
+acciones = [
+    Accion("mover B a mesa", ["en(B, A)", "libre(B)", "libre(mesa)"],
+           ["en(B, mesa)", "libre(A)"], ["en(B, A)"]),
+    Accion("mover A a B", ["en(A, mesa)", "libre(A)", "libre(B)"],
+           ["en(A, B)"], ["en(A, mesa)", "libre(B)"]),
+]
+
+# Planificación simple
+def planificar(estado, objetivo, acciones):
+    plan = []
+    while not objetivo.issubset(estado):
+        for accion in acciones:
+            if accion.es_aplicable(estado):
+                estado = accion.aplicar(estado)
+                plan.append(accion.nombre)
+                break
+        else:
+            print("No se puede alcanzar el objetivo con las acciones disponibles.")
+            return []
+    return plan
+
+# Ejecución del planificador
+plan = planificar(estado_inicial, estado_objetivo, acciones)
+print("Plan encontrado:", plan)

@@ -1,0 +1,26 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Ejemplo simplificado de SATPLAN en Python
+
+import pycosat
+
+# Variables:
+# 1: Luz encendida en el estado inicial
+# 2: Luz encendida después de la acción
+# 3: Acción de encender la luz
+
+# Clausulas en CNF (Forma Normal Conjuntiva)
+# Representan las condiciones del problema
+
+cnf = [
+    [-1],       # La luz está apagada inicialmente
+    [-3, 2],    # Si se ejecuta la acción (3), entonces la luz está encendida después (2)
+    [3],        # Se ejecuta la acción de encender la luz
+    [-2]        # Queremos que la luz esté encendida después
+]
+
+# Resolver el problema de satisfacibilidad
+soluciones = pycosat.solve(cnf)
+
+# Mostrar la solución
+print("Solución:", soluciones)

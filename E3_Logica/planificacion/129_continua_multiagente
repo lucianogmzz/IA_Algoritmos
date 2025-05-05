@@ -1,0 +1,62 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# -----------------------------------------
+# PLANIFICACIÓN CONTINUA Y MULTIAGENTE
+# -----------------------------------------
+# Este programa simula un entorno de planificación continua en el que múltiples agentes tienen distintos objetivos.
+# Cada agente genera un plan simple basado en su objetivo. Si ocurre un cambio inesperado en el entorno durante
+# la ejecución del plan, el agente replanifica sus acciones.
+
+# -----------------------------------------
+# DEFINICIÓN DE AGENTES Y OBJETIVOS
+# -----------------------------------------
+# Creamos un diccionario de agentes, cada uno con un objetivo específico y un campo 'plan' vacío para llenarse después.
+agentes = {
+    'agente_1': {'objetivo': 'recoger_objeto', 'plan': []},
+    'agente_2': {'objetivo': 'entregar_objeto', 'plan': []}
+}
+
+# -----------------------------------------
+# FUNCIÓN PARA GENERAR PLANES SIMPLES
+# -----------------------------------------
+# Esta función devuelve una lista de acciones a realizar dependiendo del objetivo del agente.
+def generar_plan(objetivo):
+    if objetivo == 'recoger_objeto':
+        return ['moverse_a_objeto', 'recoger']
+    elif objetivo == 'entregar_objeto':
+        return ['moverse_a_destino', 'entregar']
+    else:
+        return []
+
+# -----------------------------------------
+# GENERAR PLANES INICIALES PARA CADA AGENTE
+# -----------------------------------------
+# Recorremos el diccionario de agentes y generamos un plan basado en su objetivo.
+for nombre, info in agentes.items():
+    info['plan'] = generar_plan(info['objetivo'])
+
+# -----------------------------------------
+# SIMULACIÓN DE EJECUCIÓN Y ADAPTACIÓN DEL PLAN
+# -----------------------------------------
+# Cada agente ejecuta su plan. Si durante la ejecución ocurre un cambio en el entorno (ej. objeto no encontrado),
+# se modifica (replanifica) el plan.
+for nombre, info in agentes.items():
+    print(f"\n{nombre} ejecutando plan:")
+    for accion in info['plan']:
+        print(f"- {accion}")
+        # Simulación de un cambio en el entorno para el agente_1
+        if accion == 'moverse_a_objeto' and nombre == 'agente_1':
+            print("Objeto no encontrado. Replanificando...")
+            # Se redefine el plan con pasos adicionales
+            info['plan'] = ['buscar_objeto', 'moverse_a_objeto', 'recoger']
+            break  # Se detiene la ejecución del plan actual
+
+# -----------------------------------------
+# MOSTRAR PLANES ACTUALIZADOS DESPUÉS DE LA REPLANIFICACIÓN
+# -----------------------------------------
+# Mostramos los planes actuales (modificados si hubo cambios).
+for nombre, info in agentes.items():
+    print(f"\n{nombre} plan final:")
+    for accion in info['plan']:
+        print(f"- {accion}")
+
