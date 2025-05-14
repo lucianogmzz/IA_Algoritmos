@@ -1,53 +1,75 @@
 # Luciano Alejandro Gómez Muñoz 22310214
 
-# Representación de acciones y estados en STRIPS
+# Este código representa un sistema de planificación automatizada usando el formalismo STRIPS.
+# El objetivo es transformar un estado inicial en un estado objetivo aplicando acciones que modifican el entorno.
+
+# --------------------------------------------------------------
+# Clase que representa una acción en el modelo STRIPS
 
 class Accion:
     def __init__(self, nombre, precondiciones, efectos_positivos, efectos_negativos):
-        self.nombre = nombre
-        self.precondiciones = precondiciones
-        self.efectos_positivos = efectos_positivos
-        self.efectos_negativos = efectos_negativos
+        self.nombre = nombre  # Nombre descriptivo de la acción
+        self.precondiciones = precondiciones  # Condiciones que deben cumplirse antes de ejecutar la acción
+        self.efectos_positivos = efectos_positivos  # Hechos que se añaden al estado después de ejecutar la acción
+        self.efectos_negativos = efectos_negativos  # Hechos que se eliminan del estado tras la acción
 
     def es_aplicable(self, estado):
-        # Verifica si todas las precondiciones están en el estado actual
+        # Verifica si todas las precondiciones están presentes en el estado actual
         return all(p in estado for p in self.precondiciones)
 
     def aplicar(self, estado):
-        # Aplica los efectos de la acción al estado
+        # Aplica los efectos de la acción sobre una copia del estado actual
         nuevo_estado = estado.copy()
         for efecto in self.efectos_negativos:
-            nuevo_estado.discard(efecto)
+            nuevo_estado.discard(efecto)  # Elimina los efectos negativos
         for efecto in self.efectos_positivos:
-            nuevo_estado.add(efecto)
+            nuevo_estado.add(efecto)  # Agrega los efectos positivos
         return nuevo_estado
 
-# Definición del problema
-estado_inicial = {"en(A, mesa)", "en(B, A)", "libre(B)", "libre(mesa)"}
-estado_objetivo = {"en(B, mesa)", "en(A, B)"}
+# --------------------------------------------------------------
+# Definición del estado inicial y del estado objetivo
 
-# Definición de acciones
+estado_inicial = {"en(A, mesa)", "en(B, A)", "libre(B)", "libre(mesa)"}  # Situación inicial del entorno
+estado_objetivo = {"en(B, mesa)", "en(A, B)"}  # Objetivo que queremos alcanzar
+
+# --------------------------------------------------------------
+# Definición de acciones disponibles en el entorno
+
 acciones = [
-    Accion("mover B a mesa", ["en(B, A)", "libre(B)", "libre(mesa)"],
-           ["en(B, mesa)", "libre(A)"], ["en(B, A)"]),
-    Accion("mover A a B", ["en(A, mesa)", "libre(A)", "libre(B)"],
-           ["en(A, B)"], ["en(A, mesa)", "libre(B)"]),
+    Accion("mover B a mesa",                       # Nombre de la acción
+           ["en(B, A)", "libre(B)", "libre(mesa)"], # Precondiciones necesarias
+           ["en(B, mesa)", "libre(A)"],             # Efectos positivos
+           ["en(B, A)"]),                           # Efectos negativos
+
+    Accion("mover A a B",                         
+           ["en(A, mesa)", "libre(A)", "libre(B)"], 
+           ["en(A, B)"], 
+           ["en(A, mesa)", "libre(B)"]),
 ]
 
-# Planificación simple
+# --------------------------------------------------------------
+# Función de planificación simple
+
 def planificar(estado, objetivo, acciones):
-    plan = []
-    while not objetivo.issubset(estado):
+    """
+    Recibe un estado inicial, un objetivo y una lista de acciones.
+    Aplica las acciones disponibles hasta alcanzar el estado objetivo.
+    """
+    plan = []  # Lista de acciones aplicadas
+    while not objetivo.issubset(estado):  # Mientras no se haya alcanzado el objetivo
         for accion in acciones:
-            if accion.es_aplicable(estado):
-                estado = accion.aplicar(estado)
-                plan.append(accion.nombre)
+            if accion.es_aplicable(estado):  # Si la acción es aplicable en el estado actual
+                estado = accion.aplicar(estado)  # Aplicar acción y modificar el estado
+                plan.append(accion.nombre)  # Añadir acción al plan
                 break
         else:
+            # Si ninguna acción es aplicable, no se puede avanzar
             print("No se puede alcanzar el objetivo con las acciones disponibles.")
             return []
-    return plan
+    return plan  # Devolver el plan encontrado
 
-# Ejecución del planificador
+# --------------------------------------------------------------
+# Ejecutar el planificador
+
 plan = planificar(estado_inicial, estado_objetivo, acciones)
 print("Plan encontrado:", plan)

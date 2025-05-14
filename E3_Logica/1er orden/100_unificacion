@@ -1,19 +1,50 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
-# Este código ilustra el proceso de unificación en lógica de primer orden (simulado).
+
+# Este código ilustra el proceso de unificación en lógica de primer orden.
+# La unificación es un procedimiento central en los sistemas de inferencia lógica, 
+# especialmente en programación lógica y sistemas expertos basados en lógica.
+# El objetivo de la unificación es encontrar una sustitución de variables que haga que dos expresiones lógicas sean idénticas.
+# Aquí se utiliza `sympy`, una biblioteca de Python para cálculo simbólico, para simular el proceso de unificación.
+
+# -------------------------------------------------------------
+# Importación de librerías necesarias
 
 from sympy import symbols, Function, Eq
+# `symbols` permite declarar variables simbólicas (como x, y).
+# `Function` permite definir funciones simbólicas (como P(x, y)).
+# `Eq` permite definir igualdades simbólicas (aunque en este caso no se usa).
+
 from sympy.unify import unify
+# `unify` es una función de `sympy` que intenta unificar dos expresiones simbólicas.
+# Devuelve una lista de sustituciones si la unificación es posible.
 
-# Definir variables simbólicas
-x, y = symbols('x y')
-P = Function('P')
+# -------------------------------------------------------------
+# Definición de variables simbólicas
 
-# Definir expresiones lógicas
-expr1 = P(x, y)
-expr2 = P(y, x)
+x, y = symbols('x y')  
+# Se definen dos variables simbólicas x e y, que se usarán como argumentos en funciones lógicas.
 
-# Realizar la unificación
-unification_result = unify(expr1, expr2)
+P = Function('P')  
+# Se define una función simbólica `P`, que representa un predicado lógico de primer orden.
 
-# Mostrar resultado
-print(f"Unificación de '{expr1}' y '{expr2}': {unification_result}")
+# -------------------------------------------------------------
+# Definición de expresiones simbólicas
+
+expr1 = P(x, y)  
+# Primera expresión: P(x, y), es decir, el predicado P aplicado a los argumentos x e y.
+
+expr2 = P(y, x)  
+# Segunda expresión: P(y, x), es decir, el mismo predicado pero con los argumentos intercambiados.
+
+# -------------------------------------------------------------
+# Aplicación del proceso de unificación
+
+unification_result = unify(expr1, expr2)  
+# Se intenta unificar expr1 y expr2, es decir, encontrar una sustitución que haga que ambas expresiones sean iguales.
+# Por ejemplo, se buscaría algo como: x := y, y := x
+
+# -------------------------------------------------------------
+# Mostrar el resultado de la unificación
+
+print(f"Unificación de '{expr1}' y '{expr2}': {unification_result}")  
+# Se imprime el resultado de la unificación, que será un diccionario con las sustituciones encontradas (si las hay).

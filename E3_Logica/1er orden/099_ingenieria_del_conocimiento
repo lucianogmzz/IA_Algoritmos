@@ -1,42 +1,47 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
-# Este código ilustra la ingeniería del conocimiento utilizando un motor de inferencia con experta.
+# Este código ilustra la ingeniería del conocimiento utilizando un motor de inferencia experto.
+# El motor de inferencia ayuda a tomar decisiones basadas en hechos declarados y reglas lógicas.
 
-from experta import *
+from experta import *  # Importa la librería Experta, una implementación de un sistema experto en Python basado en CLIPS.
 
-# Definición de hechos
+# Definición de hechos (hechos son representaciones de datos en un sistema experto).
+# Estos hechos son las "entradas" sobre las que el motor de inferencia trabajará.
+
 class Sintoma(Fact):
     """Hecho que representa un síntoma en un paciente."""
-    pass
+    pass  # Esta clase no tiene ninguna implementación adicional, solo sirve para identificar un tipo de hecho.
 
 class Diagnostico(Fact):
     """Hecho que representa un diagnóstico médico."""
-    pass
+    pass  # Similar a Sintoma, esta clase solo representa un hecho que será utilizado por el motor de inferencia.
 
 class Causa(Fact):
     """Hecho que representa la causa de un diagnóstico."""
-    pass
+    pass  # Representa un hecho que describe la causa de una condición, como la causa de una enfermedad.
 
-# Motor de inferencia
+# Motor de inferencia: el motor que aplicará reglas a los hechos declarados para inferir nuevos hechos.
 class MotorMedico(KnowledgeEngine):
 
+    # Regla para diagnosticar una enfermedad: si el paciente tiene fiebre y dolor de cabeza, se diagnostica gripe.
     @Rule(Sintoma(nombre='fiebre', paciente='paciente1'),
           Sintoma(nombre='dolor_de_cabeza', paciente='paciente1'))
     def diagnosticar_gripe(self):
         print("✔ Diagnóstico: El paciente1 tiene gripe.")
-        self.declare(Diagnostico(nombre='gripe', paciente='paciente1'))
+        self.declare(Diagnostico(nombre='gripe', paciente='paciente1'))  # Se declara un diagnóstico de 'gripe' para el paciente.
 
+    # Regla para determinar la causa del diagnóstico: si el diagnóstico es gripe, la causa es el virus de la gripe.
     @Rule(Diagnostico(nombre='gripe', paciente='paciente1'))
     def determinar_causa(self):
         print("✔ Causa: El virus de la gripe es la causa.")
-        self.declare(Causa(origen='virus_de_gripe', paciente='paciente1'))
+        self.declare(Causa(origen='virus_de_gripe', paciente='paciente1'))  # Se declara que la causa es el virus de la gripe.
 
-# Ejecutar motor
+# Crear una instancia del motor de inferencia.
 engine = MotorMedico()
-engine.reset()
+engine.reset()  # Resetea el motor para asegurarse de que no hay hechos previos.
 
-# Declarar síntomas del paciente
+# Declarar síntomas del paciente. En este caso, el paciente 'paciente1' tiene fiebre y dolor de cabeza.
 engine.declare(Sintoma(nombre='fiebre', paciente='paciente1'))
 engine.declare(Sintoma(nombre='dolor_de_cabeza', paciente='paciente1'))
 
-# Ejecutar inferencia
-engine.run()
+# Ejecutar el motor de inferencia para procesar los hechos y aplicar las reglas.
+engine.run()  # Esto activará las reglas definidas anteriormente y realizará las inferencias.

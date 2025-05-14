@@ -1,45 +1,51 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
-# Encadenamiento hacia delante con la biblioteca experta
+# Este código implementa el encadenamiento hacia adelante utilizando la biblioteca experta en Python.
 
-from experta import *
+from experta import *  # Importa la librería Experta para crear sistemas expertos en Python.
 
-# Definir los hechos
+# Definir los hechos que representan las relaciones familiares.
+# Estos hechos serán utilizados por el motor de inferencia para realizar las inferencias.
+
 class Padre(Fact):
-    """Relación de padre"""
+    """Relación de padre. Representa que una persona es padre de otra."""
     pass
 
 class Madre(Fact):
-    """Relación de madre"""
+    """Relación de madre. Representa que una persona es madre de otra."""
     pass
 
 class Hermano(Fact):
-    """Relación de hermanos"""
+    """Relación de hermanos. Representa que dos personas son hermanas."""
     pass
 
-# Motor de inferencia
+# Motor de inferencia: el motor aplicará reglas basadas en hechos para determinar relaciones y generar inferencias.
 class MotorHermandad(KnowledgeEngine):
-    
+
+    # Regla para determinar si dos personas son hermanas. Se verifica si tienen el mismo padre y madre, y que no sean la misma persona.
     @Rule(Padre(padre=MATCH.p, hijo=MATCH.h1),
           Padre(padre=MATCH.p, hijo=MATCH.h2),
           Madre(madre=MATCH.m, hijo=MATCH.h1),
           Madre(madre=MATCH.m, hijo=MATCH.h2),
-          TEST(lambda h1, h2: h1 != h2))
+          TEST(lambda h1, h2: h1 != h2))  # La condición TEST garantiza que h1 y h2 no sean la misma persona.
     def determinar_hermanos(self, h1, h2):
+        # Se declara un hecho indicando que h1 y h2 son hermanos.
         self.declare(Hermano(persona1=h1, persona2=h2))
     
+    # Regla para mostrar los hermanos cuando se ha hecho la inferencia.
     @Rule(Hermano(persona1=MATCH.x, persona2=MATCH.y))
     def mostrar_hermanos(self, x, y):
+        # Imprime que las personas x e y son hermanas.
         print(f"{x} y {y} son hermanos.")
 
-# Crear una instancia del motor
+# Crear una instancia del motor de inferencia.
 motor = MotorHermandad()
 
-# Insertar hechos
-motor.reset()
+# Insertar hechos en el motor. Aquí se define que "Juan" es padre de "Maria" y "Pedro", y que "Ana" es madre de "Maria" y "Pedro".
+motor.reset()  # Resetea el motor para asegurarse de que no haya hechos previos.
 motor.declare(Padre(padre="Juan", hijo="Maria"))
 motor.declare(Padre(padre="Juan", hijo="Pedro"))
 motor.declare(Madre(madre="Ana", hijo="Maria"))
 motor.declare(Madre(madre="Ana", hijo="Pedro"))
 
-# Ejecutar encadenamiento hacia delante
+# Ejecutar el encadenamiento hacia adelante, lo que hará que el motor de inferencia aplique las reglas.
 motor.run()

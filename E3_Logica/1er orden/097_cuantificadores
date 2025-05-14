@@ -1,19 +1,24 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código ilustra cómo construir expresiones con cuantificadores en lógica de primer orden con SymPy.
+# Este código ilustra cómo construir expresiones con cuantificadores en lógica de primer orden utilizando la librería SymPy.
+# SymPy es una librería en Python para matemáticas simbólicas que incluye herramientas para la manipulación de expresiones algebraicas y lógicas.
 
-from sympy import symbols, Function, ForAll, Exists, Implies
+from sympy import symbols, Function, ForAll, Exists, Implies  # Importa las funciones necesarias de SymPy para trabajar con lógica de primer orden.
 
-# Definir variables
+# Definir las variables simbólicas.
+# x y y son variables libres que se usarán en la proposición lógica.
 x, y = symbols('x y')
 
-# Definir predicados como funciones simbólicas
-P = Function('P')
-Q = Function('Q')
+# Definir predicados como funciones simbólicas.
+# P y Q son predicados que se usan para expresar proposiciones lógicas.
+P = Function('P')  # Predicado P(x), que depende de la variable x.
+Q = Function('Q')  # Predicado Q(x, y), que depende de las variables x y y.
 
 # Construir la proposición: ∀x (P(x) ⇒ ∃y Q(x, y))
-proposition = ForAll(x, Implies(P(x), Exists(y, Q(x, y))))
+# La proposición dice "Para todo x, si P(x) es cierto, entonces existe un y tal que Q(x, y) es cierto".
+proposition = ForAll(x, Implies(P(x), Exists(y, Q(x, y))))  # ForAll(x) significa para todo x, Implies significa implicación, Exists(y) significa existe un y.
 
-# Mostrar la proposición
+# Mostrar la proposición lógica.
+# La proposición construida se imprime en forma simbólica.
 print("Proposición lógica con cuantificadores:")
-print(proposition)
+print(proposition)  # Imprime la proposición que hemos construido.

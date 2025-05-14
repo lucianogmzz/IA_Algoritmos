@@ -1,16 +1,25 @@
-# Luciano Alejandro Gómez Muñoz 22310214
-
-# Modelo probabilista básico usando la regla de Bayes
+# Resumen:
+# Este código implementa un modelo probabilista simple utilizando la regla de Bayes
+# para calcular la probabilidad de una hipótesis dada una evidencia.
 
 def probabilidad_bayes(p_hipotesis, p_evidencia_dado_hipotesis, p_evidencia):
-    # P(H|E) = P(E|H) * P(H) / P(E)
+    """
+    Aplica la regla de Bayes para calcular la probabilidad condicional P(H|E).
+    La fórmula es: P(H|E) = P(E|H) * P(H) / P(E)
+    :param p_hipotesis: La probabilidad de la hipótesis (P(H)).
+    :param p_evidencia_dado_hipotesis: La probabilidad de la evidencia dada la hipótesis (P(E|H)).
+    :param p_evidencia: La probabilidad de la evidencia (P(E)).
+    :return: La probabilidad de la hipótesis dado la evidencia (P(H|E)).
+    """
     return (p_evidencia_dado_hipotesis * p_hipotesis) / p_evidencia
 
 # Ejemplo: probabilidad de tener gripe si se tiene fiebre
-p_gripe = 0.1  # P(H): probabilidad de tener gripe
-p_fiebre_dado_gripe = 0.9  # P(E|H): si tienes gripe, hay 90% de tener fiebre
-p_fiebre = 0.2  # P(E): fiebre en general (población)
+p_gripe = 0.1  # P(H): probabilidad de tener gripe (10% de la población tiene gripe)
+p_fiebre_dado_gripe = 0.9  # P(E|H): si tienes gripe, hay 90% de chance de tener fiebre
+p_fiebre = 0.2  # P(E): probabilidad de tener fiebre en general (20% de la población tiene fiebre)
 
+# Aplicar la regla de Bayes
 p_gripe_dado_fiebre = probabilidad_bayes(p_gripe, p_fiebre_dado_gripe, p_fiebre)
 
+# Mostrar el resultado
 print(f"Probabilidad de tener gripe si tienes fiebre: {p_gripe_dado_fiebre:.2f}")

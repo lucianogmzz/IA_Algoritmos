@@ -1,14 +1,21 @@
+# Importar la función para validación cruzada y el modelo de Random Forest
 from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.datasets import load_iris
 
-# Cargar el conjunto de datos
+# Cargar el conjunto de datos Iris, que ya está disponible en sklearn
+# X contiene las características y, y, las etiquetas de clase (objetivo)
 X, y = load_iris(return_X_y=True)
 
-# Crear el modelo
+# Crear el modelo Random Forest con un valor de semilla aleatoria para reproducibilidad
 model = RandomForestClassifier(random_state=42)
 
 # Evaluar el modelo utilizando validación cruzada
+# 'cv=5' significa que se realizarán 5 particiones (folds) en la validación cruzada
 scores = cross_val_score(model, X, y, cv=5)
+
+# Imprimir los puntajes de la validación cruzada (precisión en cada partición)
 print(f"Puntajes de validación cruzada: {scores}")
+
+# Imprimir la precisión promedio obtenida en las 5 particiones
 print(f"Precisión promedio: {scores.mean()}")

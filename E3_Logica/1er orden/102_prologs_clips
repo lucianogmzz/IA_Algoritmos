@@ -1,44 +1,66 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
-# Simulación de programación lógica con "experta"
 
-from experta import *
+# Este código implementa un sistema basado en reglas utilizando la biblioteca `experta` para realizar inferencias lógicas
+# mediante **encadenamiento hacia delante**.
+# El objetivo es determinar si dos personas son hermanos, basándose en hechos sobre sus padres y madres.
 
-# Hechos base
+# -----------------------------------------------------------------------
+# Importación de la biblioteca experta, utilizada para construir motores de inferencia (sistemas expertos)
+
+from experta import *  # Se importa todo de la biblioteca experta, incluyendo `Fact`, `KnowledgeEngine`, `Rule`, `MATCH`, `TEST`, etc.
+
+# -----------------------------------------------------------------------
+# Definición de clases de hechos que representan relaciones familiares
+
 class Padre(Fact):
-    """Relación padre-hijo"""
-    pass
+    """Hecho que representa una relación de paternidad"""
+    pass  # No requiere funcionalidad adicional, solo sirve como estructura para los datos
 
 class Madre(Fact):
-    """Relación madre-hijo"""
+    """Hecho que representa una relación de maternidad"""
     pass
 
 class Hermano(Fact):
-    """Relación hermano-hermano"""
+    """Hecho que representa que dos personas son hermanos"""
     pass
 
-# Motor de reglas
-class MotorDeConocimiento(KnowledgeEngine):
-    
-    @Rule(
-        Padre(padre=MATCH.p, hijo=MATCH.h1),
-        Padre(padre=MATCH.p, hijo=MATCH.h2),
-        Madre(madre=MATCH.m, hijo=MATCH.h1),
-        Madre(madre=MATCH.m, hijo=MATCH.h2),
-        TEST(lambda h1, h2: h1 != h2)
-    )
-    def son_hermanos(self, h1, h2):
-        print(f"{h1} y {h2} son hermanos.")
-        self.declare(Hermano(persona1=h1, persona2=h2))
+# -----------------------------------------------------------------------
+# Definición del motor de inferencia que utiliza reglas para determinar relaciones familiares
 
-# Crear instancia del motor
-motor = MotorDeConocimiento()
+class MotorHermandad(KnowledgeEngine):
+    # Esta clase hereda de `KnowledgeEngine`, lo que la convierte en un motor de reglas de producción
+
+    @Rule(
+        Padre(padre=MATCH.p, hijo=MATCH.h1),   # Coincide con un hecho que diga que p es padre de h1
+        Padre(padre=MATCH.p, hijo=MATCH.h2),   # Coincide con otro hecho que diga que p es padre de h2
+        Madre(madre=MATCH.m, hijo=MATCH.h1),   # Coincide con un hecho que diga que m es madre de h1
+        Madre(madre=MATCH.m, hijo=MATCH.h2),   # Coincide con un hecho que diga que m es madre de h2
+        TEST(lambda h1, h2: h1 != h2)           # Condición adicional: los hijos deben ser personas diferentes
+    )
+    def determinar_hermanos(self, h1, h2):
+        # Si se cumplen las condiciones anteriores, se infiere que h1 y h2 son hermanos
+        self.declare(Hermano(persona1=h1, persona2=h2))  # Se declara un nuevo hecho `Hermano`
+
+    @Rule(Hermano(persona1=MATCH.x, persona2=MATCH.y))
+    def mostrar_hermanos(self, x, y):
+        # Si se detecta un hecho `Hermano`, se imprime una declaración indicando la relación
+        print(f"{x} y {y} son hermanos.")
+
+# -----------------------------------------------------------------------
+# Creación y ejecución del motor de inferencia
+
+# Se crea una instancia del motor
+motor = MotorHermandad()
+
+# Se reinicia el motor para limpiar hechos anteriores
 motor.reset()
 
-# Insertar hechos
-motor.declare(Padre(padre="Juan", hijo="Maria"))
-motor.declare(Padre(padre="Juan", hijo="Pedro"))
-motor.declare(Madre(madre="Ana", hijo="Maria"))
-motor.declare(Madre(madre="Ana", hijo="Pedro"))
+# Se insertan hechos conocidos sobre relaciones de padres e hijos
+motor.declare(Padre(padre="Juan", hijo="Maria"))   # Juan es padre de María
+motor.declare(Padre(padre="Juan", hijo="Pedro"))   # Juan es padre de Pedro
+motor.declare(Madre(madre="Ana", hijo="Maria"))    # Ana es madre de María
+motor.declare(Madre(madre="Ana", hijo="Pedro"))    # Ana es madre de Pedro
 
-# Ejecutar reglas
+# Se ejecuta el motor para activar el encadenamiento hacia delante
 motor.run()
+# Esto hará que se apliquen las reglas definidas en el motor y se impriman los resultados.

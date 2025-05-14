@@ -1,37 +1,65 @@
 # Luciano Alejandro Gómez Muñoz 22310214
-
-# Sistema experto simple para diagnóstico médico con reglas "si-entonces"
+# Resumen:
+# Este código implementa un sistema experto simple para diagnóstico médico que utiliza reglas de inferencia "si-entonces".
+# El sistema agrega hechos y reglas, realiza inferencias y luego muestra las conclusiones.
 
 class SistemaExperto:
     def __init__(self):
-        self.hechos = []
-        self.reglas = []
+        """
+        Inicializa el sistema experto.
+        El sistema tiene una lista de hechos y una lista de reglas.
+        """
+        self.hechos = []  # Lista para almacenar los hechos conocidos (por ejemplo, síntomas)
+        self.reglas = []  # Lista para almacenar las reglas de inferencia (si-entonces)
 
     def agregar_hecho(self, hecho):
-        self.hechos.append(hecho)
+        """
+        Agrega un hecho al sistema.
+        :param hecho: El hecho que se va a agregar (por ejemplo, "fiebre", "dolor_cabeza").
+        """
+        self.hechos.append(hecho)  # Agrega el hecho a la lista de hechos conocidos
 
     def agregar_regla(self, condiciones, conclusion):
-        self.reglas.append((condiciones, conclusion))
+        """
+        Agrega una regla de inferencia al sistema.
+        :param condiciones: Lista de condiciones que deben cumplirse para aplicar la regla.
+        :param conclusion: La conclusión que se infiere si las condiciones se cumplen.
+        """
+        self.reglas.append((condiciones, conclusion))  # Agrega la regla (condiciones, conclusión) a la lista de reglas
 
     def inferir(self):
-        conclusiones = []
+        """
+        Aplica las reglas de inferencia para agregar conclusiones basadas en los hechos actuales.
+        Si todas las condiciones de una regla están presentes, se agrega la conclusión.
+        """
+        conclusiones = []  # Lista para almacenar las conclusiones inferidas
         for condiciones, conclusion in self.reglas:
-            if all(cond in self.hechos for cond in condiciones):
-                if conclusion not in self.hechos:
-                    conclusiones.append(conclusion)
-        self.hechos.extend(conclusiones)
+            if all(cond in self.hechos for cond in condiciones):  # Verifica si todas las condiciones están presentes en los hechos
+                if conclusion not in self.hechos:  # Si la conclusión no está ya en los hechos
+                    conclusiones.append(conclusion)  # Añade la conclusión a la lista de conclusiones
+        self.hechos.extend(conclusiones)  # Agrega todas las conclusiones a los hechos conocidos
 
     def mostrar_conclusiones(self):
+        """
+        Muestra todos los hechos y conclusiones inferidas.
+        """
         print("Hechos conocidos:")
-        for hecho in self.hechos:
+        for hecho in self.hechos:  # Muestra todos los hechos conocidos
             print(f"- {hecho}")
 
 # Crear sistema experto
-se = SistemaExperto()
-se.agregar_hecho("fiebre")
-se.agregar_hecho("dolor_cabeza")
-se.agregar_regla(["fiebre", "dolor_cabeza"], "gripe")
-se.agregar_regla(["gripe"], "reposo")
+se = SistemaExperto()  # Crea una instancia del sistema experto
 
+# Agregar hechos (síntomas)
+se.agregar_hecho("fiebre")  # El paciente tiene fiebre
+se.agregar_hecho("dolor_cabeza")  # El paciente tiene dolor de cabeza
+
+# Agregar reglas de inferencia
+se.agregar_regla(["fiebre", "dolor_cabeza"], "gripe")  # Si tiene fiebre y dolor de cabeza, tiene gripe
+se.agregar_regla(["gripe"], "reposo")  # Si tiene gripe, necesita reposo
+
+# Inferir conclusiones basadas en los hechos y las reglas
 se.inferir()
+
+# Mostrar todos los hechos y conclusiones inferidas
 se.mostrar_conclusiones()

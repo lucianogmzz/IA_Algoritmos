@@ -1,33 +1,60 @@
-# Luciano Alejandro Gómez Muñoz 22310214
-
-# Razonamiento por defecto simple
+# Resumen:
+# Este código implementa un sistema de razonamiento por defecto que utiliza hechos y reglas de inferencia.
+# Si un hecho no está explícitamente presente en la base de conocimiento, se infiere utilizando reglas de inferencia por defecto.
 
 class BaseConocimiento:
     def __init__(self):
-        self.hechos = {}
-        self.reglas_defecto = []
+        """
+        Inicializa la base de conocimiento.
+        La base almacena hechos y reglas de inferencia por defecto.
+        """
+        self.hechos = {}  # Diccionario para almacenar los hechos (por ejemplo, "Ave(Pedro)")
+        self.reglas_defecto = []  # Lista para almacenar las reglas de inferencia
 
     def agregar_hecho(self, hecho, valor=True):
-        self.hechos[hecho] = valor
+        """
+        Agrega un hecho a la base de conocimiento.
+        :param hecho: El hecho que se va a agregar (por ejemplo, "Ave(Pedro)").
+        :param valor: El valor del hecho (por defecto es Verdadero).
+        """
+        self.hechos[hecho] = valor  # Agrega el hecho al diccionario de hechos
 
     def agregar_regla_defecto(self, condicion, conclusion):
-        self.reglas_defecto.append((condicion, conclusion))
+        """
+        Agrega una regla de inferencia por defecto.
+        :param condicion: La condición que debe cumplirse para aplicar la regla.
+        :param conclusion: El hecho que se inferirá si la condición no está presente.
+        """
+        self.reglas_defecto.append((condicion, conclusion))  # Añade la regla (condición, conclusión) a las reglas de inferencia
 
     def inferir(self):
+        """
+        Aplica las reglas de inferencia por defecto.
+        Si la condición de la regla no está presente en los hechos, se infiere la conclusión.
+        """
         for condicion, conclusion in self.reglas_defecto:
-            if condicion not in self.hechos:
-                self.hechos[conclusion] = True
+            if condicion not in self.hechos:  # Si la condición no está en los hechos, se infiere la conclusión
+                self.hechos[conclusion] = True  # Inferir el hecho (conclusión) y agregarlo como verdadero
 
     def mostrar_hechos(self):
+        """
+        Muestra todos los hechos almacenados en la base de conocimiento.
+        """
         for hecho, valor in self.hechos.items():
-            estado = "Verdadero" if valor else "Falso"
-            print(f"{hecho}: {estado}")
+            estado = "Verdadero" if valor else "Falso"  # Determina si el hecho es verdadero o falso
+            print(f"{hecho}: {estado}")  # Muestra el hecho y su estado
 
 # Crear base de conocimiento
-bc = BaseConocimiento()
-bc.agregar_hecho("Ave(Pedro)")
-bc.agregar_regla_defecto("No_vuela(Pedro)", "Vuela(Pedro)")
+bc = BaseConocimiento()  # Crea una instancia de la base de conocimiento
 
-# Inferir hechos por defecto
-bc.inferir()
-bc.mostrar_hechos()
+# Agregar hechos a la base de conocimiento
+bc.agregar_hecho("Ave(Pedro)")  # Se agrega el hecho "Ave(Pedro)" como verdadero
+
+# Agregar una regla de inferencia por defecto
+bc.agregar_regla_defecto("No_vuela(Pedro)", "Vuela(Pedro)")  # Si "No_vuela(Pedro)" no está, infiere "Vuela(Pedro)"
+
+# Inferir hechos por defecto basados en las reglas
+bc.inferir()  # Aplica las reglas de inferencia, agregando nuevos hechos cuando sea necesario
+
+# Mostrar todos los hechos en la base de conocimiento
+bc.mostrar_hechos()  # Muestra todos los hechos y su estado (Verdadero/Falso)

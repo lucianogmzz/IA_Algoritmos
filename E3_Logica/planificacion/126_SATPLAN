@@ -1,26 +1,50 @@
 # Luciano Alejandro Gómez Muñoz 22310214
 
+# ------------------------------------------------------
 # Ejemplo simplificado de SATPLAN en Python
+# ------------------------------------------------------
+# SATPLAN es una técnica de planificación que transforma un problema de planificación 
+# en una instancia del problema de satisfacibilidad booleana (SAT).
+#
+# Este ejemplo muestra cómo representar un problema de encender una luz mediante lógica proposicional
+# y resolverlo usando un SAT solver. Usamos la biblioteca `pycosat`, que resuelve fórmulas en CNF.
 
-import pycosat
+# ----------------------
+# Importación de librerías
+# ----------------------
 
-# Variables:
-# 1: Luz encendida en el estado inicial
-# 2: Luz encendida después de la acción
-# 3: Acción de encender la luz
+import pycosat  # Biblioteca para resolver problemas de satisfacibilidad booleana (SAT)
 
-# Clausulas en CNF (Forma Normal Conjuntiva)
-# Representan las condiciones del problema
+# --------------------------
+# Codificación del problema
+# --------------------------
+
+# En este ejemplo representamos proposiciones lógicas mediante números enteros:
+# Variable  1: luz encendida en el estado inicial (True si está encendida al principio)
+# Variable  2: luz encendida después de la acción
+# Variable  3: acción de encender la luz (True si se ejecuta la acción)
+
+# Las fórmulas se escriben en Forma Normal Conjuntiva (CNF),
+# es decir, como una lista de cláusulas, donde cada cláusula es una lista de literales (variables o sus negaciones).
 
 cnf = [
-    [-1],       # La luz está apagada inicialmente
-    [-3, 2],    # Si se ejecuta la acción (3), entonces la luz está encendida después (2)
-    [3],        # Se ejecuta la acción de encender la luz
-    [-2]        # Queremos que la luz esté encendida después
+    [-1],       # ¬1  → la luz NO está encendida al inicio (inicialmente está apagada)
+    [-3, 2],    # ¬3 ∨ 2 → si se ejecuta la acción (3) entonces la luz está encendida después (2)
+                # Esto equivale a: 3 → 2
+    [3],        # 3 → la acción de encender la luz SE ejecuta
+    [-2]        # ¬2 → queremos que la luz esté encendida después, pero esto es un error lógico
+                # porque ¬2 significa que NO está encendida (esto contradice lo esperado)
 ]
 
-# Resolver el problema de satisfacibilidad
-soluciones = pycosat.solve(cnf)
+# -------------------------
+# Resolución del problema
+# -------------------------
 
+# Utilizamos el SAT solver de pycosat para resolver las cláusulas CNF
+soluciones = pycosat.solve(cnf)  # Retorna una solución (valores asignados a las variables) o 'UNSAT' si no hay solución
+
+# ----------------------
 # Mostrar la solución
-print("Solución:", soluciones)
+# ----------------------
+
+print("Solución:", soluciones)  # Imprime una lista con la asignación de valores: positivos para True, negativos para False

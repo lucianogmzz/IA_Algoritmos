@@ -1,12 +1,20 @@
+# Definición de una función que implementa una lista de decisiones
 def k_decision_list(x):
+    # Si la 'feature1' es mayor a 5 y 'feature2' es igual a 'A', asignamos 'Clase 1'
     if x['feature1'] > 5 and x['feature2'] == 'A':
         return 'Clase 1'
+    # Si no se cumple la primera condición, pero 'feature3' es menor a 10, asignamos 'Clase 2'
     elif x['feature3'] < 10:
         return 'Clase 2'
+    # Si ninguna de las condiciones anteriores es verdadera, asignamos 'Clase 3'
     else:
         return 'Clase 3'
 
-# Ejemplo de uso
+# Ejemplo de uso: un diccionario con características
 ejemplo = {'feature1': 6, 'feature2': 'A', 'feature3': 8}
+
+# Llamamos a la función pasando el diccionario 'ejemplo' y guardamos el resultado
 resultado = k_decision_list(ejemplo)
+
+# Imprimimos el resultado de la clasificación
 print(f"Resultado de la clasificación: {resultado}")

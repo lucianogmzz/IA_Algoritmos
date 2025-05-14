@@ -1,41 +1,67 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
+
+# ---------------------------------------------------------------------
 # Sistema básico de base de conocimiento sin experta
+# ---------------------------------------------------------------------
+# Este código representa un sistema de inferencia simple que no utiliza reglas de un sistema experto formal,
+# sino que usa estructuras de datos y relaciones explícitas para inferir información.
+#
+# En este caso, el sistema permite registrar relaciones familiares (padres y madres)
+# y deducir automáticamente qué personas son hermanos, en base a si comparten ambos padres.
+
+# -----------------------------------------------------
+# Clase que define la base de conocimiento familiar
+# -----------------------------------------------------
 
 class BaseConocimiento:
     def __init__(self):
-        self.padres = []
-        self.madres = []
-        self.hermanos = set()
+        # Inicializa las estructuras internas:
+        self.padres = []          # Lista de tuplas (padre, hijo)
+        self.madres = []          # Lista de tuplas (madre, hijo)
+        self.hermanos = set()     # Conjunto de pares (h1, h2) de hermanos deducidos (sin repetidos)
 
     def agregar_padre(self, padre, hijo):
+        # Agrega una relación de paternidad
         self.padres.append((padre, hijo))
 
     def agregar_madre(self, madre, hijo):
+        # Agrega una relación de maternidad
         self.madres.append((madre, hijo))
 
     def deducir_hermanos(self):
-        hijos_padre = {}
-        hijos_madre = {}
+        # Método que deduce hermanos basándose en si comparten padre y madre
 
+        hijos_padre = {}  # Diccionario que mapea padre -> conjunto de hijos
+        hijos_madre = {}  # Diccionario que mapea madre -> conjunto de hijos
+
+        # Agrupa hijos por padre
         for padre, hijo in self.padres:
             hijos_padre.setdefault(padre, set()).add(hijo)
 
+        # Agrupa hijos por madre
         for madre, hijo in self.madres:
             hijos_madre.setdefault(madre, set()).add(hijo)
 
-        # Buscar combinaciones con mismos padres y madres
+        # Busca intersecciones entre hijos del mismo padre y misma madre
+        # Es decir, quienes comparten al mismo tiempo padre y madre son hermanos
         for padre, hijos_p in hijos_padre.items():
             for madre, hijos_m in hijos_madre.items():
-                comunes = hijos_p & hijos_m
+                comunes = hijos_p & hijos_m  # Intersección: hijos que tienen al mismo padre y misma madre
+
+                # Se crean pares de hermanos sin repetirse a sí mismos
                 for h1 in comunes:
                     for h2 in comunes:
                         if h1 != h2:
+                            # Se ordena el par para evitar duplicados como ('Pedro', 'Maria') y ('Maria', 'Pedro')
                             self.hermanos.add(tuple(sorted((h1, h2))))
 
     def mostrar_hechos(self):
+        # Muestra todas las relaciones almacenadas e inferencias
+
         print("Padres:")
         for padre, hijo in self.padres:
             print(f"{padre} es padre de {hijo}")
+
         print("\nMadres:")
         for madre, hijo in self.madres:
             print(f"{madre} es madre de {hijo}")
@@ -44,16 +70,21 @@ class BaseConocimiento:
         for h1, h2 in self.hermanos:
             print(f"{h1} y {h2} son hermanos")
 
+# -----------------------------------------------------
+# Uso del sistema de base de conocimiento
+# -----------------------------------------------------
 
-# Uso del sistema
+# Se crea una instancia del sistema
 bc = BaseConocimiento()
 
-# Hechos
-bc.agregar_padre('Juan', 'Maria')
-bc.agregar_padre('Juan', 'Pedro')
-bc.agregar_madre('Ana', 'Maria')
-bc.agregar_madre('Ana', 'Pedro')
+# Hechos introducidos manualmente
+bc.agregar_padre('Juan', 'Maria')    # Juan es padre de Maria
+bc.agregar_padre('Juan', 'Pedro')    # Juan es padre de Pedro
+bc.agregar_madre('Ana', 'Maria')     # Ana es madre de Maria
+bc.agregar_madre('Ana', 'Pedro')     # Ana es madre de Pedro
 
-# Inferencias
+# Deducción de relaciones adicionales (hermanos)
 bc.deducir_hermanos()
+
+# Mostrar todas las relaciones y deducciones
 bc.mostrar_hechos()

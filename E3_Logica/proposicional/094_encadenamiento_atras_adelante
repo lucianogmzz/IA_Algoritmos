@@ -1,56 +1,67 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa el encadenamiento hacia delante y hacia atrás.
+# -----------------------------------------------------------------
+# Implementación de encadenamiento hacia adelante y hacia atrás
+# -----------------------------------------------------------------
+# Este código implementa el concepto de encadenamiento hacia adelante 
+# y hacia atrás utilizando un motor de reglas (en este caso pyke) 
+# para inferir hechos a partir de una base de conocimiento.
 
-from pyke import knowledge_engine, bc_rule
+# --------------------------------------------------------------
+# Importación de bibliotecas necesarias
+# --------------------------------------------------------------
+from pyke import knowledge_engine, bc_rule  # Importa las funciones y clases necesarias del módulo pyke
 
+# --------------------------------------------------------------
 # Crear una instancia del motor de conocimiento
-engine = knowledge_engine.engine(__name__)
+# --------------------------------------------------------------
+engine = knowledge_engine.engine(__name__)  # Crea un motor de conocimiento asociado con el nombre del script actual
 
+# --------------------------------------------------------------
 # Definir la estructura de la base de conocimiento
-engine.reset()
-engine.activate('facts')
+# --------------------------------------------------------------
+engine.reset()  # Resetea el motor de conocimiento a su estado inicial, eliminando hechos previos
+engine.activate('facts')  # Activa la "capa" de hechos para comenzar a agregar hechos a la base de conocimiento
 
-# Definir hechos
-engine.add_fact('padre', ('Juan', 'Maria'))
-engine.add_fact('padre', ('Juan', 'Pedro'))
-engine.add_fact('madre', ('Ana', 'Maria'))
-engine.add_fact('madre', ('Ana', 'Pedro'))
+# --------------------------------------------------------------
+# Definir hechos sobre relaciones familiares
+# --------------------------------------------------------------
+# Hechos sobre los padres de María y Pedro
+engine.add_fact('padre', ('Juan', 'Maria'))  # Juan es padre de María
+engine.add_fact('padre', ('Juan', 'Pedro'))  # Juan es padre de Pedro
+# Hechos sobre las madres de María y Pedro
+engine.add_fact('madre', ('Ana', 'Maria'))  # Ana es madre de María
+engine.add_fact('madre', ('Ana', 'Pedro'))  # Ana es madre de Pedro
 
-# Definir reglas para encadenamiento hacia delante
-@bc_rule
-def es_hermano(engine, hermano1, hermano2):
-    engine.add_fact('hermano', (hermano1, hermano2))
+# --------------------------------------------------------------
+# Definir reglas para el encadenamiento hacia adelante
+# --------------------------------------------------------------
+# Definición de la primera regla para establecer la relación de hermano
+@bc_rule  # Define una regla que será utilizada por el motor de conocimiento
+def es_hermano(engine, hermano1, hermano2):  
+    engine.add_fact('hermano', (hermano1, hermano2))  # Si la regla se activa, agrega un hecho de que hermano1 es hermano de hermano2
 
-@bc_rule
+# Definición de la segunda regla para inferir la relación de hermanos
+@bc_rule  # Otra regla para inferir hermanos
 def es_hermano(engine, persona1, persona2):
-    engine.has_fact('padre', (padre, persona1))
-    engine.has_fact('padre', (padre, persona2))
-    engine.has_fact('madre', (madre, persona1))
-    engine.has_fact('madre', (madre, persona2))
+    # Comprobamos si persona1 y persona2 tienen el mismo padre
+    engine.has_fact('padre', (padre, persona1))  # Verifica si persona1 tiene un padre llamado 'padre'
+    engine.has_fact('padre', (padre, persona2))  # Verifica si persona2 tiene un padre llamado 'padre'
+    # Comprobamos si persona1 y persona2 tienen la misma madre
+    engine.has_fact('madre', (madre, persona1))  # Verifica si persona1 tiene una madre llamada 'madre'
+    engine.has_fact('madre', (madre, persona2))  # Verifica si persona2 tiene una madre llamada 'madre'
+    # Si las personas tienen el mismo padre y madre y no son la misma persona, son hermanos
     if persona1 != persona2:
-        engine.add_fact('hermano', (persona1, persona2))
+        engine.add_fact('hermano', (persona1, persona2))  # Agrega un hecho de que persona1 y persona2 son hermanos
 
-# Activar las reglas para encadenamiento hacia delante
-engine.activate('facts')
+# --------------------------------------------------------------
+# Activar las reglas para encadenamiento hacia adelante
+# --------------------------------------------------------------
+engine.activate('facts')  # Vuelve a activar las reglas para evaluar los hechos basados en las reglas definidas
 
-# Consultar la base de conocimiento
-print("Hechos en la base de conocimiento (encadenamiento hacia delante):")
-for fact in engine.facts:
-    print(fact)
-
-# Definir reglas para encadenamiento hacia atrás
-@bc_rule
-def es_hermano_backward(engine, persona1, persona2):
-    engine.has_fact('hermano', (persona1, persona2))
-    engine.has_fact('padre', (padre, persona1))
-    engine.has_fact('padre', (padre, persona2))
-    engine.has_fact('madre', (madre, persona1))
-    engine.has_fact('madre', (madre, persona2))
-    if persona1 != persona2:
-        engine.add_fact('hermano', (persona1, persona2))
-
-# Consultar la base de conocimiento con encadenamiento hacia atrás
-print("\nHechos en la base de conocimiento (encadenamiento hacia atrás):")
-for fact in engine.facts:
-    print(fact)
+# --------------------------------------------------------------
+# Consultar la base de conocimiento con encadenamiento hacia adelante
+# --------------------------------------------------------------
+print("Hechos en la base de conocimiento (encadenamiento hacia adelante):")  # Imprime un mensaje indicando que se verán los hechos
+# Itera sobre los hechos registrados en la base de conocimiento
+for fact in engine.facts

@@ -1,39 +1,63 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Implementa reglas de diagnóstico y causales con un motor de inferencia basado en Experta.
+# Este código implementa un sistema experto simple usando la biblioteca `experta`, que permite trabajar con motores de inferencia basados en reglas.
+# En este caso, se modela un sistema de diagnóstico médico que:
+# - Recibe síntomas de un paciente como hechos.
+# - Aplica reglas para diagnosticar enfermedades.
+# - Asocia causas a dichos diagnósticos.
+# El motor de inferencia aplica reglas condicionales basadas en la lógica de producción (IF-THEN) para generar nuevos hechos.
 
-from experta import *
+# -------------------------------------------------------------
+# Importación de librerías
 
-# Definición de hechos
+from experta import *  
+# `experta` es una biblioteca de Python para construir sistemas expertos.
+# Proporciona clases como `Fact` para representar hechos y `KnowledgeEngine` para definir motores de reglas.
+
+# -------------------------------------------------------------
+# Definición de clases de hechos personalizados
+
 class Sintoma(Fact):
     """Hecho que representa un síntoma del paciente"""
-    pass
+    pass  # No se añade lógica extra, se usa como estructura de datos
 
 class Diagnostico(Fact):
     """Hecho que representa un diagnóstico del paciente"""
-    pass
+    pass  # Se declara para estructurar los diagnósticos
 
 class Causa(Fact):
     """Hecho que representa una causa médica"""
-    pass
+    pass  # Estructura para definir causas médicas
 
-# Motor de reglas
+# -------------------------------------------------------------
+# Definición del motor de inferencia, que contiene las reglas
+
 class MotorDiagnostico(KnowledgeEngine):
-    
+    # Esta clase hereda de `KnowledgeEngine`, que permite definir reglas para inferencia lógica.
+
     @Rule(Sintoma(nombre='fiebre', paciente='paciente1'),
           Sintoma(nombre='dolor_de_cabeza', paciente='paciente1'))
+    # Esta regla se activa si el paciente1 presenta fiebre y dolor de cabeza
     def diagnosticar_gripe(self):
         print("📋 Diagnóstico: Gripe para paciente1")
+        # Se declara un nuevo hecho: el paciente1 tiene gripe
         self.declare(Diagnostico(nombre='gripe', paciente='paciente1'))
 
     @Rule(Diagnostico(nombre='gripe', paciente='paciente1'))
+    # Esta regla se activa si se ha diagnosticado gripe en el paciente1
     def causa_de_fiebre(self):
         print("🦠 Causa: Virus de gripe detectado en paciente1")
+        # Se declara un nuevo hecho que representa la causa del diagnóstico: virus de gripe
         self.declare(Causa(origen='virus_de_gripe', paciente='paciente1'))
 
-# Ejecutar el motor
-motor = MotorDiagnostico()
-motor.reset()
+# -------------------------------------------------------------
+# Ejecución del sistema experto
+
+motor = MotorDiagnostico()  # Se crea una instancia del motor de inferencia
+motor.reset()  # Se reinicia el motor, eliminando hechos previos
+
+# Se declaran dos síntomas como hechos de entrada
 motor.declare(Sintoma(nombre='fiebre', paciente='paciente1'))
 motor.declare(Sintoma(nombre='dolor_de_cabeza', paciente='paciente1'))
-motor.run()
+
+motor.run()  # Se ejecuta el motor para aplicar las reglas sobre los hechos disponibles

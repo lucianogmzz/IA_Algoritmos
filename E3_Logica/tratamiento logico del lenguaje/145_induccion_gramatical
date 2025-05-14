@@ -1,34 +1,33 @@
-# Luciano Alejandro Gómez Muñoz 22310214
-
-# Inducción gramatical simple utilizando NLTK
-
+# Importamos la librería NLTK, que proporciona herramientas para el procesamiento de lenguaje natural.
 import nltk
-from nltk import CFG
+from nltk import CFG  # Importamos la clase CFG que permite definir gramáticas libres de contexto.
 
-# Definimos un conjunto de oraciones ejemplo
+# Definimos un conjunto de oraciones ejemplo en español para analizarlas.
 oraciones = [
     "el gato come pescado",
     "el perro persigue al gato",
     "el gato duerme"
 ]
 
-# Tokenizamos las oraciones
+# Tokenizamos las oraciones, lo que significa dividir las oraciones en palabras individuales.
 tokenizadas = [nltk.word_tokenize(oracion) for oracion in oraciones]
 
-# Definimos una gramática inicial
+# Definimos una gramática inicial utilizando CFG (Context-Free Grammar). 
+# Esta gramática define las reglas para las oraciones en nuestro conjunto de ejemplo.
 gramatica = CFG.fromstring("""
-    S -> NP VP
-    NP -> Det N
-    VP -> V NP | V
-    Det -> 'el' | 'al'
-    N -> 'gato' | 'perro' | 'pescado'
-    V -> 'come' | 'persigue' | 'duerme'
+    S -> NP VP      # Una oración (S) se divide en un sujeto (NP) y un predicado (VP).
+    NP -> Det N     # Un sujeto (NP) es un determinante (Det) seguido de un sustantivo (N).
+    VP -> V NP | V  # Un predicado (VP) puede ser un verbo (V) seguido de un sujeto (NP), o solo un verbo (V).
+    Det -> 'el' | 'al'  # Los determinantes (Det) pueden ser 'el' o 'al'.
+    N -> 'gato' | 'perro' | 'pescado'  # Los sustantivos (N) son 'gato', 'perro' o 'pescado'.
+    V -> 'come' | 'persigue' | 'duerme'  # Los verbos (V) son 'come', 'persigue' o 'duerme'.
 """)
 
-# Creamos el analizador sintáctico
+# Creamos el analizador sintáctico utilizando la gramática definida.
+# El analizador analizará las oraciones y generará los árboles de análisis sintáctico.
 analizador = nltk.ChartParser(gramatica)
 
-# Analizamos las oraciones
+# Analizamos cada oración tokenizada y generamos su árbol de análisis sintáctico.
 for oracion in tokenizadas:
-    for arbol in analizador.parse(oracion):
-        print(arbol)
+    for arbol in analizador.parse(oracion):  # Genera el árbol de análisis para cada oración.
+        print(arbol)  # Imprime el árbol generado, mostrando la estructura gramatical de la oración.

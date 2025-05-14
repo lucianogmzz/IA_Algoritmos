@@ -1,69 +1,96 @@
-# Luciano Alejandro Gómez Muñoz 22310214
-
-# Implementación simplificada del algoritmo ID3 en Python
+# Implementación simplificada del algoritmo ID3 para construir un árbol de decisión
+# El algoritmo ID3 se utiliza para construir árboles de decisión utilizando la ganancia de información
+# Las librerías utilizadas son math (para operaciones matemáticas como el cálculo de logaritmos) 
+# y Counter (para contar las ocurrencias de las clases en el conjunto de datos)
 
 import math
 from collections import Counter
 
 # Función para calcular la entropía de un conjunto de datos
+# La entropía mide la incertidumbre o el desorden de un conjunto de datos. 
+# Cuanto mayor es la entropía, más impredecible es el conjunto en términos de las clases.
 def calcular_entropia(datos):
-    total = len(datos)
-    etiquetas = [fila[-1] for fila in datos]
-    conteo = Counter(etiquetas)
-    entropia = 0.0
+    total = len(datos)  # Total de ejemplos en el conjunto de datos
+    etiquetas = [fila[-1] for fila in datos]  # Última columna es la clase (resultado)
+    conteo = Counter(etiquetas)  # Contamos cuántas veces aparece cada clase
+    entropia = 0.0  # Inicializamos la entropía
+
+    # Para cada clase calculamos su probabilidad y sumamos la contribución a la entropía
     for etiqueta in conteo:
-        probabilidad = conteo[etiqueta] / total
-        entropia -= probabilidad * math.log2(probabilidad)
+        probabilidad = conteo[etiqueta] / total  # Probabilidad de la clase
+        entropia -= probabilidad * math.log2(probabilidad)  # Fórmula de entropía
     return entropia
 
 # Función para dividir el conjunto de datos según un atributo y su valor
+# Divide los datos en subconjuntos según el valor del atributo seleccionado.
 def dividir_conjunto(datos, indice_atributo, valor):
-    subconjunto = []
+    subconjunto = []  # Inicializamos el subconjunto de datos
     for fila in datos:
+        # Si el valor del atributo es igual al valor de la división, se agrega al subconjunto
         if fila[indice_atributo] == valor:
-            nueva_fila = fila[:indice_atributo] + fila[indice_atributo+1:]
+            nueva_fila = fila[:indice_atributo] + fila[indice_atributo+1:]  # Excluimos el atributo de la fila
             subconjunto.append(nueva_fila)
     return subconjunto
 
 # Función para encontrar el mejor atributo para dividir los datos
+# Elige el atributo que más reduce la incertidumbre (mayor ganancia de información)
 def mejor_atributo_para_dividir(datos):
-    num_atributos = len(datos[0]) - 1
-    entropia_base = calcular_entropia(datos)
-    mejor_ganancia = 0.0
-    mejor_indice = -1
+    num_atributos = len(datos[0]) - 1  # Número de atributos (sin contar la clase)
+    entropia_base = calcular_entropia(datos)  # Entropía antes de dividir los datos
+    mejor_ganancia = 0.0  # Inicializamos la mejor ganancia
+    mejor_indice = -1  # Índice del mejor atributo
+
+    # Para cada atributo, calculamos su ganancia de información
     for i in range(num_atributos):
-        valores = set([fila[i] for fila in datos])
-        nueva_entropia = 0.0
+        valores = set([fila[i] for fila in datos])  # Valores únicos del atributo
+        nueva_entropia = 0.0  # Inicializamos la nueva entropía
+
+        # Calculamos la entropía para cada valor del atributo
         for valor in valores:
-            subconjunto = dividir_conjunto(datos, i, valor)
-            probabilidad = len(subconjunto) / len(datos)
-            nueva_entropia += probabilidad * calcular_entropia(subconjunto)
+            subconjunto = dividir_conjunto(datos, i, valor)  # Dividimos los datos por el valor del atributo
+            probabilidad = len(subconjunto) / len(datos)  # Probabilidad del valor
+            nueva_entropia += probabilidad * calcular_entropia(subconjunto)  # Entropía ponderada
+
+        # Ganancia de información: reducción de la entropía
         ganancia = entropia_base - nueva_entropia
-        if ganancia > mejor_ganancia:
+        if ganancia > mejor_ganancia:  # Si la ganancia es mejor, actualizamos el mejor índice
             mejor_ganancia = ganancia
             mejor_indice = i
     return mejor_indice
 
 # Función principal para construir el árbol de decisión
+# Utiliza recursión para construir el árbol basado en la ganancia de información
 def construir_arbol(datos, etiquetas):
-    etiquetas_clase = [fila[-1] for fila in datos]
+    etiquetas_clase = [fila[-1] for fila in datos]  # Extraemos las clases del conjunto de datos
+
+    # Si todos los ejemplos tienen la misma clase, retornamos esa clase
     if etiquetas_clase.count(etiquetas_clase[0]) == len(etiquetas_clase):
         return etiquetas_clase[0]
+
+    # Si no quedan más atributos, retornamos la clase más común
     if len(datos[0]) == 1:
         return Counter(etiquetas_clase).most_common(1)[0][0]
+
+    # Encontramos el mejor atributo para dividir los datos
     mejor_indice = mejor_atributo_para_dividir(datos)
     mejor_etiqueta = etiquetas[mejor_indice]
+    
+    # Creamos un nodo en el árbol para el atributo seleccionado
     arbol = {mejor_etiqueta: {}}
+    
+    # Eliminamos el atributo seleccionado de las etiquetas restantes
     del etiquetas[mejor_indice]
-    valores = set([fila[mejor_indice] for fila in datos])
+
+    # Para cada valor del atributo, dividimos los datos y llamamos recursivamente para construir el árbol
+    valores = set([fila[mejor_indice] for fila in datos])  # Valores únicos del atributo
     for valor in valores:
-        subconjunto = dividir_conjunto(datos, mejor_indice, valor)
-        sub_etiquetas = etiquetas[:]
-        arbol[mejor_etiqueta][valor] = construir_arbol(subconjunto, sub_etiquetas)
+        subconjunto = dividir_conjunto(datos, mejor_indice, valor)  # Subconjunto de datos para el valor actual
+        sub_etiquetas = etiquetas[:]  # Copiamos las etiquetas restantes
+        arbol[mejor_etiqueta][valor] = construir_arbol(subconjunto, sub_etiquetas)  # Recursión
     return arbol
 
 # Conjunto de datos de ejemplo
-# Cada fila representa un ejemplo con atributos y la clase al final
+# Cada fila tiene atributos y la última columna es la clase a predecir
 datos = [
     ['Soleado', 'Caliente', 'Alta', 'Falsa', 'No'],
     ['Soleado', 'Caliente', 'Alta', 'Verdadera', 'No'],
@@ -84,7 +111,9 @@ datos = [
 # Etiquetas de los atributos
 etiquetas = ['Clima', 'Temperatura', 'Humedad', 'Viento']
 
-# Construir el árbol de decisión
+# Construir el árbol de decisión con los datos proporcionados
 arbol = construir_arbol(datos, etiquetas)
+
+# Imprimir el árbol de decisión
 print("Árbol de decisión construido:")
 print(arbol)

@@ -1,28 +1,41 @@
-# Luciano Alejandro Gómez Muñoz 22310214
-
-# Red semántica simple
+# Resumen:
+# El código define una clase Nodo para representar conceptos en una red semántica.
+# Los nodos pueden tener relaciones con otros nodos, y estas relaciones se representan por pares tipo-nodo.
+# La red semántica construida en este ejemplo es una jerarquía que vincula "Perro", "Mamífero" y "Animal".
 
 class Nodo:
     def __init__(self, nombre):
-        self.nombre = nombre
-        self.relaciones = {}
+        """
+        Constructor de la clase Nodo.
+        :param nombre: El nombre del nodo, que representa un concepto o entidad.
+        """
+        self.nombre = nombre  # El nombre del nodo (concepto)
+        self.relaciones = {}  # Diccionario para almacenar las relaciones con otros nodos.
 
     def agregar_relacion(self, tipo, nodo_objetivo):
-        self.relaciones[tipo] = nodo_objetivo
+        """
+        Método para agregar una relación entre este nodo y otro nodo.
+        :param tipo: Tipo de relación (por ejemplo, "es_un").
+        :param nodo_objetivo: Nodo con el cual se establece la relación.
+        """
+        self.relaciones[tipo] = nodo_objetivo  # Agrega una relación con el nodo objetivo.
 
     def mostrar_relaciones(self):
-        for tipo, nodo in self.relaciones.items():
-            print(f"{self.nombre} --{tipo}--> {nodo.nombre}")
+        """
+        Método para mostrar todas las relaciones del nodo actual con otros nodos.
+        """
+        for tipo, nodo in self.relaciones.items():  # Itera sobre todas las relaciones.
+            print(f"{self.nombre} --{tipo}--> {nodo.nombre}")  # Muestra la relación de tipo y el nodo relacionado.
 
 # Crear nodos
-animal = Nodo("Animal")
-mamifero = Nodo("Mamífero")
-perro = Nodo("Perro")
+animal = Nodo("Animal")  # Nodo que representa el concepto "Animal".
+mamifero = Nodo("Mamífero")  # Nodo que representa el concepto "Mamífero".
+perro = Nodo("Perro")  # Nodo que representa el concepto "Perro".
 
-# Establecer relaciones
-perro.agregar_relacion("es_un", mamifero)
-mamifero.agregar_relacion("es_un", animal)
+# Establecer relaciones entre los nodos
+perro.agregar_relacion("es_un", mamifero)  # "Perro" es un "Mamífero".
+mamifero.agregar_relacion("es_un", animal)  # "Mamífero" es un "Animal".
 
-# Mostrar relaciones
-perro.mostrar_relaciones()
-mamifero.mostrar_relaciones()
+# Mostrar las relaciones de cada nodo
+perro.mostrar_relaciones()  # Muestra las relaciones del nodo "Perro".
+mamifero.mostrar_relaciones()  # Muestra las relaciones del nodo "Mamífero".

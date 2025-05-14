@@ -1,19 +1,47 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-from sympy import symbols, And, Or, Not, to_cnf
+# -----------------------------------------------------------------
+# Conversión de expresiones lógicas a forma normal conjuntiva (FNC)
+# -----------------------------------------------------------------
+# Este código convierte expresiones lógicas a su forma normal conjuntiva
+# (FNC), que es una forma estándar usada para simplificar y resolver
+# problemas lógicos en computación y lógica simbólica.
 
-# Definir proposiciones simbólicas
-P, Q, R = symbols('P Q R')
+# --------------------------------------------------------------
+# Importación de bibliotecas necesarias
+# --------------------------------------------------------------
+from sympy import symbols, And, Or, Not, to_cnf  # Importa las funciones necesarias de sympy para manipular expresiones lógicas
 
-# Definir expresiones lógicas
-expr1 = And(P, Or(Q, R))
-expr2 = Or(Not(P), R)
+# --------------------------------------------------------------
+# Definición de las proposiciones simbólicas
+# --------------------------------------------------------------
+P, Q, R = symbols('P Q R')  # Define tres proposiciones lógicas: P, Q y R
 
-# Convertir a forma normal conjuntiva (FNC)
-cnf_expr1 = to_cnf(expr1, simplify=True)
-cnf_expr2 = to_cnf(expr2, simplify=True)
+# --------------------------------------------------------------
+# Definición de las expresiones lógicas
+# --------------------------------------------------------------
+expr1 = And(P, Or(Q, R))   # Expresión lógica 'P ∧ (Q ∨ R)' (P y (Q o R))
+expr2 = Or(Not(P), R)      # Expresión lógica '¬P ∨ R' (no P o R)
 
-print(f"FNC de expr1: {cnf_expr1}")
-print(f"FNC de expr2: {cnf_expr2}")
+# --------------------------------------------------------------
+# Conversión de las expresiones a Forma Normal Conjuntiva (FNC)
+# --------------------------------------------------------------
+# La forma normal conjuntiva (FNC) es una conjunción de cláusulas,
+# donde cada cláusula es una disyunción de literales.
+cnf_expr1 = to_cnf(expr1, simplify=True)  # Convierte 'expr1' a FNC, simplificando la expresión
+cnf_expr2 = to_cnf(expr2, simplify=True)  # Convierte 'expr2' a FNC, simplificando la expresión
 
-# Puedes luego analizar manualmente si hay contradicción o resolverlo externamente
+# --------------------------------------------------------------
+# Imprimir las expresiones convertidas a FNC
+# --------------------------------------------------------------
+print(f"FNC de expr1: {cnf_expr1}")  # Imprime la FNC de la expresión 'expr1'
+print(f"FNC de expr2: {cnf_expr2}")  # Imprime la FNC de la expresión 'expr2'
+
+# --------------------------------------------------------------
+# Comentario adicional:
+# --------------------------------------------------------------
+# Las expresiones convertidas a FNC son más fáciles de analizar, 
+# resolver y usar en algoritmos de lógica computacional como SAT
+# (Satisfacibilidad) o en la resolución de sistemas lógicos.
+# Se pueden verificar manualmente si hay contradicción o realizar
+# otros análisis lógicos.

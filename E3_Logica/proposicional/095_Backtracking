@@ -1,48 +1,69 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa el algoritmo de backtracking para resolver un problema simple.
+# -----------------------------------------------------------------
+# Algoritmo de backtracking para resolver el problema de las N reinas
+# -----------------------------------------------------------------
 
+# --------------------------------------------------------------
+# Función que verifica si es seguro colocar una reina en la 
+# posición (row, col) del tablero
+# --------------------------------------------------------------
 def is_safe(board, row, col, n):
     # Verificar si hay una reina en la misma columna
-    for i in range(row):
-        if board[i][col] == 1:
+    for i in range(row):  # Revisa todas las filas anteriores
+        if board[i][col] == 1:  # Si hay una reina en la columna, no es seguro
             return False
 
     # Verificar si hay una reina en la diagonal superior izquierda
-    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
-        if board[i][j] == 1:
+    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):  # Revisa la diagonal superior izquierda
+        if board[i][j] == 1:  # Si hay una reina en la diagonal, no es seguro
             return False
 
     # Verificar si hay una reina en la diagonal superior derecha
-    for i, j in zip(range(row, -1, -1), range(col, n)):
-        if board[i][j] == 1:
+    for i, j in zip(range(row, -1, -1), range(col, n)):  # Revisa la diagonal superior derecha
+        if board[i][j] == 1:  # Si hay una reina en la diagonal, no es seguro
             return False
 
-    return True
+    return True  # Si no hay conflictos, se puede colocar la reina
 
+# --------------------------------------------------------------
+# Función recursiva para resolver el problema de las N reinas
+# --------------------------------------------------------------
 def solve_n_queens(board, row, n):
+    # Si hemos colocado todas las reinas, hemos encontrado una solución
     if row >= n:
-        return True
+        return True  # La solución ha sido encontrada
 
+    # Intentar colocar una reina en cada columna de la fila actual
     for col in range(n):
+        # Si es seguro colocar la reina en la posición (row, col)
         if is_safe(board, row, col, n):
-            board[row][col] = 1
-            if solve_n_queens(board, row + 1, n):
+            board[row][col] = 1  # Coloca la reina en el tablero
+            # Recursivamente intenta colocar la reina en la siguiente fila
+            if solve_n_queens(board, row + 1, n):  # Si la siguiente fila se resuelve, se ha encontrado una solución
                 return True
-            board[row][col] = 0
+            board[row][col] = 0  # Si no se pudo resolver, deshace el movimiento y prueba con otra columna
 
-    return False
+    return False  # Si no se pudo colocar la reina en ninguna columna, retorna False
 
+# --------------------------------------------------------------
+# Función para imprimir el tablero de N reinas
+# --------------------------------------------------------------
 def print_board(board):
+    # Recorre cada fila del tablero
     for row in board:
+        # Imprime "Q" para la reina (representada por 1) y "." para las casillas vacías (representadas por 0)
         print(" ".join("Q" if x == 1 else "." for x in row))
 
+# --------------------------------------------------------------
 # Resolver el problema de las N reinas
-n = 4
-board = [[0] * n for _ in range(n)]
+# --------------------------------------------------------------
+n = 4  # Tamaño del tablero y número de reinas (puedes cambiar este valor)
+board = [[0] * n for _ in range(n)]  # Inicializa un tablero de N x N con todas las casillas vacías (0)
 
+# Intentar resolver el problema comenzando desde la fila 0
 if solve_n_queens(board, 0, n):
-    print("Solución encontrada:")
-    print_board(board)
+    print("Solución encontrada:")  # Si se encuentra una solución, se imprime
+    print_board(board)  # Imprime el tablero con la solución
 else:
-    print("No se encontró solución.")
+    print("No se encontró solución.")  # Si no se encuentra una solución, se informa

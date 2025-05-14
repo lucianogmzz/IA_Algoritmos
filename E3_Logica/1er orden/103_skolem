@@ -1,30 +1,52 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
+# Importamos la librería pydatalog, la cual permite trabajar con lógica de programación declarativa
+# Datalog es un subconjunto de Prolog, útil para trabajar con reglas lógicas y hechos.
 from pydatalog import pyDatalog
 
-pyDatalog.clear()  # Limpia cualquier definición anterior
+# Limpiamos cualquier definición anterior que haya sido creada en este entorno.
+# Esto es útil cuando se ejecuta varias veces el mismo script o se hacen cambios en las reglas.
+pyDatalog.clear()
+
+# Creamos términos lógicos que usaremos en las reglas y hechos.
+# Estos términos representan variables o funciones en la lógica de Datalog.
+# X, Y, Z son variables; P, Q son predicados (relaciones); f y skolem_func son funciones.
 pyDatalog.create_terms('X, Y, Z, P, Q, f, skolem_func')
 
-# Hechos (simulan proposiciones)
+# A continuación, agregamos hechos al sistema:
+# Un hecho es una proposición que se considera verdadera.
+# En este caso, P('a', 'b') se considera verdadero (es un hecho base).
 +P('a', 'b')     # P(a, b) es verdadero
+
+# También declaramos que Q('b') es un hecho verdadero.
 +Q('b')          # Q(b) es verdadero
 
-# Skolem function f (simulada como una función determinista)
+# Definimos una función determinista llamada skolem_func.
+# Esta función simula una función de Skolem, que es comúnmente usada
+# en lógica para eliminar cuantificadores existenciales.
+# En este caso, simplemente devuelve un string basado en el valor de entrada.
 def skolem_func(y):
-    return 'sk_' + str(y)
+    return 'sk_' + str(y)  # Retorna una cadena con prefijo 'sk_' seguido del valor de y
 
-# Podemos usar la función skolem en una regla
-# Ejemplo de regla usando skolem_func: si Q(Y) entonces P(f(Y), Y)
+# Creamos un término lógico adicional que usaremos para representar la función de Skolem.
 pyDatalog.create_terms('SkY')
 
-# Regla lógica: si Q(Y) es verdadera, entonces P(f(Y), Y) debe ser verdadera
-# f(Y) se simula con SkY == skolem_func(Y)
+# Definimos una regla lógica: si Q(Y) es verdadero, entonces P(f(Y), Y) también debe ser verdadero.
+# En lógica formal, esto se leería como: Q(Y) → P(f(Y), Y)
+# Aquí SkY es una función lambda que aplica skolem_func a Y.
+# Esto simula el uso de una función de Skolem dentro de una regla de deducción.
 SkY = lambda Y: skolem_func(Y)
+
+# Agregamos la regla al sistema de lógica:
+# Si Q(Y) es verdadero, entonces también debe ser verdadero que P(SkY(Y), Y)
+# Es decir, estamos derivando un nuevo hecho usando una regla basada en los hechos existentes.
 P(SkY(Y), Y) <= Q(Y)
 
-# Consultamos los hechos generados
+# Imprimimos los hechos derivados usando la consulta lógica sobre P.
+# Esto incluye los hechos originales + los nuevos hechos derivados a través de la regla definida.
 print("\nHechos derivados:")
-print(P(X, Y))
+print(P(X, Y))  # Muestra todas las combinaciones de X, Y para las cuales P(X, Y) es verdadero.
 
+# Imprimimos los hechos de Q, que son los hechos base (no derivados por reglas).
 print("\nHechos originales de Q:")
-print(Q(Y))
+print(Q(Y))  # Muestra todos los valores de Y para los que Q(Y) es verdadero.

@@ -1,23 +1,52 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
+# -----------------------------------------------------------------
 # Inferencia lógica proposicional simple (sin entails)
+# -----------------------------------------------------------------
+# Este código implementa un proceso de inferencia lógica proposicional,
+# en el que se verifica si una proposición (objetivo) es deducible de
+# un conjunto de proposiciones (base de conocimiento) usando lógica
+# proposicional y métodos de satisfacibilidad.
 
-from sympy import symbols, Implies, And, Not
-from sympy.logic.inference import satisfiable
+# --------------------------------------------------------------
+# Importación de bibliotecas necesarias para inferencia lógica
+# --------------------------------------------------------------
+from sympy import symbols, Implies, And, Not         # Importa las funciones necesarias de sympy
+from sympy.logic.inference import satisfiable      # Importa el método para verificar la satisfacibilidad
 
-# Definir proposiciones
-P, Q, R = symbols('P Q R')
+# --------------------------------------------------------------
+# Definición de las proposiciones utilizadas en la lógica
+# --------------------------------------------------------------
+P, Q, R = symbols('P Q R')  # Definimos tres proposiciones: P, Q y R
 
-# Base de conocimiento: P ∧ (P ⇒ Q) ∧ (Q ⇒ R)
+# --------------------------------------------------------------
+# Definición de la base de conocimiento (KB) 
+# --------------------------------------------------------------
+# La base de conocimiento está compuesta por tres proposiciones:
+# 1. P (es verdadera)
+# 2. (P ⇒ Q) (Si P es verdadera, entonces Q es verdadera)
+# 3. (Q ⇒ R) (Si Q es verdadera, entonces R es verdadera)
 knowledge_base = And(P, Implies(P, Q), Implies(Q, R))
 
-# Objetivo: R
-goal = R
+# --------------------------------------------------------------
+# Definición del objetivo (la proposición que queremos deducir)
+# --------------------------------------------------------------
+goal = R  # El objetivo es probar si R es verdadero a partir de la base de conocimiento
 
-# Para probar que KB ⊨ R, verificamos si KB ∧ ¬R es insatisfacible
-formula = And(knowledge_base, Not(goal))
+# --------------------------------------------------------------
+# Verificación de la satisfacibilidad de KB ∧ ¬R
+# --------------------------------------------------------------
+# La inferencia se realiza probando si la fórmula KB ∧ ¬R es satisfacible.
+# Si KB ∧ ¬R es insatisfacible (es decir, no puede ser verdadera), 
+# entonces R debe ser verdadera en cualquier caso, lo que implica que 
+# R se deduce de la base de conocimiento.
 
-# Si la fórmula es insatisfacible, entonces R se deduce de KB
-if not satisfiable(formula):
+formula = And(knowledge_base, Not(goal))  # Formamos la fórmula KB ∧ ¬R
+
+# --------------------------------------------------------------
+# Verificación de satisfacibilidad usando sympy
+# --------------------------------------------------------------
+# Si la fórmula es insatisfacible, entonces R se puede inferir de KB
+if not satisfiable(formula):  # Verificamos si la fórmula es insatisfacible
     print(f"La proposición objetivo '{goal}' se puede inferir del conjunto de proposiciones.")
 else:
     print(f"La proposición objetivo '{goal}' NO se puede inferir del conjunto de proposiciones.")

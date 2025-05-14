@@ -1,21 +1,48 @@
 # Luciano Alejandro Gómez Muñoz 22310214
 
+# ------------------------------------------------------
 # Vigilancia de ejecución y replanificación
+# ------------------------------------------------------
+# Este código simula un sistema de planificación que supervisa la ejecución de un plan
+# y es capaz de detectar fallos para generar un nuevo plan (replanificación).
+#
+# Esta técnica es común en sistemas robóticos o agentes autónomos que deben adaptarse
+# dinámicamente a entornos donde no todo es predecible.
+#
+# El plan original consiste en una secuencia de acciones, y si una falla ocurre (por ejemplo,
+# un obstáculo impide "girar a la derecha"), el sistema replantea el curso de acción.
 
-# Plan inicial
+# -------------------------------
+# Definición del plan inicial
+# -------------------------------
+
+# El plan es una lista ordenada de acciones que el agente debe ejecutar
 plan = ['encender_motor', 'avanzar', 'girar_derecha', 'avanzar']
 
-# Simulación de ejecución
-for accion in plan:
-    print(f"Ejecutando acción: {accion}")
-    if accion == 'girar_derecha':
-        # Simular un fallo en la acción
-        print("Fallo detectado en la acción: girar_derecha")
-        print("Replanificando...")
-        # Nuevo plan adaptado
-        plan = ['retroceder', 'girar_izquierda', 'avanzar']
-        break
+# ---------------------------------------------
+# Simulación de la ejecución del plan original
+# ---------------------------------------------
 
-# Continuar con el nuevo plan
+# Recorremos la lista de acciones del plan paso por paso
 for accion in plan:
-    print(f"Ejecutando acción: {accion}")
+    print(f"Ejecutando acción: {accion}")  # Mostramos qué acción se está ejecutando actualmente
+
+    if accion == 'girar_derecha':
+        # Simulamos que ocurre un fallo en esta acción específica
+        print("Fallo detectado en la acción: girar_derecha")
+
+        # Al detectar un fallo, el sistema decide que necesita replanificar
+        print("Replanificando...")
+
+        # Se genera un nuevo plan adaptado a la situación (por ejemplo, evitar la curva a la derecha)
+        plan = ['retroceder', 'girar_izquierda', 'avanzar']
+
+        break  # Terminamos la ejecución del plan original para comenzar con el nuevo plan
+
+# ---------------------------------------------
+# Ejecución del nuevo plan (post-fallo)
+# ---------------------------------------------
+
+# Continuamos la ejecución con el nuevo plan generado después del fallo
+for accion in plan:
+    print(f"Ejecutando acción: {accion}")  # Imprimimos cada acción que se está ejecutando del nuevo plan

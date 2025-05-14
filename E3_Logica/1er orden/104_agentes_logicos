@@ -1,29 +1,53 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-from experta import *
+# Este código implementa un sistema experto de diagnóstico médico básico utilizando la biblioteca `experta`.
+# El sistema infiere si un paciente tiene gripe y recomienda un tratamiento basado en los síntomas dados.
+
+# --------------------------------------------------------------
+# Importación de la biblioteca experta
+
+from experta import *  # Se importa toda la biblioteca `experta`, que proporciona herramientas para crear sistemas expertos en Python.
+
+# --------------------------------------------------------------
+# Definición de la clase Paciente que representa los hechos sobre los síntomas
 
 class Paciente(Fact):
     """Hechos sobre los síntomas del paciente"""
-    pass
+    pass  # Esta clase sirve solo para estructurar los hechos relacionados con el paciente, no contiene lógica adicional.
+
+# --------------------------------------------------------------
+# Definición de la clase DiagnosticoAgente que hereda de KnowledgeEngine
 
 class DiagnosticoAgente(KnowledgeEngine):
-    @Rule(Paciente(sintoma='fiebre'),
-          Paciente(sintoma='dolor_de_cabeza'))
+    """Agente experto que realiza un diagnóstico basado en reglas"""
+
+    @Rule(Paciente(sintoma='fiebre'),           # Regla que se activa si el paciente tiene fiebre
+          Paciente(sintoma='dolor_de_cabeza'))   # Y si también tiene dolor de cabeza
     def diagnosticar_gripe(self):
-        print("Diagnóstico: Gripe")
-        self.declare(Fact(diagnostico='gripe'))
+        # Si se cumplen ambas condiciones, el motor infiere que el paciente tiene gripe.
+        print("Diagnóstico: Gripe")  # Se imprime el diagnóstico
+        self.declare(Fact(diagnostico='gripe'))  # Se declara un nuevo hecho `Diagnóstico` con el valor 'gripe'
 
-    @Rule(Fact(diagnostico='gripe'))
+    @Rule(Fact(diagnostico='gripe'))  # Esta regla se activa cuando se ha declarado un diagnóstico de gripe
     def recomendar_tratamiento(self):
-        print("Recomendación: Reposo y buena hidratación.")
+        # Si el diagnóstico es gripe, se recomienda un tratamiento.
+        print("Recomendación: Reposo y buena hidratación.")  # Se imprime la recomendación de tratamiento
 
-# Crear instancia del agente
+# --------------------------------------------------------------
+# Crear una instancia del motor de inferencia
+
 engine = DiagnosticoAgente()
 
-# Insertar hechos
-engine.reset()
-engine.declare(Paciente(sintoma='fiebre'))
-engine.declare(Paciente(sintoma='dolor_de_cabeza'))
+# --------------------------------------------------------------
+# Insertar hechos sobre el paciente
 
-# Ejecutar reglas
-engine.run()
+engine.reset()  # Reinicia el motor y limpia los hechos anteriores.
+
+# Declarar que el paciente tiene fiebre y dolor de cabeza
+engine.declare(Paciente(sintoma='fiebre'))  
+engine.declare(Paciente(sintoma='dolor_de_cabeza'))  
+
+# --------------------------------------------------------------
+# Ejecutar las reglas del motor para realizar inferencias
+
+engine.run()  # Ejecuta el motor de inferencia, evaluando las reglas y generando nuevos hechos basados en los hechos actuales.

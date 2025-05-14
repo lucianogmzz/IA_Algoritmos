@@ -1,31 +1,47 @@
 # Luciano Alejandro Gómez Muñoz 22310214
 
-# Representación de un espacio de estados simple
+# Este código representa un espacio de estados simple y realiza búsqueda en anchura
+# para encontrar un camino entre un estado inicial y uno objetivo en un grafo dirigido.
 
-from collections import deque
+from collections import deque  # Se importa deque para implementar una cola eficiente (FIFO)
 
-# Definición del grafo de estados
+# --------------------------------------------------------------
+# Definición del grafo que representa el espacio de estados
+
 grafo = {
-    'A': ['B', 'C'],
-    'B': ['D'],
-    'C': ['D'],
-    'D': ['E'],
-    'E': []
+    'A': ['B', 'C'],  # Desde A se puede ir a B y C
+    'B': ['D'],       # Desde B se puede ir a D
+    'C': ['D'],       # Desde C también se puede ir a D
+    'D': ['E'],       # Desde D se puede ir a E
+    'E': []           # E es un nodo terminal (no tiene vecinos)
 }
 
-def buscar_camino(estado_inicial, estado_objetivo, grafo):
-    # Búsqueda en anchura
-    frontera = deque()
-    frontera.append((estado_inicial, [estado_inicial]))
-    while frontera:
-        estado_actual, camino = frontera.popleft()
-        if estado_actual == estado_objetivo:
-            return camino
-        for vecino in grafo[estado_actual]:
-            if vecino not in camino:
-                frontera.append((vecino, camino + [vecino]))
-    return None
+# --------------------------------------------------------------
+# Función que implementa búsqueda en anchura
 
-# Ejecución de la búsqueda
+def buscar_camino(estado_inicial, estado_objetivo, grafo):
+    """
+    Realiza una búsqueda en anchura en el grafo para encontrar un camino
+    desde el estado_inicial hasta el estado_objetivo.
+    """
+    frontera = deque()  # Cola para explorar los nodos
+    frontera.append((estado_inicial, [estado_inicial]))  # Inicializa con el estado inicial y su camino
+
+    while frontera:
+        estado_actual, camino = frontera.popleft()  # Extrae el primer nodo de la cola
+
+        if estado_actual == estado_objetivo:  # Si se alcanzó el objetivo
+            return camino  # Devuelve el camino encontrado
+
+        # Explorar los vecinos del estado actual
+        for vecino in grafo[estado_actual]:
+            if vecino not in camino:  # Evitar ciclos
+                frontera.append((vecino, camino + [vecino]))  # Añade el nuevo camino a la frontera
+
+    return None  # Si no se encuentra camino
+
+# --------------------------------------------------------------
+# Ejecutar búsqueda desde el nodo 'A' hasta el nodo 'E'
+
 camino = buscar_camino('A', 'E', grafo)
 print("Camino encontrado:", camino)

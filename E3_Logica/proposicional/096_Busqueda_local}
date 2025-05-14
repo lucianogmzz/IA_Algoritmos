@@ -1,47 +1,73 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa un algoritmo de búsqueda local simple para resolver un problema de optimización.
+# -----------------------------------------------------------------
+# Algoritmo de búsqueda local para resolver un problema de optimización
+# -----------------------------------------------------------------
 
 import random
 
-# Definir una función objetivo simple (por ejemplo, minimizar la suma de los cuadrados de los elementos)
+# --------------------------------------------------------------
+# Función objetivo simple: Minimizar la suma de los cuadrados de los elementos
+# Esta es una función comúnmente utilizada en algoritmos de optimización,
+# donde el objetivo es minimizar el valor de la función.
+# --------------------------------------------------------------
 def objective_function(solution):
+    # Suma de los cuadrados de los elementos de la solución
     return sum(x**2 for x in solution)
 
-# Definir una función para generar una solución inicial aleatoria
+# --------------------------------------------------------------
+# Función para generar una solución inicial aleatoria
+# La solución es un vector de números aleatorios entre -10 y 10.
+# --------------------------------------------------------------
 def generate_initial_solution(size):
+    # Genera una lista de tamaño 'size' con números aleatorios entre -10 y 10
     return [random.uniform(-10, 10) for _ in range(size)]
 
-# Definir una función para generar el vecindario de una solución
+# --------------------------------------------------------------
+# Función para generar el vecindario de una solución
+# El vecindario se genera realizando pequeñas perturbaciones en los elementos de la solución
+# --------------------------------------------------------------
 def get_neighbors(solution):
     neighbors = []
     for i in range(len(solution)):
+        # Genera una copia de la solución y agrega una pequeña perturbación
         neighbor = solution.copy()
-        neighbor[i] += random.uniform(-1, 1)  # Pequeña perturbación
-        neighbors.append(neighbor)
+        neighbor[i] += random.uniform(-1, 1)  # Pequeña perturbación aleatoria
+        neighbors.append(neighbor)  # Añade la solución perturbada al vecindario
     return neighbors
 
-# Definir el algoritmo de búsqueda local
+# --------------------------------------------------------------
+# Algoritmo de búsqueda local
+# El algoritmo comienza con una solución inicial y busca mejorarla iterativamente
+# probando soluciones vecinas y moviéndose a la mejor vecina si mejora el valor de la función objetivo.
+# --------------------------------------------------------------
 def local_search(initial_solution, max_iterations):
-    current_solution = initial_solution
-    current_value = objective_function(current_solution)
+    current_solution = initial_solution  # Comienza con la solución inicial
+    current_value = objective_function(current_solution)  # Calcula el valor de la función objetivo para la solución actual
 
-    for _ in range(max_iterations):
-        neighbors = get_neighbors(current_solution)
-        best_neighbor = min(neighbors, key=objective_function)
-        best_neighbor_value = objective_function(best_neighbor)
+    for _ in range(max_iterations):  # Realiza un máximo de 'max_iterations' iteraciones
+        neighbors = get_neighbors(current_solution)  # Obtiene los vecinos de la solución actual
+        best_neighbor = min(neighbors, key=objective_function)  # Encuentra el vecino con el mejor valor de la función objetivo
+        best_neighbor_value = objective_function(best_neighbor)  # Calcula el valor de la función objetivo para el mejor vecino
 
+        # Si la mejor vecina tiene un valor mejor que la solución actual, la actualizamos
         if best_neighbor_value < current_value:
             current_solution = best_neighbor
             current_value = best_neighbor_value
 
-    return current_solution, current_value
+    return current_solution, current_value  # Devuelve la mejor solución encontrada y su valor
 
-# Ejemplo de uso
-solution_size = 5
-initial_solution = generate_initial_solution(solution_size)
-max_iterations = 1000
+# --------------------------------------------------------------
+# Ejemplo de uso del algoritmo de búsqueda local
+# --------------------------------------------------------------
 
+solution_size = 5  # Definimos que la solución será un vector de tamaño 5
+initial_solution = generate_initial_solution(solution_size)  # Generamos una solución inicial aleatoria
+max_iterations = 1000  # Definimos el número máximo de iteraciones
+
+# Ejecutamos la búsqueda local para encontrar la mejor solución
 best_solution, best_value = local_search(initial_solution, max_iterations)
+
+# Imprimimos la mejor solución encontrada y su valor de la función objetivo
 print("Mejor solución encontrada:", best_solution)
 print("Valor de la función objetivo:", best_value)

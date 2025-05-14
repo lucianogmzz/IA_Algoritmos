@@ -1,22 +1,38 @@
-# Luciano Alejandro Gómez Muñoz 22310214
+# Resumen:
+# Este código define una clase llamada 'Agente' que representa un agente con un conjunto de creencias.
+# La clase tiene métodos para agregar creencias y mostrarlas junto con su valor (verdadero o falso).
 
-# Modelo simple de creencias de un agente
-
+# Definición de la clase Agente
 class Agente:
     def __init__(self):
-        self.creencias = {}
+        """
+        Constructor de la clase Agente.
+        Inicializa un diccionario vacío para almacenar las creencias.
+        """
+        self.creencias = {}  # Diccionario que almacenará las creencias como claves con sus valores.
 
     def agregar_creencia(self, proposicion, valor):
-        self.creencias[proposicion] = valor
+        """
+        Método para agregar una creencia al agente.
+        :param proposicion: La proposición o creencia que el agente tiene.
+        :param valor: El valor asociado con la creencia (True o False).
+        """
+        self.creencias[proposicion] = valor  # Se agrega la creencia con su valor al diccionario.
 
     def mostrar_creencias(self):
-        for proposicion, valor in self.creencias.items():
-            estado = "Verdadero" if valor else "Falso"
-            print(f"{proposicion}: {estado}")
+        """
+        Método para mostrar todas las creencias del agente.
+        """
+        for proposicion, valor in self.creencias.items():  # Itera sobre las creencias almacenadas.
+            estado = "Verdadero" if valor else "Falso"  # Asigna "Verdadero" o "Falso" según el valor de la creencia.
+            print(f"{proposicion}: {estado}")  # Imprime la proposición y su estado.
 
-# Crear agente y agregar creencias
+# Crear una instancia del agente
 agente = Agente()
-agente.agregar_creencia("El cielo es azul", True)
-agente.agregar_creencia("Los gatos vuelan", False)
 
+# Agregar algunas creencias al agente
+agente.agregar_creencia("El cielo es azul", True)  # El agente cree que el cielo es azul.
+agente.agregar_creencia("Los gatos vuelan", False)  # El agente no cree que los gatos vuelan.
+
+# Mostrar las creencias del agente
 agente.mostrar_creencias()

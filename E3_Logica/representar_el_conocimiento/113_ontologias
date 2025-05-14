@@ -2,25 +2,42 @@
 
 # Ontología simple para representar animales y sus características
 
+# Definimos una clase llamada Animal para representar animales y sus características.
 class Animal:
     def __init__(self, nombre, especie):
-        self.nombre = nombre
-        self.especie = especie
-        self.caracteristicas = []
+        """
+        Constructor para inicializar un objeto Animal.
+        :param nombre: El nombre del animal.
+        :param especie: La especie a la que pertenece el animal.
+        """
+        self.nombre = nombre  # Atributo que almacena el nombre del animal
+        self.especie = especie  # Atributo que almacena la especie del animal
+        self.caracteristicas = []  # Lista que almacenará las características del animal
 
     def agregar_caracteristica(self, caracteristica):
-        self.caracteristicas.append(caracteristica)
+        """
+        Método para agregar una característica al animal.
+        :param caracteristica: Característica que se agregará a la lista.
+        """
+        self.caracteristicas.append(caracteristica)  # Agrega la característica a la lista
 
     def mostrar_info(self):
-        print(f"Nombre: {self.nombre}")
-        print(f"Especie: {self.especie}")
-        print("Características:")
-        for c in self.caracteristicas:
-            print(f"- {c}")
+        """
+        Método para mostrar la información del animal, incluyendo su nombre, especie y características.
+        """
+        print(f"Nombre: {self.nombre}")  # Muestra el nombre del animal
+        print(f"Especie: {self.especie}")  # Muestra la especie del animal
+        print("Características:")  # Imprime el encabezado de características
+        for c in self.caracteristicas:  # Itera sobre la lista de características
+            print(f"- {c}")  # Muestra cada característica en la lista
 
-# Crear instancia de la ontología
+# Crear una instancia de la ontología, en este caso un perro llamado "Fido"
 perro = Animal("Fido", "Canis lupus familiaris")
+
+# Agregar algunas características del perro a la instancia creada
 perro.agregar_caracteristica("Tiene cuatro patas")
 perro.agregar_caracteristica("Ladra")
 
+# Mostrar la información del perro, incluyendo sus características
 perro.mostrar_info()
+

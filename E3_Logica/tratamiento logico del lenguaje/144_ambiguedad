@@ -1,6 +1,8 @@
-# Luciano Alejandro Gómez Muñoz 22310214
-
-# Demostración de ambigüedad en una gramática utilizando Lark
+# Resumen:
+# Este código muestra cómo se puede generar y analizar una gramática ambigua
+# utilizando Lark, un analizador sintáctico en Python. La gramática definida
+# permite operaciones matemáticas con suma y multiplicación, y la ambigüedad
+# se muestra cuando se analiza una expresión como "2 + 3 * 4".
 
 from lark import Lark
 
@@ -20,4 +22,6 @@ analizador = Lark(gramatica, parser='earley', ambiguity='explicit')
 
 # Analizamos una expresión ambigua
 arbol = analizador.parse("2 + 3 * 4")
+
+# Imprimimos el árbol de análisis para ver las diferentes interpretaciones
 print(arbol.pretty())

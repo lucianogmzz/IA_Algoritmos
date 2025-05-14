@@ -1,16 +1,29 @@
-# Luciano Alejandro Gómez Muñoz 22310214
+# Resumen:
+# Este código define una clase llamada 'MarcoCompra' que representa una situación de compra.
+# La clase incluye un comprador, un producto y un vendedor, y tiene un método para describir la compra.
+# Se crea una instancia de la clase para describir una compra específica.
 
-# Marco para representar una situación de compra
-
+# Definición de la clase MarcoCompra
 class MarcoCompra:
     def __init__(self, comprador, producto, vendedor):
-        self.comprador = comprador
-        self.producto = producto
-        self.vendedor = vendedor
+        """
+        Constructor de la clase MarcoCompra.
+        :param comprador: El nombre del comprador.
+        :param producto: El nombre del producto que se compra.
+        :param vendedor: El nombre del vendedor que ofrece el producto.
+        """
+        self.comprador = comprador  # Atributo que guarda el nombre del comprador.
+        self.producto = producto  # Atributo que guarda el nombre del producto.
+        self.vendedor = vendedor  # Atributo que guarda el nombre del vendedor.
 
     def describir(self):
-        print(f"{self.comprador} compró {self.producto} a {self.vendedor}.")
+        """
+        Método para describir la compra de manera simple.
+        """
+        print(f"{self.comprador} compró {self.producto} a {self.vendedor}.")  # Imprime la descripción de la compra.
 
-# Crear instancia del marco
+# Crear una instancia de la clase MarcoCompra con los detalles de la compra
 compra = MarcoCompra("Ana", "libro", "Librería Central")
+
+# Describir la compra usando el método describir
 compra.describir()

@@ -1,8 +1,26 @@
 # Luciano Alejandro Gómez Muñoz 22310214
 
+# ---------------------------------------------------------------------------
 # Implementación simplificada de GRAPHPLAN
+# ---------------------------------------------------------------------------
+# GRAPHPLAN es un algoritmo de planificación que construye de forma iterativa
+# un “grafo de planificación” con niveles alternos de **estados (literales)**
+# y **acciones**, propagando los efectos hasta que el objetivo aparece
+# simultáneamente en un mismo nivel sin contradicciones.
+#
+# Esta versión es **muy reducida**:
+# 1. No modela mutex (exclusiones mutuas) entre acciones o literales.
+# 2. Supone que los efectos nunca se contradicen entre sí.
+# 3. Extrae un “plan” tan pronto como los objetivos están presentes,
+#    sin retro‑proyección ni búsqueda hacia atrás por niveles.
+# ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
 # Definición de acciones
+# Cada acción tiene:
+#   • 'pre'  : lista de precondiciones
+#   • 'post' : lista de efectos positivos
+# ---------------------------------------------------------------------------
 acciones = {
     'a1': {'pre': ['p'], 'post': ['q']},
     'a2': {'pre': ['q'], 'post': ['r']},
@@ -10,27 +28,51 @@ acciones = {
     'a4': {'pre': ['s'], 'post': ['t']}
 }
 
-# Estado inicial y objetivo
+# ---------------------------------------------------------------------------
+# Estado inicial y conjunto de literales objetivo
+# ---------------------------------------------------------------------------
 estado_inicial = ['p']
-objetivo = ['r', 't']
+objetivo       = ['r', 't']
 
-# Construcción del grafo de planificación
-niveles = [set(estado_inicial)]
-plan = []
+# ---------------------------------------------------------------------------
+# Construcción del grafo de planificación (sólo con niveles de literales)
+# ---------------------------------------------------------------------------
+niveles = [set(estado_inicial)]  # Nivel 0: literales del estado inicial
+plan    = []                     # Lista para almacenar acciones candidatas
 
-for _ in range(10):  # Limitar a 10 niveles
-    nivel_anterior = niveles[-1]
-    nuevo_nivel = nivel_anterior.copy()
-    acciones_aplicables = []
+# Se limita la expansión a un máximo de 10 niveles para evitar bucles infinitos
+for _ in range(10):
+    nivel_anterior = niveles[-1]       # Último conjunto de literales añadidos
+    nuevo_nivel    = nivel_anterior.copy()  # Copia para ir agregando efectos
+    acciones_aplicables = []           # Acciones cuyas precondiciones se cumplen
+
+    # -------------------------------------------------------
+    # Explorar todas las acciones y comprobar sus precondiciones
+    # -------------------------------------------------------
     for nombre, accion in acciones.items():
+        # ¿Todas las precondiciones están en el nivel anterior?
         if all(pre in nivel_anterior for pre in accion['pre']):
+            # Sí ⇒ la acción es aplicable: añadir sus efectos a nuevo_nivel
             nuevo_nivel.update(accion['post'])
             acciones_aplicables.append(nombre)
+
+    # -------------------------------------------------------
+    # ¿El objetivo completo ya es alcanzable en este nuevo nivel?
+    # -------------------------------------------------------
     if set(objetivo).issubset(nuevo_nivel):
-        plan = acciones_aplicables
-        break
+        plan = acciones_aplicables      # Guardar las acciones aplicadas en este nivel
+        break                           # Detener la expansión: objetivo cubierto
+
+    # -------------------------------------------------------
+    # Si no se generaron nuevos literales, el grafo se estancó
+    # -------------------------------------------------------
     if nuevo_nivel == nivel_anterior:
-        break
+        break                           # No hay avance posible → sin plan
+
+    # Añadir el nuevo nivel de literales al grafo
     niveles.append(nuevo_nivel)
 
+# ---------------------------------------------------------------------------
+# Resultado
+# ---------------------------------------------------------------------------
 print("Plan encontrado:", plan)

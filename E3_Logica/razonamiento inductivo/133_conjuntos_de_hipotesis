@@ -1,19 +1,54 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Este código implementa el algoritmo de clasificación AdaBoost utilizando la biblioteca scikit-learn.
+# AdaBoost (Adaptive Boosting) es un método de ensamblado que combina múltiples clasificadores débiles (por lo general, árboles de decisión simples)
+# para formar un clasificador fuerte. En cada iteración, AdaBoost ajusta el peso de las instancias mal clasificadas,
+# enfocándose más en los ejemplos difíciles en las siguientes rondas.
+# El código entrena el modelo con datos sintéticos, lo prueba y muestra la precisión obtenida.
+
+# Importación del clasificador AdaBoost desde el módulo ensemble de scikit-learn.
+# Este clasificador mejora el rendimiento combinando varios clasificadores simples.
 from sklearn.ensemble import AdaBoostClassifier
+
+# Importación de una función para generar un conjunto de datos sintético para clasificación.
+# Esta función permite crear datos con un número definido de características informativas.
 from sklearn.datasets import make_classification
+
+# Importación de una función para dividir los datos en subconjuntos de entrenamiento y prueba.
+# Es esencial para validar el rendimiento del modelo de forma justa.
 from sklearn.model_selection import train_test_split
+
+# Importación de una función para calcular la precisión del modelo.
+# La precisión mide el porcentaje de predicciones correctas realizadas por el modelo.
 from sklearn.metrics import accuracy_score
 
-# Generar un conjunto de datos sintético
+# Generar un conjunto de datos sintético con:
+# - 1000 muestras
+# - 20 características en total
+# - 15 de esas características serán informativas (útiles para la clasificación)
+# - Se establece una semilla aleatoria (random_state=42) para garantizar resultados reproducibles
 X, y = make_classification(n_samples=1000, n_features=20, n_informative=15, random_state=42)
 
-# Dividir en entrenamiento y prueba
+# Dividir el conjunto de datos en entrenamiento (80%) y prueba (20%)
+# - X_train e y_train se usarán para entrenar el modelo
+# - X_test e y_test se usarán para evaluar el modelo
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Crear y entrenar el modelo AdaBoost
+# Crear una instancia del modelo AdaBoost
+# - n_estimators=50 indica que se utilizarán 50 clasificadores débiles (por defecto, árboles con profundidad 1)
+# - random_state=42 asegura que los resultados sean replicables
 model = AdaBoostClassifier(n_estimators=50, random_state=42)
+
+# Entrenar el modelo con los datos de entrenamiento
+# El modelo ajustará los clasificadores débiles de forma iterativa para mejorar la precisión
 model.fit(X_train, y_train)
 
-# Predecir y evaluar
+# Realizar predicciones con los datos de prueba
+# El modelo intenta predecir la clase de cada instancia de prueba
 y_pred = model.predict(X_test)
+
+# Calcular la precisión del modelo comparando las predicciones con las etiquetas reales
 accuracy = accuracy_score(y_test, y_pred)
+
+# Mostrar la precisión del modelo en pantalla
 print(f"Precisión del modelo: {accuracy}")

@@ -1,33 +1,50 @@
-# Luciano Alejandro Gómez Muñoz 22310214
+# Resumen:
+# Este código implementa una taxonomía simple para representar vehículos y sus subcategorías.
+# Utiliza clases para estructurar las categorías de vehículos y permite agregar subcategorías específicas.
+# Luego, imprime la taxonomía de forma jerárquica, mostrando las relaciones entre las categorías y sus subcategorías.
 
-# Taxonomía simple de vehículos
-
+# Definimos una clase llamada Categoria para representar categorías y subcategorías dentro de una taxonomía.
 class Categoria:
     def __init__(self, nombre):
-        self.nombre = nombre
-        self.subcategorias = []
+        """
+        Constructor para inicializar un objeto Categoria.
+        :param nombre: El nombre de la categoría.
+        """
+        self.nombre = nombre  # Atributo que almacena el nombre de la categoría.
+        self.subcategorias = []  # Lista para almacenar las subcategorías de la categoría.
 
     def agregar_subcategoria(self, subcategoria):
-        self.subcategorias.append(subcategoria)
+        """
+        Método para agregar una subcategoría a la categoría.
+        :param subcategoria: Subcategoría que se agregará a la lista.
+        """
+        self.subcategorias.append(subcategoria)  # Agrega la subcategoría a la lista de subcategorías.
 
     def mostrar_taxonomia(self, nivel=0):
-        print("  " * nivel + self.nombre)
-        for sub in self.subcategorias:
-            sub.mostrar_taxonomia(nivel + 1)
+        """
+        Método para mostrar la taxonomía de categorías y subcategorías de manera jerárquica.
+        :param nivel: El nivel actual en la jerarquía de categorías. (Por defecto es 0)
+        """
+        print("  " * nivel + self.nombre)  # Muestra el nombre de la categoría, indentado según el nivel.
+        for sub in self.subcategorias:  # Itera sobre las subcategorías de la categoría.
+            sub.mostrar_taxonomia(nivel + 1)  # Llama recursivamente para mostrar las subcategorías con un nivel mayor.
 
-# Crear la taxonomía
-vehiculos = Categoria("Vehículos")
-terrestres = Categoria("Terrestres")
-acuaticos = Categoria("Acuáticos")
-aereos = Categoria("Aéreos")
+# Crear las categorías principales de la taxonomía
+vehiculos = Categoria("Vehículos")  # Categoría principal "Vehículos"
+terrestres = Categoria("Terrestres")  # Subcategoría "Terrestres"
+acuaticos = Categoria("Acuáticos")  # Subcategoría "Acuáticos"
+aereos = Categoria("Aéreos")  # Subcategoría "Aéreos"
 
+# Agregar las subcategorías principales a la categoría "Vehículos"
 vehiculos.agregar_subcategoria(terrestres)
 vehiculos.agregar_subcategoria(acuaticos)
 vehiculos.agregar_subcategoria(aereos)
 
-automovil = Categoria("Automóvil")
-motocicleta = Categoria("Motocicleta")
-terrestres.agregar_subcategoria(automovil)
-terrestres.agregar_subcategoria(motocicleta)
+# Crear subcategorías más específicas dentro de "Terrestres"
+automovil = Categoria("Automóvil")  # Subcategoría "Automóvil"
+motocicleta = Categoria("Motocicleta")  # Subcategoría "Motocicleta"
+terrestres.agregar_subcategoria(automovil)  # Agregar "Automóvil" a "Terrestres"
+terrestres.agregar_subcategoria(motocicleta)  # Agregar "Motocicleta" a "Terrestres"
 
+# Mostrar la taxonomía completa
 vehiculos.mostrar_taxonomia()

@@ -1,22 +1,43 @@
 # Luciano Alejandro Gómez Muñoz 22310214
 
+# --------------------------------------------------------
 # Planificación condicional simple
+# --------------------------------------------------------
+# Este código ejemplifica una planificación con condiciones (condicional),
+# donde el agente toma decisiones en función de la información disponible (estado).
+#
+# En inteligencia artificial, la planificación condicional es una técnica que permite
+# que el agente actúe correctamente aun cuando el estado del mundo no está completamente determinado
+# o puede cambiar según ciertas condiciones.
 
-# Estado inicial con incertidumbre
+# --------------------------------------------
+# Definición del estado inicial con incertidumbre
+# --------------------------------------------
+
 estado = {
-    'llave_disponible': True,
-    'puerta_abierta': False
+    'llave_disponible': True,     # Se asume que tenemos la llave disponible (valor booleano True)
+    'puerta_abierta': False       # La puerta está inicialmente cerrada (valor booleano False)
 }
 
-# Planificación condicional
-if estado['llave_disponible']:
-    print("Usar la llave para abrir la puerta.")
-    estado['puerta_abierta'] = True
-else:
-    print("Buscar otra forma de abrir la puerta.")
+# --------------------------------------------
+# Planificación basada en una condición
+# --------------------------------------------
 
-# Verificar el resultado
-if estado['puerta_abierta']:
-    print("La puerta está abierta.")
+# Verificamos si la llave está disponible para decidir qué acción realizar
+if estado['llave_disponible']:
+    # Si la llave está disponible, se ejecuta esta rama del condicional
+    print("Usar la llave para abrir la puerta.")      # Mostramos la acción tomada
+    estado['puerta_abierta'] = True                   # Modificamos el estado: la puerta ahora está abierta
 else:
-    print("La puerta sigue cerrada.")
+    # Si la llave no está disponible, se ejecuta esta rama alternativa
+    print("Buscar otra forma de abrir la puerta.")    # Mostramos otra opción en caso de no tener la llave
+
+# --------------------------------------------
+# Verificación del estado resultante
+# --------------------------------------------
+
+# Evaluamos el estado de la puerta después de la acción condicional
+if estado['puerta_abierta']:
+    print("La puerta está abierta.")                  # Si la puerta fue abierta, lo confirmamos
+else:
+    print("La puerta sigue cerrada.")                 # Si no se pudo abrir, indicamos que permanece cerrada
