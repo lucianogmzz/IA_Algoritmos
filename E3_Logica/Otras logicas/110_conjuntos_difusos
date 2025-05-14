@@ -1,0 +1,27 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+"""
+Este código ejemplifica conjuntos difusos utilizando funciones de membresía.
+Se determina el grado de pertenencia de una temperatura a las categorías 'frío' y 'caliente'.
+"""
+
+def cold(temp):
+    if temp <= 0:
+        return 1.0
+    elif 0 < temp < 15:
+        return (15 - temp) / 15
+    else:
+        return 0.0
+
+def hot(temp):
+    if temp <= 25:
+        return 0.0
+    elif 25 < temp < 40:
+        return (temp - 25) / 15
+    else:
+        return 1.0
+
+temperature = 20
+print(f"Grado de pertenencia para {temperature}°C:")
+print(f"Frío: {cold(temperature)}")
+print(f"Caliente: {hot(temperature)}")

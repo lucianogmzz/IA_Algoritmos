@@ -1,0 +1,22 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Modelo simple de creencias de un agente
+
+class Agente:
+    def __init__(self):
+        self.creencias = {}
+
+    def agregar_creencia(self, proposicion, valor):
+        self.creencias[proposicion] = valor
+
+    def mostrar_creencias(self):
+        for proposicion, valor in self.creencias.items():
+            estado = "Verdadero" if valor else "Falso"
+            print(f"{proposicion}: {estado}")
+
+# Crear agente y agregar creencias
+agente = Agente()
+agente.agregar_creencia("El cielo es azul", True)
+agente.agregar_creencia("Los gatos vuelan", False)
+
+agente.mostrar_creencias()

@@ -1,0 +1,33 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Razonamiento por defecto simple
+
+class BaseConocimiento:
+    def __init__(self):
+        self.hechos = {}
+        self.reglas_defecto = []
+
+    def agregar_hecho(self, hecho, valor=True):
+        self.hechos[hecho] = valor
+
+    def agregar_regla_defecto(self, condicion, conclusion):
+        self.reglas_defecto.append((condicion, conclusion))
+
+    def inferir(self):
+        for condicion, conclusion in self.reglas_defecto:
+            if condicion not in self.hechos:
+                self.hechos[conclusion] = True
+
+    def mostrar_hechos(self):
+        for hecho, valor in self.hechos.items():
+            estado = "Verdadero" if valor else "Falso"
+            print(f"{hecho}: {estado}")
+
+# Crear base de conocimiento
+bc = BaseConocimiento()
+bc.agregar_hecho("Ave(Pedro)")
+bc.agregar_regla_defecto("No_vuela(Pedro)", "Vuela(Pedro)")
+
+# Inferir hechos por defecto
+bc.inferir()
+bc.mostrar_hechos()

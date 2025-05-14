@@ -1,0 +1,36 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Implementación simplificada de GRAPHPLAN
+
+# Definición de acciones
+acciones = {
+    'a1': {'pre': ['p'], 'post': ['q']},
+    'a2': {'pre': ['q'], 'post': ['r']},
+    'a3': {'pre': ['p'], 'post': ['s']},
+    'a4': {'pre': ['s'], 'post': ['t']}
+}
+
+# Estado inicial y objetivo
+estado_inicial = ['p']
+objetivo = ['r', 't']
+
+# Construcción del grafo de planificación
+niveles = [set(estado_inicial)]
+plan = []
+
+for _ in range(10):  # Limitar a 10 niveles
+    nivel_anterior = niveles[-1]
+    nuevo_nivel = nivel_anterior.copy()
+    acciones_aplicables = []
+    for nombre, accion in acciones.items():
+        if all(pre in nivel_anterior for pre in accion['pre']):
+            nuevo_nivel.update(accion['post'])
+            acciones_aplicables.append(nombre)
+    if set(objetivo).issubset(nuevo_nivel):
+        plan = acciones_aplicables
+        break
+    if nuevo_nivel == nivel_anterior:
+        break
+    niveles.append(nuevo_nivel)
+
+print("Plan encontrado:", plan)

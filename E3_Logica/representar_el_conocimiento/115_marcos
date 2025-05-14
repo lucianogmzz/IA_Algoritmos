@@ -1,0 +1,16 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Marco para representar una situación de compra
+
+class MarcoCompra:
+    def __init__(self, comprador, producto, vendedor):
+        self.comprador = comprador
+        self.producto = producto
+        self.vendedor = vendedor
+
+    def describir(self):
+        print(f"{self.comprador} compró {self.producto} a {self.vendedor}.")
+
+# Crear instancia del marco
+compra = MarcoCompra("Ana", "libro", "Librería Central")
+compra.describir()

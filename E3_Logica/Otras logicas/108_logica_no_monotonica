@@ -1,0 +1,24 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+"""
+Este código demuestra la lógica no monotónica mediante reglas que pueden ser retractadas
+cuando se obtiene nueva información, simulando razonamiento con excepciones.
+"""
+
+# Base de conocimientos inicial
+knowledge_base = {
+    'birds': {'Tweety'},
+    'can_fly': {'Tweety'}
+}
+
+# Nueva información: Tweety es un pingüino
+knowledge_base['penguins'] = {'Tweety'}
+
+# Regla: Si es un pingüino, entonces no puede volar
+for penguin in knowledge_base.get('penguins', set()):
+    if penguin in knowledge_base['can_fly']:
+        knowledge_base['can_fly'].remove(penguin)
+
+# Verificamos si Tweety puede volar
+print("¿Puede volar Tweety?")
+print('Tweety' in knowledge_base['can_fly'])

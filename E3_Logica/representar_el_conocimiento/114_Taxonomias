@@ -1,0 +1,33 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Taxonomía simple de vehículos
+
+class Categoria:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.subcategorias = []
+
+    def agregar_subcategoria(self, subcategoria):
+        self.subcategorias.append(subcategoria)
+
+    def mostrar_taxonomia(self, nivel=0):
+        print("  " * nivel + self.nombre)
+        for sub in self.subcategorias:
+            sub.mostrar_taxonomia(nivel + 1)
+
+# Crear la taxonomía
+vehiculos = Categoria("Vehículos")
+terrestres = Categoria("Terrestres")
+acuaticos = Categoria("Acuáticos")
+aereos = Categoria("Aéreos")
+
+vehiculos.agregar_subcategoria(terrestres)
+vehiculos.agregar_subcategoria(acuaticos)
+vehiculos.agregar_subcategoria(aereos)
+
+automovil = Categoria("Automóvil")
+motocicleta = Categoria("Motocicleta")
+terrestres.agregar_subcategoria(automovil)
+terrestres.agregar_subcategoria(motocicleta)
+
+vehiculos.mostrar_taxonomia()

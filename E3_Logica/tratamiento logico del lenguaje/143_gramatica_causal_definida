@@ -1,0 +1,12 @@
+% Luciano Alejandro Gómez Muñoz 22310214
+
+% Gramática para oraciones simples en español
+
+oracion --> sujeto, predicado.
+
+sujeto --> [el], sustantivo.
+predicado --> verbo, objeto.
+
+sustantivo --> [gato]; [perro].
+verbo --> [come]; [persigue].
+objeto --> [pescado]; [raton].

@@ -41,3 +41,4 @@ regla_inducida = inducir_regla(positivos, negativos)
 # Mostramos la regla lógica aprendida
 print("Regla lógica inducida (simulación FOIL):")
 print("madre(X) :-", " ∧ ".join([f"{cond}(X)" for cond in regla_inducida]))
+    

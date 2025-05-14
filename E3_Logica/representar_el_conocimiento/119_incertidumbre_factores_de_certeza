@@ -1,0 +1,27 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Este código representa cómo manejar incertidumbre usando factores de certeza.
+# Se asigna a cada hecho un valor entre -1 y 1 que representa el nivel de certeza.
+
+class SistemaCerteza:
+    def __init__(self):
+        self.factores = {}  # Diccionario de hechos con su factor de certeza
+
+    def agregar_hecho(self, hecho, certeza):
+        # Aseguramos que el valor esté en el rango válido [-1, 1]
+        if -1 <= certeza <= 1:
+            self.factores[hecho] = certeza
+        else:
+            print("Error: El factor de certeza debe estar entre -1 y 1.")
+
+    def mostrar_factores(self):
+        for hecho, certeza in self.factores.items():
+            print(f"{hecho}: certeza = {certeza}")
+
+# Crear el sistema de certeza
+sistema = SistemaCerteza()
+sistema.agregar_hecho("Paciente tiene fiebre", 0.9)
+sistema.agregar_hecho("Paciente tiene gripe", 0.75)
+sistema.agregar_hecho("Paciente tiene COVID", 0.4)
+
+sistema.mostrar_factores()

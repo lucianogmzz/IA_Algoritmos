@@ -1,0 +1,20 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+"""
+Este código implementa lógica por defecto, donde se asumen ciertas propiedades
+a menos que se indique lo contrario, permitiendo manejar excepciones de manera estructurada.
+"""
+
+# Base de conocimientos
+birds = {'Tweety', 'Pengu'}
+non_flying_birds = {'Pengu'}
+
+# Función para determinar si un pájaro puede volar
+def can_fly(bird):
+    if bird in non_flying_birds:
+        return False
+    return True  # Por defecto, los pájaros pueden volar
+
+# Evaluamos la capacidad de vuelo
+for bird in birds:
+    print(f"¿Puede volar {bird}? {can_fly(bird)}")

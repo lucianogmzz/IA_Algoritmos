@@ -1,0 +1,21 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Vigilancia de ejecución y replanificación
+
+# Plan inicial
+plan = ['encender_motor', 'avanzar', 'girar_derecha', 'avanzar']
+
+# Simulación de ejecución
+for accion in plan:
+    print(f"Ejecutando acción: {accion}")
+    if accion == 'girar_derecha':
+        # Simular un fallo en la acción
+        print("Fallo detectado en la acción: girar_derecha")
+        print("Replanificando...")
+        # Nuevo plan adaptado
+        plan = ['retroceder', 'girar_izquierda', 'avanzar']
+        break
+
+# Continuar con el nuevo plan
+for accion in plan:
+    print(f"Ejecutando acción: {accion}")

@@ -1,0 +1,22 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Planificación condicional simple
+
+# Estado inicial con incertidumbre
+estado = {
+    'llave_disponible': True,
+    'puerta_abierta': False
+}
+
+# Planificación condicional
+if estado['llave_disponible']:
+    print("Usar la llave para abrir la puerta.")
+    estado['puerta_abierta'] = True
+else:
+    print("Buscar otra forma de abrir la puerta.")
+
+# Verificar el resultado
+if estado['puerta_abierta']:
+    print("La puerta está abierta.")
+else:
+    print("La puerta sigue cerrada.")

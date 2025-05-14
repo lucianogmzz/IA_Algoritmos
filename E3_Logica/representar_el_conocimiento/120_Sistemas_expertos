@@ -1,0 +1,37 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Sistema experto simple para diagnóstico médico con reglas "si-entonces"
+
+class SistemaExperto:
+    def __init__(self):
+        self.hechos = []
+        self.reglas = []
+
+    def agregar_hecho(self, hecho):
+        self.hechos.append(hecho)
+
+    def agregar_regla(self, condiciones, conclusion):
+        self.reglas.append((condiciones, conclusion))
+
+    def inferir(self):
+        conclusiones = []
+        for condiciones, conclusion in self.reglas:
+            if all(cond in self.hechos for cond in condiciones):
+                if conclusion not in self.hechos:
+                    conclusiones.append(conclusion)
+        self.hechos.extend(conclusiones)
+
+    def mostrar_conclusiones(self):
+        print("Hechos conocidos:")
+        for hecho in self.hechos:
+            print(f"- {hecho}")
+
+# Crear sistema experto
+se = SistemaExperto()
+se.agregar_hecho("fiebre")
+se.agregar_hecho("dolor_cabeza")
+se.agregar_regla(["fiebre", "dolor_cabeza"], "gripe")
+se.agregar_regla(["gripe"], "reposo")
+
+se.inferir()
+se.mostrar_conclusiones()

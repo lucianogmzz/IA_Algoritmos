@@ -1,0 +1,47 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+"""
+Este código realiza inferencia difusa utilizando reglas simples.
+Se calcula el grado de recomendación de actividad física basado en la temperatura.
+"""
+
+def cold(temp):
+    if temp <= 0:
+        return 1.0
+    elif 0 < temp < 15:
+        return (15 - temp) / 15
+    else:
+        return 0.0
+
+def moderate(temp):
+    if 10 < temp < 20:
+        return (temp - 10) / 10
+    elif 20 <= temp <= 25:
+        return 1.0
+    elif 25 < temp < 30:
+        return (30 - temp) / 5
+    else:
+        return 0.0
+
+def hot(temp):
+    if temp <= 25:
+        return 0.0
+    elif 25 < temp < 35:
+        return (temp - 25) / 10
+    else:
+        return 1.0
+
+def activity_level(temp):
+    cold_degree = cold(temp)
+    moderate_degree = moderate(temp)
+    hot_degree = hot(temp)
+
+    # Reglas:
+    # Si frío, entonces baja actividad (0.3)
+    # Si moderado, entonces actividad media (0.6)
+    # Si caliente, entonces alta actividad (0.9)
+
+    return (cold_degree * 0.3 + moderate_degree * 0.6 + hot_degree * 0.9) / (cold_degree + moderate_degree + hot_degree)
+
+temperature = 22
+print(f"Nivel de actividad recomendado para {temperature}°C: {activity_level(temperature)}")

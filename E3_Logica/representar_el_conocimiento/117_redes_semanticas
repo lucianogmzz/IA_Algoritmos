@@ -1,0 +1,28 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Red semántica simple
+
+class Nodo:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.relaciones = {}
+
+    def agregar_relacion(self, tipo, nodo_objetivo):
+        self.relaciones[tipo] = nodo_objetivo
+
+    def mostrar_relaciones(self):
+        for tipo, nodo in self.relaciones.items():
+            print(f"{self.nombre} --{tipo}--> {nodo.nombre}")
+
+# Crear nodos
+animal = Nodo("Animal")
+mamifero = Nodo("Mamífero")
+perro = Nodo("Perro")
+
+# Establecer relaciones
+perro.agregar_relacion("es_un", mamifero)
+mamifero.agregar_relacion("es_un", animal)
+
+# Mostrar relaciones
+perro.mostrar_relaciones()
+mamifero.mostrar_relaciones()

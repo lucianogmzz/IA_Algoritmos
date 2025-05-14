@@ -1,0 +1,34 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Inducción gramatical simple utilizando NLTK
+
+import nltk
+from nltk import CFG
+
+# Definimos un conjunto de oraciones ejemplo
+oraciones = [
+    "el gato come pescado",
+    "el perro persigue al gato",
+    "el gato duerme"
+]
+
+# Tokenizamos las oraciones
+tokenizadas = [nltk.word_tokenize(oracion) for oracion in oraciones]
+
+# Definimos una gramática inicial
+gramatica = CFG.fromstring("""
+    S -> NP VP
+    NP -> Det N
+    VP -> V NP | V
+    Det -> 'el' | 'al'
+    N -> 'gato' | 'perro' | 'pescado'
+    V -> 'come' | 'persigue' | 'duerme'
+""")
+
+# Creamos el analizador sintáctico
+analizador = nltk.ChartParser(gramatica)
+
+# Analizamos las oraciones
+for oracion in tokenizadas:
+    for arbol in analizador.parse(oracion):
+        print(arbol)

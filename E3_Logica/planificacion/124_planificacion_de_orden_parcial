@@ -1,0 +1,27 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Planificación de orden parcial simple
+
+# Definición de acciones con sus precondiciones y efectos
+acciones = {
+    'cocinar pasta': {'pre': ['hervir agua'], 'post': ['pasta cocida']},
+    'hervir agua': {'pre': ['llenar olla'], 'post': ['agua hervida']},
+    'llenar olla': {'pre': [], 'post': ['olla llena']},
+    'preparar salsa': {'pre': [], 'post': ['salsa lista']},
+    'servir plato': {'pre': ['pasta cocida', 'salsa lista'], 'post': ['plato servido']}
+}
+
+# Determinar el orden parcial
+orden = []
+
+# Acciones ya realizadas
+realizadas = set()
+
+# Mientras haya acciones por realizar
+while len(realizadas) < len(acciones):
+    for accion, info in acciones.items():
+        if accion not in realizadas and all(pre in realizadas for pre in info['pre']):
+            orden.append(accion)
+            realizadas.add(accion)
+
+print("Orden parcial de acciones:", orden)

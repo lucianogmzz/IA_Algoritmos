@@ -1,0 +1,16 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Modelo probabilista básico usando la regla de Bayes
+
+def probabilidad_bayes(p_hipotesis, p_evidencia_dado_hipotesis, p_evidencia):
+    # P(H|E) = P(E|H) * P(H) / P(E)
+    return (p_evidencia_dado_hipotesis * p_hipotesis) / p_evidencia
+
+# Ejemplo: probabilidad de tener gripe si se tiene fiebre
+p_gripe = 0.1  # P(H): probabilidad de tener gripe
+p_fiebre_dado_gripe = 0.9  # P(E|H): si tienes gripe, hay 90% de tener fiebre
+p_fiebre = 0.2  # P(E): fiebre en general (población)
+
+p_gripe_dado_fiebre = probabilidad_bayes(p_gripe, p_fiebre_dado_gripe, p_fiebre)
+
+print(f"Probabilidad de tener gripe si tienes fiebre: {p_gripe_dado_fiebre:.2f}")

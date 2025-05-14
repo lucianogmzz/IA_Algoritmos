@@ -1,0 +1,19 @@
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.inspection import permutation_importance
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
+# Cargar el conjunto de datos
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+
+# Entrenar el modelo
+model = RandomForestClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+# Calcular la importancia de las características
+result = permutation_importance(model, X_test, y_test, n_repeats=10, random_state=42)
+
+# Mostrar la importancia de las características
+for i in result.importances_mean.argsort()[::-1]:
+    print(f"Característica {i}: Importancia media = {result.importances_mean[i]:.4f}")
