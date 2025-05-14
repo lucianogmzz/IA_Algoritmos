@@ -1,34 +1,47 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código aplica filtros básicos a una imagen utilizando scipy.ndimage.
+# Este código aplica filtros básicos a una imagen utilizando funciones de la librería scipy.ndimage.
+# Se crea una imagen aleatoria con ruido, se suaviza con un filtro gaussiano y se detectan bordes con un filtro de Sobel.
+# Luego se muestran la imagen original, la imagen suavizada y la imagen con bordes detectados.
 
+# Importa numpy para trabajar con arreglos numéricos (creación de la imagen)
 import numpy as np
+
+# Importa matplotlib para visualizar imágenes en forma de gráficos
 import matplotlib.pyplot as plt
+
+# Importa filtros gaussian_filter y sobel desde scipy.ndimage para procesamiento de imágenes
 from scipy.ndimage import gaussian_filter, sobel
 
-# Crear una imagen de ejemplo con ruido
+# Crea una imagen de ejemplo de 100x100 píxeles con valores aleatorios (ruido)
 image = np.random.rand(100, 100)
 
-# Aplicar un filtro gaussiano para suavizar la imagen
+# Aplica un filtro gaussiano con sigma=1 para suavizar la imagen (reduce el ruido)
 smoothed_image = gaussian_filter(image, sigma=1)
 
-# Aplicar un filtro Sobel para realzar los bordes
+# Aplica el filtro Sobel para detectar y resaltar los bordes en la imagen original
 edges = sobel(image)
 
-# Mostrar las imágenes originales y procesadas
+# Crea una figura para mostrar 3 subgráficos (imágenes) en una fila
 plt.figure(figsize=(12, 4))
 
-plt.subplot(1, 3, 1)
-plt.title('Imagen Original')
-plt.imshow(image, cmap='gray')
+# Muestra la imagen original con escala de grises
+plt.subplot(1, 3, 1)             # Primer subplot de una fila de 3
+plt.title('Imagen Original')    # Título del primer gráfico
+plt.imshow(image, cmap='gray')  # Muestra la imagen original en escala de grises
 
-plt.subplot(1, 3, 2)
+# Muestra la imagen suavizada con filtro gaussiano
+plt.subplot(1, 3, 2)                    # Segundo subplot
 plt.title('Imagen Suavizada (Gaussiano)')
-plt.imshow(smoothed_image, cmap='gray')
+plt.imshow(smoothed_image, cmap='gray')  # Imagen suavizada en escala de grises
 
-plt.subplot(1, 3, 3)
+# Muestra la imagen con bordes detectados por el filtro Sobel
+plt.subplot(1, 3, 3)                   # Tercer subplot
 plt.title('Bordes Realzados (Sobel)')
-plt.imshow(edges, cmap='gray')
+plt.imshow(edges, cmap='gray')         # Imagen con bordes en escala de grises
 
+# Ajusta automáticamente el espacio entre gráficos para mejor visualización
 plt.tight_layout()
+
+# Muestra la figura con las 3 imágenes
 plt.show()

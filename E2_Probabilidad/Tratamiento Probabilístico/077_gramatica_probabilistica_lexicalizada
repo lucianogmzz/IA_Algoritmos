@@ -1,37 +1,63 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
 # Este código implementa una gramática probabilística lexicalizada simple.
+# La gramática probabilística se utiliza para generar oraciones aleatorias basadas en reglas de producción,
+# y las probabilidades asociadas determinan qué tan probable es usar cada regla.
 
-import random
+import random  # Importa el módulo random, utilizado para elegir reglas de producción aleatorias basadas en probabilidades.
 
-# Definir una gramática lexicalizada simple
+# Definir una gramática lexicalizada simple.
+# La gramática describe cómo las diferentes categorías gramaticales pueden combinarse para formar oraciones.
+# En este caso, "S" (oración) se descompone en "NP" (sustantivo) y "VP" (verbo + sustantivo), y así sucesivamente.
+
 lexicalized_grammar = {
-    "S": [("NP", "VP")],
-    "NP": [("Det", "N")],
-    "VP": [("V", "NP")],
-    "Det": [("el",), ("un",)],
-    "N": [("gato",), ("perro",), ("mesa",)],
-    "V": [("está",), ("come",)]
+    "S": [("NP", "VP")],  # La oración (S) se descompone en un sustantivo (NP) y un verbo (VP).
+    "NP": [("Det", "N")],  # Un sustantivo (NP) se descompone en un determinante (Det) y un sustantivo (N).
+    "VP": [("V", "NP")],  # Un verbo (VP) se descompone en un verbo (V) y un sustantivo (NP).
+    "Det": [("el",), ("un",)],  # El determinante (Det) puede ser "el" o "un".
+    "N": [("gato",), ("perro",), ("mesa",)],  # Los sustantivos (N) pueden ser "gato", "perro" o "mesa".
+    "V": [("está",), ("come",)]  # Los verbos (V) pueden ser "está" o "come".
 }
 
-# Definir probabilidades para cada regla de producción
+# Definir probabilidades para cada regla de producción.
+# Las probabilidades determinan qué tan probable es usar una regla particular dentro de cada categoría.
+# En este caso, las probabilidades se asignan a las reglas dentro de cada categoría gramatical.
+
 lexicalized_probabilities = {
-    "S": [1.0],
-    "NP": [1.0],
-    "VP": [1.0],
-    "Det": [0.5, 0.5],
-    "N": [0.4, 0.3, 0.3],
-    "V": [0.6, 0.4]
+    "S": [1.0],  # La regla de la oración (S) tiene una probabilidad de 1.0, es decir, siempre se utiliza.
+    "NP": [1.0],  # La regla de sustantivo (NP) también tiene una probabilidad de 1.0 (siempre se utiliza).
+    "VP": [1.0],  # La regla de verbo (VP) tiene una probabilidad de 1.0 (siempre se utiliza).
+    "Det": [0.5, 0.5],  # El determinante (Det) tiene dos opciones con igual probabilidad (0.5 cada una): "el" o "un".
+    "N": [0.4, 0.3, 0.3],  # Los sustantivos (N) tienen tres opciones: "gato" (0.4), "perro" (0.3) y "mesa" (0.3).
+    "V": [0.6, 0.4]  # Los verbos (V) tienen dos opciones: "está" (0.6) y "come" (0.4).
 }
 
-# Función para generar una oración lexicalizada
+# Función para generar una oración lexicalizada.
+# La función recursiva genera una oración empezando con el símbolo de inicio (por defecto "S").
+# En cada paso, selecciona aleatoriamente una de las reglas de producción para el símbolo actual, 
+# utilizando las probabilidades asociadas, y genera las partes de la oración correspondientes.
+
 def generate_lexicalized_sentence(grammar, probabilities, start_symbol="S"):
-    if start_symbol not in grammar:
+    """
+    Esta función genera una oración aleatoria basada en una gramática lexicalizada simple,
+    utilizando probabilidades asociadas con cada regla de producción.
+
+    grammar: Diccionario que define las reglas de producción para la gramática.
+    probabilities: Diccionario que define las probabilidades de cada regla de producción.
+    start_symbol: El símbolo de inicio de la gramática, por defecto es "S" (oración).
+    """
+    if start_symbol not in grammar:  # Si el símbolo de inicio no está en la gramática, es un terminal (palabra).
         return start_symbol
 
+    # Seleccionar aleatoriamente una regla de producción para el símbolo actual, utilizando las probabilidades.
     production = random.choices(grammar[start_symbol], probabilities[start_symbol], k=1)[0]
+    
+    # Para cada símbolo en la producción seleccionada, generar la parte correspondiente de la oración.
+    # La producción puede ser una secuencia de símbolos (por ejemplo, "NP" y "VP" para "S").
     return " ".join(generate_lexicalized_sentence(grammar, probabilities, symbol) for symbol in production)
 
-# Generar una oración lexicalizada aleatoria
+# Generar una oración lexicalizada aleatoria utilizando la gramática y las probabilidades definidas.
 lexicalized_sentence = generate_lexicalized_sentence(lexicalized_grammar, lexicalized_probabilities)
+
+# Imprimir la oración generada.
 print("Oración lexicalizada generada:", lexicalized_sentence)

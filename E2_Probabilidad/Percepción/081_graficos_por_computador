@@ -1,35 +1,55 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
 # Este código ilustra la creación de gráficos básicos por computador utilizando matplotlib.
+# Se definen dos funciones: una para dibujar un círculo y otra para dibujar un rectángulo en un gráfico.
+# Luego, configura y muestra el gráfico con las formas creadas en una figura de 8x8 pulgadas.
 
+# Importa matplotlib para crear gráficos y numpy para trabajar con arrays (aunque no se usa explícitamente aquí)
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Definir una función para dibujar un círculo
+# Define una función para dibujar un círculo con un centro, radio y color opcional
 def draw_circle(center, radius, color='blue'):
-    circle = plt.Circle(center, radius, color=color, fill=False)
+    # Crea un círculo con el centro y radio proporcionados
+    circle = plt.Circle(center, radius, color=color, fill=False)  
+    # Añade el círculo al gráfico actual
     plt.gca().add_patch(circle)
 
-# Definir una función para dibujar un rectángulo
+# Define una función para dibujar un rectángulo con una esquina inferior izquierda, ancho, altura y color opcional
 def draw_rectangle(bottom_left, width, height, color='red'):
-    rectangle = plt.Rectangle(bottom_left, width, height, linewidth=1, edgecolor=color, facecolor='none')
+    # Crea un rectángulo con las especificaciones dadas
+    rectangle = plt.Rectangle(bottom_left, width, height, linewidth=1, edgecolor=color, facecolor='none') 
+    # Añade el rectángulo al gráfico actual
     plt.gca().add_patch(rectangle)
 
 # Configuración del gráfico
+# Establece el tamaño de la figura a 8x8 pulgadas
 plt.figure(figsize=(8, 8))
+
+# Establece los límites de los ejes X y Y entre 0 y 10
 plt.xlim(0, 10)
 plt.ylim(0, 10)
+
+# Ajusta la relación de aspecto para que los ejes X y Y tengan la misma escala
 plt.gca().set_aspect('equal', adjustable='box')
 
-# Dibujar un círculo
+# Llama a la función para dibujar un círculo en el centro (5, 5) con radio 2 y color azul
 draw_circle((5, 5), 2, 'blue')
 
-# Dibujar un rectángulo
+# Llama a la función para dibujar un rectángulo con la esquina inferior izquierda en (2, 2), ancho 4, altura 3, y color rojo
 draw_rectangle((2, 2), 4, 3, 'red')
 
-# Mostrar el gráfico
+# Muestra el título del gráfico
 plt.title('Gráficos por Computador: Círculo y Rectángulo')
+
+# Etiqueta el eje X
 plt.xlabel('Eje X')
+
+# Etiqueta el eje Y
 plt.ylabel('Eje Y')
+
+# Activa la cuadrícula en el gráfico para facilitar la visualización
 plt.grid(True)
+
+# Muestra el gráfico en pantalla
 plt.show()

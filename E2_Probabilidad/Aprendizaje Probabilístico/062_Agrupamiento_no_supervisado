@@ -1,28 +1,72 @@
-# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Luciano Alejandro Gómez Muñoz - 22310214 - 6E2
+# ---------------------------------------------------------
+# Este código implementa el algoritmo de agrupamiento no supervisado K-Means (K-medias).
+# K-Means es un algoritmo que divide los datos en K grupos (clusters) al minimizar la distancia
+# entre los puntos y el centroide de su grupo.
+# En este ejemplo se usan datos sintéticos generados artificialmente.
 
-# Este código implementa un algoritmo de agrupamiento no supervisado utilizando K-medias.
+# ----------------------------
+# Importación de librerías
+# ----------------------------
 
 from sklearn.datasets import make_blobs
+# make_blobs genera puntos agrupados artificialmente, ideal para probar algoritmos de clustering
+
 from sklearn.cluster import KMeans
+# KMeans implementa el algoritmo de agrupamiento K-medias en scikit-learn
+
 import matplotlib.pyplot as plt
+# matplotlib.pyplot permite generar gráficos de dispersión para visualizar los resultados
 
-# Generar datos de ejemplo
+# ----------------------------
+# Generación de datos artificiales
+# ----------------------------
+
 X, _ = make_blobs(n_samples=300, centers=4, random_state=42)
+# Se generan 300 muestras repartidas en 4 centros (blobs)
+# 'X' son las coordenadas (características) de los puntos
+# '_' ignora las etiquetas reales (no se usan en clustering no supervisado)
 
-# Inicializar el modelo K-medias
+# ----------------------------
+# Inicialización del modelo K-Means
+# ----------------------------
+
 kmeans = KMeans(n_clusters=4, random_state=42)
+# Se crea un modelo K-means que agrupará los datos en 4 clusters
+# 'random_state' se usa para hacer el resultado reproducible
 
-# Ajustar el modelo a los datos
+# ----------------------------
+# Entrenamiento del modelo
+# ----------------------------
+
 kmeans.fit(X)
+# El modelo encuentra los centroides de cada grupo y asigna cada punto a su cluster más cercano
 
-# Predecir las etiquetas de los clusters
+# ----------------------------
+# Predicción de etiquetas
+# ----------------------------
+
 labels = kmeans.labels_
+# Se obtienen las etiquetas asignadas a cada punto (0 a 3), indicando el cluster al que pertenece
 
-# Graficar los resultados
+# ----------------------------
+# Visualización de resultados
+# ----------------------------
+
+# Se crea un gráfico de dispersión (2D) donde:
+# - El color depende del cluster al que fue asignado cada punto
 plt.scatter(X[:, 0], X[:, 1], c=labels, s=40, cmap='viridis', marker='o')
+
+# Se extraen los centroides calculados por KMeans
 centers = kmeans.cluster_centers_
+
+# Se grafican los centroides en rojo con una 'X'
 plt.scatter(centers[:, 0], centers[:, 1], c='red', s=200, alpha=0.75, marker='X')
+
+# Etiquetas del gráfico
 plt.title('Agrupamiento No Supervisado utilizando K-medias')
 plt.xlabel('Característica 1')
 plt.ylabel('Característica 2')
+
+# Mostrar el gráfico final
 plt.show()

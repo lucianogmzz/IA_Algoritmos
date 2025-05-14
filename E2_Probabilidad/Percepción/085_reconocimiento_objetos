@@ -1,46 +1,72 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa un sistema simple de reconocimiento de objetos utilizando OpenCV y una imagen de ejemplo de skimage.
+# Este código implementa un sistema básico de reconocimiento de objetos con OpenCV.
+# Utiliza una imagen de ejemplo de skimage (el astronauta), la convierte a escala de grises, aplica un suavizado Gaussiano,
+# detecta bordes con el algoritmo de Canny y finalmente encuentra y dibuja contornos sobre la imagen.
+# Este proceso ilustra técnicas clave en visión por computadora como preprocesamiento y detección de objetos.
 
+# Importa OpenCV para el procesamiento de imágenes
 import cv2
+
+# Importa matplotlib para mostrar imágenes en gráficos
 import matplotlib.pyplot as plt
+
+# Importa una imagen de ejemplo desde la biblioteca skimage
 from skimage import data
+
+# Importa numpy para manejo de matrices
 import numpy as np
 
-# Cargar una imagen de ejemplo desde skimage y convertirla al formato OpenCV
+# Importa utilidad para convertir imágenes a tipo uint8 (necesario para OpenCV)
 from skimage import img_as_ubyte
-image_sk = img_as_ubyte(data.astronaut())  # Imagen RGB
-image = cv2.cvtColor(image_sk, cv2.COLOR_RGB2BGR)  # Convertir a BGR para OpenCV
-image_rgb = image_sk.copy()  # Mantener una copia en RGB para graficar con matplotlib
 
-# Convertir la imagen a escala de grises
+# Carga una imagen RGB de ejemplo (astronauta) y la convierte a uint8
+image_sk = img_as_ubyte(data.astronaut())
+
+# Convierte la imagen RGB al formato BGR (requerido por OpenCV)
+image = cv2.cvtColor(image_sk, cv2.COLOR_RGB2BGR)
+
+# Guarda una copia en RGB para mostrarla correctamente con matplotlib
+image_rgb = image_sk.copy()
+
+# Convierte la imagen a escala de grises para facilitar el procesamiento
 gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-# Aplicar un filtro Gaussiano para suavizar la imagen
+# Aplica un filtro Gaussiano de 5x5 para reducir el ruido en la imagen
 blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
 
-# Detectar bordes utilizando el algoritmo de Canny
+# Detecta bordes en la imagen suavizada usando el algoritmo de Canny
+# Umbrales: 50 (mínimo), 150 (máximo)
 edges = cv2.Canny(blurred_image, 50, 150)
 
-# Encontrar contornos en la imagen
+# Encuentra contornos en la imagen binaria (de bordes)
+# cv2.RETR_TREE recupera todos los contornos y reconstruye jerarquía
+# cv2.CHAIN_APPROX_SIMPLE almacena solo los puntos esenciales
 contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-# Dibujar contornos en la imagen original
+# Crea una copia de la imagen original para dibujar los contornos detectados
 output_image = image_rgb.copy()
+
+# Dibuja todos los contornos encontrados sobre la imagen, en color verde y grosor 2
 cv2.drawContours(output_image, contours, -1, (0, 255, 0), 2)
 
-# Mostrar las imágenes originales y procesadas
+# Crea una figura para mostrar la imagen original y la procesada
 plt.figure(figsize=(12, 6))
 
+# Muestra la imagen original
 plt.subplot(1, 2, 1)
 plt.title('Imagen Original')
-plt.imshow(image_rgb)
-plt.axis('off')
+plt.imshow(image_rgb)  # Usa RGB para visualización correcta
+plt.axis('off')  # Oculta los ejes
 
+# Muestra la imagen con contornos detectados
 plt.subplot(1, 2, 2)
 plt.title('Contornos Detectados')
-plt.imshow(output_image)
-plt.axis('off')
+plt.imshow(output_image)  # Imagen con contornos en verde
+plt.axis('off')  # Oculta los ejes
 
+# Ajusta automáticamente el espacio entre subgráficas
 plt.tight_layout()
+
+# Muestra el resultado en pantalla
 plt.show()

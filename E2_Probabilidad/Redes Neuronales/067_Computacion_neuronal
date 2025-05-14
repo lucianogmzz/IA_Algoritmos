@@ -1,28 +1,46 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código ilustra un modelo simple de computación neuronal.
+# Este código ilustra un modelo simple de computación neuronal que implementa una neurona artificial utilizando una función de activación sigmoide.
+# El objetivo del código es crear una neurona sencilla que tome dos entradas, las procese mediante una función de activación sigmoide y produzca una salida.
 
-import numpy as np
+import numpy as np  # Importamos la librería numpy, que nos ayuda a realizar operaciones numéricas como matrices y álgebra lineal.
 
 # Definir una función de activación simple (sigmoide)
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    """
+    La función sigmoide es una función matemática que se utiliza comúnmente como función de activación en redes neuronales.
+    Su salida varía entre 0 y 1, lo que la hace útil para modelar probabilidades o decisiones binarias.
+    """
+    return 1 / (1 + np.exp(-x))  # La fórmula de la función sigmoide. np.exp(-x) calcula el exponencial de -x.
 
 # Definir una neurona simple
 class SimpleNeuron:
+    """
+    Esta clase define una neurona simple con una única capa de entrada.
+    La neurona toma un conjunto de entradas, aplica una suma ponderada y pasa el resultado a través de una función de activación (sigmoide).
+    """
     def __init__(self, input_size):
-        # Inicializar pesos aleatoriamente
-        self.weights = np.random.randn(input_size)
-        self.bias = np.random.randn()
+        """
+        Inicializa la neurona con un tamaño de entrada específico.
+        Los pesos se inicializan de manera aleatoria con una distribución normal.
+        También se inicializa un sesgo (bias) aleatorio.
+        """
+        self.weights = np.random.randn(input_size)  # Inicializa los pesos de la neurona de manera aleatoria (distribución normal).
+        self.bias = np.random.randn()  # Inicializa el sesgo de la neurona de manera aleatoria.
 
     def activate(self, inputs):
-        # Calcular la suma ponderada de las entradas
-        weighted_sum = np.dot(inputs, self.weights) + self.bias
-        # Aplicar la función de activación
+        """
+        Calcula la salida de la neurona para un conjunto dado de entradas.
+        Primero, se calcula la suma ponderada de las entradas y luego se aplica la función de activación (sigmoide).
+        """
+        weighted_sum = np.dot(inputs, self.weights) + self.bias  # np.dot realiza el producto punto entre las entradas y los pesos.
+        # La suma ponderada se calcula y se le suma el sesgo (bias).
+        
+        # La salida de la neurona es el valor obtenido después de pasar la suma ponderada a través de la función sigmoide.
         return sigmoid(weighted_sum)
 
 # Ejemplo de uso
-inputs = np.array([0.5, 0.8])
-neuron = SimpleNeuron(input_size=2)
-output = neuron.activate(inputs)
-print("Salida de la neurona:", output)
+inputs = np.array([0.5, 0.8])  # Definimos un conjunto de entradas para la neurona. En este caso, son dos entradas.
+neuron = SimpleNeuron(input_size=2)  # Creamos una neurona con un tamaño de entrada de 2 (dos entradas).
+output = neuron.activate(inputs)  # Calculamos la salida de la neurona al activar con las entradas.
+print("Salida de la neurona:", output)  # Mostramos la salida de la neurona. El resultado es un valor entre 0 y 1 debido a la función sigmoide.

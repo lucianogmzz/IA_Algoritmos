@@ -1,38 +1,56 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código realiza la detección de aristas y la segmentación de una imagen utilizando scikit-image.
+# Este código realiza la detección de aristas y la segmentación de una imagen utilizando funciones de la librería scikit-image.
+# Se usa una imagen de ejemplo (astronauta), se convierte a escala de grises, se detectan bordes con el filtro Sobel,
+# y se segmenta la imagen con el algoritmo watershed. Finalmente, se muestran los resultados.
 
+# Importa numpy para operaciones numéricas (no se usa directamente aquí, pero es requerido por otras librerías)
 import numpy as np
-import matplotlib.pyplot as plt
-from skimage import filters, color, segmentation, data
-from skimage.util import img_as_ubyte
 
-# Cargar una imagen de ejemplo integrada de skimage
+# Importa matplotlib para visualizar imágenes
+import matplotlib.pyplot as plt
+
+# Importa funciones de procesamiento de imágenes de scikit-image:
+from skimage import filters, color, segmentation, data  # - filtros para detección de bordes
+                                                        # - color para convertir imágenes
+                                                        # - segmentation para aplicar watershed
+                                                        # - data para cargar imágenes de ejemplo
+from skimage.util import img_as_ubyte  # Convierte imágenes a formato de 8 bits (no se usa en este ejemplo)
+
+# Carga una imagen de ejemplo predefinida de un astronauta (RGB)
 image = data.astronaut()
 
-# Convertir la imagen a escala de grises
+# Convierte la imagen de color (RGB) a escala de grises para facilitar el procesamiento
 gray_image = color.rgb2gray(image)
 
-# Aplicar detección de aristas utilizando el filtro Sobel
+# Aplica el filtro Sobel a la imagen en escala de grises para detectar bordes (aristas)
 edges = filters.sobel(gray_image)
 
-# Aplicar segmentación utilizando el algoritmo de watershed
+# Segmenta la imagen a partir de las aristas usando el algoritmo Watershed
+# - markers: cantidad de regiones iniciales
+# - compactness: controla qué tan compactas serán las regiones
 segmented_image = segmentation.watershed(edges, markers=250, compactness=0.001)
 
-# Mostrar las imágenes originales y procesadas
+# Crea una figura con tamaño 12x4 pulgadas para mostrar las imágenes
 plt.figure(figsize=(12, 4))
 
+# Primer subplot: Imagen original en color
 plt.subplot(1, 3, 1)
 plt.title('Imagen Original')
 plt.imshow(image)
 
+# Segundo subplot: Imagen con aristas detectadas usando el filtro Sobel
 plt.subplot(1, 3, 2)
 plt.title('Aristas Detectadas (Sobel)')
 plt.imshow(edges, cmap='gray')
 
+# Tercer subplot: Imagen segmentada con watershed, usando un mapa de colores espectral
 plt.subplot(1, 3, 3)
 plt.title('Imagen Segmentada (Watershed)')
 plt.imshow(segmented_image, cmap='nipy_spectral')
 
+# Ajusta el diseño para que no se sobrepongan los elementos
 plt.tight_layout()
+
+# Muestra la figura en pantalla
 plt.show()

@@ -1,3 +1,9 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Este código implementa una solución al problema de coloreo de grafos utilizando el algoritmo de backtracking.
+# El problema de coloreo de grafos consiste en asignar colores a los nodos de un grafo de tal manera que ningún nodo adyacente tenga el mismo color.
+# La solución utiliza backtracking para explorar todas las posibles asignaciones de colores y verificar si cumplen con las restricciones.
+
 # Definimos una función para verificar si un nodo puede ser coloreado con un color específico
 def es_valido(nodo, color, colores, grafo):
     """

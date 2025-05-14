@@ -2,26 +2,33 @@
 
 # Este código ilustra el aprendizaje bayesiano utilizando un ejemplo simple de clasificación.
 
-from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import GaussianNB
-from sklearn.metrics import accuracy_score
+# Importamos las librerías necesarias
+from sklearn.datasets import make_classification  # Para generar datos de ejemplo
+from sklearn.model_selection import train_test_split  # Para dividir los datos en conjuntos de entrenamiento y prueba
+from sklearn.naive_bayes import GaussianNB  # Para el modelo Naive Bayes
+from sklearn.metrics import accuracy_score  # Para evaluar la precisión del modelo
 
 # Generar datos de ejemplo
+# Creamos un conjunto de datos sintético para clasificación binaria
 X, y = make_classification(n_samples=1000, n_features=20, random_state=42)
 
 # Dividir los datos en conjuntos de entrenamiento y prueba
+# Dividimos los datos en un 70% para entrenamiento y 30% para prueba
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 # Inicializar el modelo Naive Bayes
+# Creamos una instancia del clasificador Gaussian Naive Bayes
 model = GaussianNB()
 
 # Entrenar el modelo
+# Ajustamos el modelo a los datos de entrenamiento
 model.fit(X_train, y_train)
 
 # Hacer predicciones
+# Usamos el modelo entrenado para predecir las etiquetas de los datos de prueba
 y_pred = model.predict(X_test)
 
 # Evaluar el modelo
+# Calculamos la precisión del modelo comparando las predicciones con las etiquetas reales
 accuracy = accuracy_score(y_test, y_pred)
 print("Precisión del modelo:", accuracy)

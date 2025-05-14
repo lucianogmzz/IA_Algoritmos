@@ -1,57 +1,59 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa un sistema simple de detección de movimiento utilizando OpenCV.
+# Este código implementa un sistema simple de detección de movimiento utilizando OpenCV y la cámara web.
+# Se compara cada fotograma con el anterior para identificar diferencias significativas,
+# y luego se resaltan las regiones donde se detecta movimiento mediante contornos en color.
 
-import cv2
-import numpy as np
+import cv2  # Librería de visión por computadora
+import numpy as np  # Librería para operaciones numéricas
 
-# Inicializar la cámara
+# Inicializar la cámara (dispositivo 0 por defecto)
 cap = cv2.VideoCapture(0)
 
-# Leer el primer fotograma
+# Leer el primer fotograma de la cámara
 ret, frame1 = cap.read()
 if not ret:
-    print("Error al leer el video")
+    print("Error al leer el video")  # Verificar si la cámara se abrió correctamente
     exit()
 
-# Convertir el primer fotograma a escala de grises
+# Convertir el primer fotograma a escala de grises para simplificar el procesamiento
 prev_gray = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
 
 while True:
-    # Leer el siguiente fotograma
+    # Leer el siguiente fotograma de la cámara
     ret, frame2 = cap.read()
     if not ret:
-        break
+        break  # Salir si no se puede leer más
 
-    # Convertir el siguiente fotograma a escala de grises
+    # Convertir el nuevo fotograma a escala de grises
     gray = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
 
     # Calcular la diferencia absoluta entre el fotograma actual y el anterior
     frame_diff = cv2.absdiff(prev_gray, gray)
 
-    # Aplicar un umbral para obtener una imagen binaria
+    # Aplicar umbral para binarizar la imagen (resalta áreas de cambio/movimiento)
     _, thresh = cv2.threshold(frame_diff, 25, 255, cv2.THRESH_BINARY)
 
-    # Encontrar contornos en la imagen binaria
+    # Encontrar contornos en la imagen binaria (zonas con cambio)
     contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    # Dibujar contornos en el fotograma original
+    # Dibujar rectángulos alrededor de las zonas de movimiento detectadas
     for contour in contours:
-        if cv2.contourArea(contour) < 500:  # Ignorar contornos pequeños
-            continue
+        if cv2.contourArea(contour) < 500:
+            continue  # Ignorar movimientos muy pequeños (ruido)
         (x, y, w, h) = cv2.boundingRect(contour)
-        cv2.rectangle(frame2, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cv2.rectangle(frame2, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Rectángulo verde
 
-    # Mostrar el fotograma con los contornos dibujados
+    # Mostrar el resultado en una ventana
     cv2.imshow('Movimiento Detectado', frame2)
 
-    # Actualizar el fotograma anterior
+    # Actualizar el fotograma anterior para la siguiente iteración
     prev_gray = gray
 
-    # Salir si se presiona la tecla 'q'
+    # Salir del bucle si se presiona la tecla 'q'
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# Liberar la cámara y cerrar las ventanas
+# Liberar los recursos de la cámara y cerrar todas las ventanas de OpenCV
 cap.release()
 cv2.destroyAllWindows()

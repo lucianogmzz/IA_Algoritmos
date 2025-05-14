@@ -42,6 +42,9 @@ theta = 0.01  # Umbral para determinar si hay cambios pequeños
 
 # Función para evaluar la política actual
 def policy_evaluation(policy, V):
+    """
+    Evalúa la política actual iterando sobre los estados y actualizando sus valores.
+    """
     while True:
         delta = 0
         for state in G.nodes():
@@ -57,6 +60,9 @@ def policy_evaluation(policy, V):
 
 # Función para mejorar la política
 def policy_improvement(V):
+    """
+    Mejora la política actual buscando la mejor acción para cada estado.
+    """
     policy_stable = True
     for state in G.nodes():
         actions = list(G.successors(state))

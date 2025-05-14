@@ -1,49 +1,63 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa la retropropagación del error en una red neuronal simple.
+# Este código implementa la retropropagación del error en una red neuronal simple con una capa oculta.
+# Se utiliza para aprender la operación lógica AND. La red neuronal tiene dos entradas, una capa oculta con dos neuronas y una capa de salida con una neurona.
+# La retropropagación ajusta los pesos de la red para minimizar el error entre las salidas predichas y las salidas esperadas.
 
-import numpy as np
+import numpy as np  # Importa la librería numpy, que se usa para realizar operaciones numéricas y manejar arreglos/matrices.
 
-# Definir una función de activación simple (sigmoide)
+# Definir una función de activación sigmoide (función logística)
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    """
+    La función sigmoide es una función de activación que mapea cualquier valor real a un rango entre 0 y 1.
+    Esta es utilizada para introducir no linealidad en la red neuronal.
+    """
+    return 1 / (1 + np.exp(-x))  # Calcula y devuelve el valor de la sigmoide de x.
 
-# Definir la derivada de la función de activación
+# Definir la derivada de la función de activación sigmoide
 def sigmoid_derivative(x):
-    return x * (1 - x)
+    """
+    La derivada de la sigmoide es necesaria para la retropropagación del error.
+    Es calculada como: sigmoid(x) * (1 - sigmoid(x)).
+    """
+    return x * (1 - x)  # Calcula y devuelve la derivada de la función sigmoide.
 
-# Datos de entrada y salida esperada (AND lógico)
-inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-expected_output = np.array([[0], [0], [0], [1]])
+# Datos de entrada y salida esperada (Operación lógica AND)
+inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])  # Conjunto de entradas posibles para el problema AND.
+expected_output = np.array([[0], [0], [0], [1]])  # Las salidas esperadas correspondientes a cada combinación de entradas.
 
-# Inicializar pesos aleatoriamente
-np.random.seed(42)
-weights_input_hidden = np.random.rand(2, 2)
-weights_hidden_output = np.random.rand(2, 1)
+# Inicialización aleatoria de los pesos
+np.random.seed(42)  # Establece una semilla para asegurar la reproducibilidad de los resultados.
+weights_input_hidden = np.random.rand(2, 2)  # Pesos aleatorios entre la capa de entrada y la capa oculta (2 entradas a 2 neuronas).
+weights_hidden_output = np.random.rand(2, 1)  # Pesos aleatorios entre la capa oculta y la capa de salida (2 neuronas a 1 salida).
 
-# Tasa de aprendizaje
-learning_rate = 0.5
+# Tasa de aprendizaje (learning rate)
+learning_rate = 0.5  # Controla la magnitud de los ajustes de los pesos durante el entrenamiento.
 
 # Entrenamiento de la red utilizando retropropagación
-for epoch in range(10000):
-    # Propagación hacia adelante
-    hidden_layer_input = np.dot(inputs, weights_input_hidden)
-    hidden_layer_output = sigmoid(hidden_layer_input)
-    final_layer_input = np.dot(hidden_layer_output, weights_hidden_output)
-    final_output = sigmoid(final_layer_input)
+for epoch in range(10000):  # El entrenamiento se realiza durante 10,000 iteraciones (épocas).
+    # Propagación hacia adelante (Forward Propagation)
+    hidden_layer_input = np.dot(inputs, weights_input_hidden)  # Calcula la entrada a la capa oculta (producto punto de las entradas y los pesos).
+    hidden_layer_output = sigmoid(hidden_layer_input)  # Aplica la función sigmoide a la entrada de la capa oculta.
+    final_layer_input = np.dot(hidden_layer_output, weights_hidden_output)  # Calcula la entrada a la capa de salida.
+    final_output = sigmoid(final_layer_input)  # Aplica la función sigmoide para obtener la salida final de la red.
 
-    # Cálculo del error
-    error = expected_output - final_output
-    final_output_delta = error * sigmoid_derivative(final_output)
+    # Cálculo del error (Diferencia entre la salida esperada y la salida obtenida)
+    error = expected_output - final_output  # El error es la diferencia entre la salida esperada y la salida real.
 
-    # Retropropagación del error
-    hidden_layer_error = final_output_delta.dot(weights_hidden_output.T)
-    hidden_layer_delta = hidden_layer_error * sigmoid_derivative(hidden_layer_output)
+    # Cálculo de la delta para la capa de salida (Retropropagación)
+    final_output_delta = error * sigmoid_derivative(final_output)  # Calcula el gradiente del error respecto a la salida utilizando la derivada de la sigmoide.
+
+    # Retropropagación del error hacia la capa oculta
+    hidden_layer_error = final_output_delta.dot(weights_hidden_output.T)  # Calcula el error en la capa oculta.
+    hidden_layer_delta = hidden_layer_error * sigmoid_derivative(hidden_layer_output)  # Calcula la delta para la capa oculta.
 
     # Actualización de pesos
-    weights_hidden_output += hidden_layer_output.T.dot(final_output_delta) * learning_rate
-    weights_input_hidden += inputs.T.dot(hidden_layer_delta) * learning_rate
+    # Ajusta los pesos de la capa oculta a la capa de salida utilizando el gradiente del error.
+    weights_hidden_output += hidden_layer_output.T.dot(final_output_delta) * learning_rate  # Ajuste de pesos entre la capa oculta y la salida.
+    # Ajusta los pesos de la capa de entrada a la capa oculta utilizando el gradiente del error.
+    weights_input_hidden += inputs.T.dot(hidden_layer_delta) * learning_rate  # Ajuste de pesos entre la capa de entrada y la capa oculta.
 
-# Prueba de la red
+# Prueba de la red después del entrenamiento
 print("Salida de la red después del entrenamiento:")
-print(final_output)
+print(final_output)  # Muestra las salidas obtenidas por la red después de entrenarla.

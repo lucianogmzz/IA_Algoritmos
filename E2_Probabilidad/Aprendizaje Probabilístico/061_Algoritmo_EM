@@ -1,26 +1,63 @@
-# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Luciano Alejandro Gómez Muñoz - 22310214 - 6E2
+# ---------------------------------------------------------
+# Algoritmo EM (Expectation-Maximization) usando Gaussian Mixture Model (GMM).
+# Este algoritmo es útil para problemas de clustering no supervisado, donde no se conoce la clase real.
+# En este ejemplo se generan puntos en 2D artificiales, y se agrupan mediante GMM.
+# GMM asume que los datos son generados por una mezcla de distribuciones gaussianas.
+# El algoritmo EM alterna entre dos pasos:
+#   - E-step: asigna probabilísticamente puntos a cada componente (cluster)
+#   - M-step: actualiza los parámetros de las gaussianas para maximizar la verosimilitud
 
-# Este código implementa el algoritmo EM utilizando un modelo de mezcla gaussiana.
+# ----------------------------
+# Importación de librerías
+# ----------------------------
 
 from sklearn.datasets import make_blobs
+# make_blobs genera conjuntos de datos artificiales agrupados (blobs), muy útiles para pruebas de clustering
+
 from sklearn.mixture import GaussianMixture
+# GaussianMixture implementa el modelo de mezcla gaussiana usando el algoritmo EM
+
 import matplotlib.pyplot as plt
+# matplotlib.pyplot permite crear gráficos. Aquí se usará para mostrar los clusters
 
-# Generar datos de ejemplo
+# ----------------------------
+# Generación de datos sintéticos
+# ----------------------------
+
+# Se crean 300 puntos distribuidos en 4 grupos (centros), con semilla aleatoria 42
 X, _ = make_blobs(n_samples=300, centers=4, random_state=42)
+# 'X' contiene las coordenadas de los puntos (características)
+# '_' ignora las etiquetas reales (no se usan, ya que el algoritmo es no supervisado)
 
-# Inicializar el modelo de mezcla gaussiana
+# ----------------------------
+# Creación y entrenamiento del modelo GMM
+# ----------------------------
+
+# Se crea una instancia del modelo con 4 componentes gaussianos (clusters)
 gmm = GaussianMixture(n_components=4, random_state=42)
 
-# Ajustar el modelo a los datos
+# Se ajusta el modelo a los datos. Aquí se calcula la media, varianza y pesos de las gaussianas.
 gmm.fit(X)
 
-# Predecir las etiquetas de los clusters
-labels = gmm.predict(X)
+# ----------------------------
+# Predicción (etiquetado por cluster)
+# ----------------------------
 
-# Graficar los resultados
+# Se predice a qué cluster pertenece cada punto
+labels = gmm.predict(X)
+# 'labels' es un arreglo con las asignaciones de cluster para cada punto
+
+# ----------------------------
+# Visualización de resultados
+# ----------------------------
+
+# Se grafica un diagrama de dispersión:
+# - Eje x: primera característica
+# - Eje y: segunda característica
+# - Color: depende del cluster al que fue asignado el punto
 plt.scatter(X[:, 0], X[:, 1], c=labels, s=40, cmap='viridis', marker='o')
-plt.title('Clustering utilizando el Algoritmo EM')
-plt.xlabel('Característica 1')
-plt.ylabel('Característica 2')
-plt.show()
+plt.title('Clustering utilizando el Algoritmo EM')  # Título del gráfico
+plt.xlabel('Característica 1')                      # Etiqueta del eje X
+plt.ylabel('Característica 2')                      # Etiqueta del eje Y
+plt.show()  # Mostrar la gráfica

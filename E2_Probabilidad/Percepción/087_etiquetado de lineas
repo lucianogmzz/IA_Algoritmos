@@ -1,42 +1,47 @@
-import cv2
-import matplotlib.pyplot as plt
-from skimage import data
-from skimage import img_as_ubyte
-import numpy as np
+# Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Cargar imagen integrada y convertirla a formato compatible con OpenCV
+# Este código implementa un sistema de detección de contornos en una imagen en escala de grises.
+# Utiliza OpenCV y una imagen integrada de monedas para aplicar filtrado Gaussiano, detección de bordes (Canny),
+# y finalmente extrae los contornos detectados para visualizarlos sobre la imagen original en color.
+
+import cv2  # Librería para procesamiento de imágenes
+import matplotlib.pyplot as plt  # Para mostrar imágenes
+from skimage import data  # Provee imágenes de ejemplo
+from skimage import img_as_ubyte  # Convierte imágenes a formato uint8
+import numpy as np  # Librería para operaciones numéricas
+
+# Cargar una imagen de monedas desde skimage y convertirla a 8 bits por píxel (uint8)
 image = img_as_ubyte(data.coins())  # Imagen en escala de grises
 
-# Si necesitas una imagen en color:
+# Si se quisiera trabajar con una imagen en color, se puede descomentar lo siguiente:
 # from skimage.color import gray2rgb
 # image = img_as_ubyte(gray2rgb(data.coins()))
 
-# Aplicar un filtro Gaussiano
+# Aplicar filtro Gaussiano para suavizar la imagen y reducir ruido
 blurred_image = cv2.GaussianBlur(image, (5, 5), 0)
 
-# Detectar bordes con Canny
+# Detectar bordes en la imagen suavizada usando el algoritmo de Canny
 edges = cv2.Canny(blurred_image, 50, 150)
 
-# Encontrar contornos
+# Encontrar los contornos a partir de los bordes detectados
 contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-# Convertir imagen a RGB para mostrar los contornos en color
+# Convertir la imagen original a RGB para poder dibujar los contornos en color (verde)
 output_image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
-cv2.drawContours(output_image, contours, -1, (0, 255, 0), 1)
+cv2.drawContours(output_image, contours, -1, (0, 255, 0), 1)  # Dibuja todos los contornos
 
-# Mostrar imágenes
-plt.figure(figsize=(12, 6))
+# Mostrar la imagen original y la imagen con contornos
+plt.figure(figsize=(12, 6))  # Tamaño del lienzo
 
-plt.subplot(1, 2, 1)
+plt.subplot(1, 2, 1)  # Primera imagen
 plt.title('Imagen Original')
-plt.imshow(image, cmap='gray')
+plt.imshow(image, cmap='gray')  # Mostrar en escala de grises
 plt.axis('off')
 
-plt.subplot(1, 2, 2)
+plt.subplot(1, 2, 2)  # Segunda imagen
 plt.title('Contornos Detectados')
-plt.imshow(output_image)
+plt.imshow(output_image)  # Mostrar con contornos en color
 plt.axis('off')
 
 plt.tight_layout()
 plt.show()
-

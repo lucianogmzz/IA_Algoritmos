@@ -1,48 +1,80 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa un sistema simple de recuperación de datos utilizando un modelo probabilístico.
+# Este código implementa un sistema básico de recuperación de información basado en un modelo probabilístico,
+# específicamente utilizando el esquema TF-IDF (Term Frequency - Inverse Document Frequency).
+# Este modelo evalúa la importancia de un término dentro de un documento en relación con un conjunto de documentos (corpus).
+# Luego, calcula la relevancia de cada documento frente a una consulta, basándose en los términos compartidos.
 
-from collections import Counter
-import math
+# -------------------------------------------------------------
+# Importación de librerías necesarias
 
-# Función para calcular la frecuencia de términos en los documentos
+from collections import Counter  # Proporciona una forma rápida de contar elementos en listas o cadenas (frecuencia de términos).
+import math  # Se usa para funciones matemáticas como el logaritmo natural (log), necesario para calcular IDF.
+
+# -------------------------------------------------------------
+# Función: Calcular frecuencias de términos en cada documento
+
 def calculate_term_frequencies(documents):
-    term_frequencies = {}
+    term_frequencies = {}  # Diccionario para almacenar las frecuencias por documento
+    # Itera sobre cada documento con su identificador
     for doc_id, doc in enumerate(documents):
+        # Divide el documento en palabras y cuenta las ocurrencias con Counter
         term_frequencies[doc_id] = Counter(doc.split())
-    return term_frequencies
+    return term_frequencies  # Devuelve un diccionario: {doc_id: {término: frecuencia}}
 
-# Función para calcular el TF-IDF de los términos
+# -------------------------------------------------------------
+# Función: Calcular el TF-IDF para cada término en cada documento
+
 def calculate_tfidf(term_frequencies, documents):
-    tfidf = {}
-    num_docs = len(documents)
+    tfidf = {}  # Diccionario para guardar los valores TF-IDF
+    num_docs = len(documents)  # Número total de documentos en el corpus
+
+    # Itera sobre los documentos y sus frecuencias de términos
     for doc_id, freqs in term_frequencies.items():
-        tfidf[doc_id] = {}
+        tfidf[doc_id] = {}  # Inicializa subdiccionario para cada documento
         for term, freq in freqs.items():
+            # Calcula el número de documentos que contienen el término (document frequency, df)
             df = sum(1 for doc in term_frequencies.values() if term in doc)
+            # Calcula IDF (con log natural). Se suma 1 al denominador para evitar división por cero
             idf = math.log(num_docs / (1 + df))
+            # TF-IDF = frecuencia del término * IDF
             tfidf[doc_id][term] = freq * idf
-    return tfidf
+    return tfidf  # Devuelve un diccionario con los scores TF-IDF por documento
 
-# Función para calcular la relevancia de un documento dado una consulta
+# -------------------------------------------------------------
+# Función: Calcular la relevancia de cada documento para una consulta
+
 def calculate_relevance(query, tfidf):
-    query_terms = query.split()
-    relevance = {}
-    for doc_id, scores in tfidf.items():
-        relevance[doc_id] = sum(scores.get(term, 0) for term in query_terms)
-    return relevance
+    query_terms = query.split()  # Divide la consulta en palabras
+    relevance = {}  # Diccionario para almacenar los puntajes de relevancia
 
-# Ejemplo de uso
+    # Itera sobre los documentos y sus puntajes TF-IDF
+    for doc_id, scores in tfidf.items():
+        # La relevancia se define como la suma de los scores TF-IDF de los términos de la consulta
+        relevance[doc_id] = sum(scores.get(term, 0) for term in query_terms)
+    return relevance  # Devuelve un diccionario: {doc_id: relevancia}
+
+# -------------------------------------------------------------
+# Ejemplo de uso del sistema
+
+# Lista de documentos del corpus
 documents = [
     "el gato está sobre la mesa",
     "el perro está bajo la mesa",
     "el gato y el perro son amigos"
 ]
 
+# Calcular frecuencias de términos en los documentos
 term_frequencies = calculate_term_frequencies(documents)
+
+# Calcular los valores TF-IDF con base en las frecuencias
 tfidf = calculate_tfidf(term_frequencies, documents)
 
-# Calcular la relevancia de los documentos para una consulta
+# Definir la consulta del usuario
 query = "gato mesa"
+
+# Calcular la relevancia de cada documento respecto a la consulta
 relevance = calculate_relevance(query, tfidf)
+
+# Mostrar los resultados
 print("Relevancia de los documentos para la consulta:", relevance)

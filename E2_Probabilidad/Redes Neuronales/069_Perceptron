@@ -1,34 +1,70 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa un Perceptrón simple.
+# Este código implementa un perceptrón simple, un tipo de red neuronal de una sola capa, utilizado para problemas de clasificación binaria.
+# En este caso, se utiliza para resolver el problema del AND lógico, donde se entrenará al perceptrón para predecir el resultado de la operación AND entre dos entradas binarias.
 
-import numpy as np
+import numpy as np  # Importa la librería numpy, que proporciona soporte para álgebra lineal y operaciones numéricas.
 
 # Definir la clase Perceptrón
 class Perceptron:
+    """
+    La clase Perceptron modela una red neuronal de una sola capa (un solo nodo de salida).
+    El perceptrón aprende a realizar una clasificación binaria a través de entrenamiento supervisado.
+    """
     def __init__(self, input_size, learning_rate=0.1):
-        self.weights = np.zeros(input_size)
-        self.bias = 0.0
-        self.learning_rate = learning_rate
+        """
+        Constructor de la clase Perceptron. Inicializa los pesos, el sesgo (bias) y la tasa de aprendizaje.
+
+        :param input_size: Número de entradas del perceptrón (en este caso, 2 para el problema AND).
+        :param learning_rate: Tasa de aprendizaje, que define el tamaño de los ajustes durante el entrenamiento.
+        """
+        self.weights = np.zeros(input_size)  # Inicializa los pesos a cero. np.zeros crea un arreglo de ceros con el tamaño especificado.
+        self.bias = 0.0  # Inicializa el sesgo (bias) a cero.
+        self.learning_rate = learning_rate  # Tasa de aprendizaje, define qué tanto se ajustan los pesos en cada iteración.
 
     def activate(self, inputs):
-        weighted_sum = np.dot(inputs, self.weights) + self.bias
+        """
+        Función de activación del perceptrón, que calcula la salida a partir de las entradas.
+        Utiliza la función escalón (step function) como activación.
+
+        :param inputs: Un arreglo de entradas para el perceptrón.
+        :return: La salida del perceptrón (1 o 0).
+        """
+        # Calcula la suma ponderada de las entradas + el sesgo.
+        weighted_sum = np.dot(inputs, self.weights) + self.bias  # np.dot realiza el producto punto entre las entradas y los pesos.
+        # Si la suma ponderada es mayor o igual a 0, devuelve 1 (activación), de lo contrario, 0 (desactivación).
         return 1 if weighted_sum >= 0 else 0
 
     def train(self, training_inputs, labels, epochs):
+        """
+        Entrenamiento del perceptrón mediante el algoritmo de aprendizaje supervisado.
+        Ajusta los pesos y el sesgo basándose en el error de la predicción.
+
+        :param training_inputs: Conjunto de entradas de entrenamiento (en este caso, las combinaciones de entradas para el AND).
+        :param labels: Etiquetas de salida esperadas (0 o 1) correspondientes a las entradas de entrenamiento.
+        :param epochs: Número de veces que el conjunto de entrenamiento se utiliza para ajustar los pesos.
+        """
+        # Se repite el entrenamiento por un número de épocas.
         for _ in range(epochs):
+            # Para cada entrada de entrenamiento y su correspondiente etiqueta.
             for inputs, label in zip(training_inputs, labels):
-                prediction = self.activate(inputs)
-                self.weights += self.learning_rate * (label - prediction) * inputs
-                self.bias += self.learning_rate * (label - prediction)
+                prediction = self.activate(inputs)  # Realiza la predicción con las entradas actuales.
+                # Actualiza los pesos y el sesgo utilizando la regla de aprendizaje del perceptrón.
+                self.weights += self.learning_rate * (label - prediction) * inputs  # Ajusta los pesos.
+                self.bias += self.learning_rate * (label - prediction)  # Ajusta el sesgo.
 
 # Ejemplo de uso
-training_inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-labels = np.array([0, 0, 0, 1])  # AND lógico
+# Definir las entradas de entrenamiento para el problema del AND lógico.
+training_inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])  # Las combinaciones posibles de entradas binarias.
+labels = np.array([0, 0, 0, 1])  # Las salidas esperadas para cada combinación (resultados de la operación AND).
 
+# Crear una instancia del perceptrón con dos entradas y una tasa de aprendizaje de 0.1.
 perceptron = Perceptron(input_size=2, learning_rate=0.1)
+
+# Entrenar al perceptrón durante 10 épocas.
 perceptron.train(training_inputs, labels, epochs=10)
 
-# Prueba del perceptrón
-test_inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+# Prueba del perceptrón con las mismas entradas para verificar el desempeño.
+test_inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])  # Las mismas combinaciones de entradas utilizadas para entrenar.
+# Mostrar las salidas del perceptrón para las entradas de prueba.
 print("Salidas del perceptrón:", [perceptron.activate(inputs) for inputs in test_inputs])

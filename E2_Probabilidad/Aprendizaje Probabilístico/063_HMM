@@ -1,28 +1,34 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa un Modelo Oculto de Markov (HMM) simple.
+# Implementación de un Modelo Oculto de Markov (HMM) con el algoritmo de paso hacia adelante.
 
-import numpy as np
+import numpy as np  # Importa numpy para trabajar con arreglos y realizar operaciones matemáticas.
 
-# Definir las probabilidades del HMM
-initial_prob = np.array([0.6, 0.4])  # Probabilidades iniciales
-transition_prob = np.array([[0.7, 0.3], [0.4, 0.6]])  # Probabilidades de transición
-emission_prob = np.array([[0.5, 0.5], [0.1, 0.9]])  # Probabilidades de emisión
+# Probabilidades del HMM
+initial_prob = np.array([0.6, 0.4])  # Probabilidades iniciales para los estados 0 y 1.
+transition_prob = np.array([[0.7, 0.3], [0.4, 0.6]])  # Matriz de probabilidades de transición entre estados.
+emission_prob = np.array([[0.5, 0.5], [0.1, 0.9]])  # Matriz de probabilidades de emisión para cada estado.
 
-# Observaciones
-observations = [0, 1, 0]
+# Secuencia de observaciones que se desea evaluar
+observations = [0, 1, 0]  # Ejemplo de secuencia de observaciones (0 y 1).
 
 # Número de estados
-n_states = 2
+n_states = 2  # El modelo tiene 2 estados ocultos.
 
-# Paso Hacia Delante
-alpha = np.zeros((len(observations), n_states))
-alpha[0] = initial_prob * emission_prob[:, observations[0]]
+# Inicialización de la matriz alpha, que almacenará las probabilidades de la secuencia observada.
+alpha = np.zeros((len(observations), n_states))  # Matriz de tamaño (n_observaciones x n_estados)
 
-for t in range(1, len(observations)):
-    for j in range(n_states):
+# Calculo inicial para la primera observación
+alpha[0] = initial_prob * emission_prob[:, observations[0]]  # Multiplica prob inicial por la probabilidad de emisión del primer símbolo.
+
+# Paso hacia adelante para las observaciones siguientes
+for t in range(1, len(observations)):  # Recorre cada observación después de la primera
+    for j in range(n_states):  # Recorre cada estado posible
         alpha[t, j] = alpha[t-1].dot(transition_prob[:, j]) * emission_prob[j, observations[t]]
+        # Calcula la probabilidad de cada estado t, tomando en cuenta las transiciones y la emisión del símbolo observado.
 
-# Probabilidad de la secuencia de observaciones
-prob_observations = alpha.sum(axis=1).prod()
+# Calcula la probabilidad total de la secuencia de observaciones.
+prob_observations = alpha.sum(axis=1).prod()  # Suma las probabilidades de cada tiempo t y las multiplica entre sí.
+
+# Imprime el resultado final: la probabilidad de que la secuencia de observaciones haya sido generada por el modelo HMM.
 print("Probabilidad de la secuencia de observaciones:", prob_observations)

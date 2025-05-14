@@ -1,4 +1,10 @@
-# Importamos la librería de backtracking para la búsqueda en profundidad
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Este código implementa una solución al problema de las n-reinas utilizando el algoritmo de satisfacción de restricciones (CSP).
+# El problema de las n-reinas consiste en colocar n reinas en un tablero de ajedrez de n x n de tal manera que ninguna reina se ataque entre sí.
+# La solución utiliza permutaciones para generar todas las posibles configuraciones de reinas y verifica si cumplen con las restricciones.
+
+# Importamos la librería de itertools para generar permutaciones
 from itertools import permutations
 
 # Función para verificar si la asignación de reinas es válida
@@ -12,7 +18,7 @@ def es_valida(tablero):
             # Las reinas no deben estar en la misma fila ni en la misma columna
             if tablero[i] == tablero[j]:
                 return False
-            
+
             # Verificar las diagonales
             if abs(tablero[i] - tablero[j]) == abs(i - j):
                 return False
@@ -26,7 +32,7 @@ def resolver_csp(n):
     """
     # Generamos todas las permutaciones posibles de columnas para las reinas
     permutaciones_posibles = permutations(range(n))
-    
+
     for perm in permutaciones_posibles:
         if es_valida(perm):  # Si la permutación cumple las restricciones
             return perm  # Retorna la solución válida

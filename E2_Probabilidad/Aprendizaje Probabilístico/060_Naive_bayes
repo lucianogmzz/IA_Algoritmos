@@ -1,28 +1,55 @@
-# Luciano Alejandro Gómez Muñoz 22310214 6E2
+# Luciano Alejandro Gómez Muñoz - 22310214 - 6E2
+# -----------------------------------------------------
+# Clasificador Naïve-Bayes utilizando el conjunto de datos Iris.
+# Naïve-Bayes es un clasificador probabilístico basado en el teorema de Bayes,
+# que asume independencia entre características (atributos).
+# Este ejemplo utiliza el clasificador Gaussiano (GaussianNB), que asume que
+# las características siguen una distribución normal.
 
-# Este código implementa un clasificador Naïve-Bayes utilizando un ejemplo simple de clasificación.
+# --------------------------
+# Importación de librerías
+# --------------------------
 
 from sklearn.datasets import load_iris
+# Carga el conjunto de datos 'Iris', muy común en problemas de clasificación.
+# Contiene medidas de 150 flores (longitud de sépalos y pétalos) de 3 especies diferentes.
+
 from sklearn.model_selection import train_test_split
+# Permite dividir el conjunto de datos en dos partes: entrenamiento y prueba.
+
 from sklearn.naive_bayes import GaussianNB
+# Importa el clasificador Naïve-Bayes con distribución gaussiana.
+
 from sklearn.metrics import accuracy_score
+# Permite calcular la precisión del modelo (porcentaje de aciertos).
 
-# Cargar datos de ejemplo (conjunto de datos Iris)
-data = load_iris()
-X, y = data.data, data.target
+# --------------------------
+# Carga y preparación de datos
+# --------------------------
 
-# Dividir los datos en conjuntos de entrenamiento y prueba
+data = load_iris()       # Carga el dataset Iris completo
+X, y = data.data, data.target  # X contiene las características (features), y contiene las etiquetas (target/classes)
+
+# División del dataset en entrenamiento (70%) y prueba (30%)
+# 'random_state=42' asegura que la división sea reproducible
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# Inicializar el modelo Naive Bayes
-model = GaussianNB()
+# --------------------------
+# Entrenamiento del modelo
+# --------------------------
 
-# Entrenar el modelo
-model.fit(X_train, y_train)
+model = GaussianNB()     # Se crea una instancia del clasificador Naïve-Bayes Gaussiano
 
-# Hacer predicciones
-y_pred = model.predict(X_test)
+model.fit(X_train, y_train)  # Se entrena el modelo con los datos de entrenamiento
 
-# Evaluar el modelo
+# --------------------------
+# Predicción y evaluación
+# --------------------------
+
+y_pred = model.predict(X_test)  # Se hacen predicciones sobre el conjunto de prueba
+
+# Se calcula la precisión comparando las predicciones con las etiquetas reales
 accuracy = accuracy_score(y_test, y_pred)
+
+# Se imprime el resultado final
 print("Precisión del modelo Naïve-Bayes:", accuracy)

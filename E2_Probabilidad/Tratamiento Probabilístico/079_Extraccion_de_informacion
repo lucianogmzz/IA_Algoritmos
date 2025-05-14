@@ -1,35 +1,50 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
 # Este código implementa un sistema simple de extracción de información utilizando un modelo probabilístico.
+# El sistema extrae entidades (como nombres y fechas) de un texto y calcula la frecuencia de las entidades en un corpus.
 
-import re
-from collections import Counter
+import re  # Importa el módulo re para realizar operaciones con expresiones regulares.
+from collections import Counter  # Importa Counter para contar frecuencias de elementos.
 
-# Función para extraer entidades de un texto
+# Función para extraer entidades de un texto.
+# Se utilizan expresiones regulares para identificar nombres propios y fechas en el texto.
+
 def extract_entities(text):
-    # Patrones simples para entidades (nombres propios y fechas)
+    # Patrones simples para entidades (nombres propios y fechas).
+    # El patrón para nombres propios es una palabra que comienza con mayúscula seguida de minúsculas.
+    # El patrón para fechas es en formato dd/mm/yyyy.
     name_pattern = r'\b[A-Z][a-z]+\b'
     date_pattern = r'\b\d{2}/\d{2}/\d{4}\b'
 
+    # Buscar todas las entidades de acuerdo con los patrones.
     names = re.findall(name_pattern, text)
     dates = re.findall(date_pattern, text)
 
     return names, dates
 
-# Función para calcular la frecuencia de entidades en un corpus
+# Función para calcular la frecuencia de entidades en un corpus.
+# El corpus es una lista de textos, y se extraen las entidades de cada texto y luego se cuentan sus frecuencias.
+
 def calculate_entity_frequencies(corpus):
-    entity_frequencies = Counter()
+    entity_frequencies = Counter()  # Crea un objeto Counter para contar las entidades.
     for text in corpus:
+        # Extraer entidades (nombres y fechas) de cada texto.
         names, dates = extract_entities(text)
+        # Actualizar las frecuencias de las entidades encontradas en el texto.
         entity_frequencies.update(names + dates)
     return entity_frequencies
 
-# Ejemplo de uso
+# Ejemplo de uso:
+# Corpus de ejemplo con varios textos que incluyen nombres y fechas.
+
 corpus = [
     "Juan fue a la tienda el 12/05/2023.",
     "María celebró su cumpleaños el 20/08/2023.",
     "Juan y María son amigos desde el 01/01/2020."
 ]
 
+# Calcular las frecuencias de las entidades en el corpus.
 entity_frequencies = calculate_entity_frequencies(corpus)
+
+# Imprimir las frecuencias de las entidades extraídas del corpus.
 print("Frecuencia de entidades en el corpus:", entity_frequencies)

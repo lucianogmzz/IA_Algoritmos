@@ -1,4 +1,13 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Este código implementa una solución al problema de coloreo de grafos utilizando propagación de restricciones y backtracking.
+# El problema de coloreo de grafos consiste en asignar colores a los nodos de un grafo de tal manera que ningún nodo adyacente tenga el mismo color.
+# La solución utiliza propagación de restricciones para reducir el dominio de colores posibles y backtracking para explorar las posibles asignaciones.
+
+# Importamos la librería networkx para crear y manipular grafos
 import networkx as nx
+
+# Importamos matplotlib.pyplot para visualizar el grafo
 import matplotlib.pyplot as plt
 
 # Definir el grafo

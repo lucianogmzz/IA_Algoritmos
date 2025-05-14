@@ -1,52 +1,78 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa un modelo probabilístico del lenguaje simple utilizando un corpus.
+# Este código implementa un modelo probabilístico de lenguaje simple utilizando un corpus de texto.
+# El modelo utiliza unigramas (probabilidades de palabras individuales) y bigramas (probabilidades de pares de palabras consecutivas) para calcular la probabilidad de una frase.
+# El corpus es una lista de oraciones que se usan para entrenar el modelo de lenguaje.
 
-from collections import defaultdict, Counter
-import numpy as np
+from collections import defaultdict, Counter  # Importa defaultdict y Counter de la librería collections para contar las palabras y bigramas de manera eficiente.
+import numpy as np  # Importa numpy, aunque no es estrictamente necesario para este código, podría ser útil para operaciones adicionales en modelos más complejos.
 
 # Función para entrenar el modelo de lenguaje
 def train_language_model(corpus):
+    """
+    Esta función entrena un modelo de lenguaje utilizando unigramas y bigramas.
+    El corpus es una lista de oraciones que se usan para calcular las frecuencias de las palabras y los pares de palabras.
+    
+    corpus: Lista de oraciones (cadenas de texto) que representan el corpus de entrenamiento.
+    """
     # Contar la frecuencia de los unigramas y bigramas
-    unigram_counts = Counter()
-    bigram_counts = defaultdict(Counter)
-    total_words = 0
+    unigram_counts = Counter()  # Un contador para almacenar la frecuencia de las palabras individuales (unigramas).
+    bigram_counts = defaultdict(Counter)  # Un defaultdict que almacena un Counter para cada palabra, para contar las palabras que siguen a cada palabra (bigramas).
+    total_words = 0  # Variable para llevar el conteo total de palabras en el corpus.
 
+    # Iterar sobre todas las oraciones en el corpus
     for sentence in corpus:
-        words = sentence.split()
-        unigram_counts.update(words)
-        total_words += len(words)
-        for i in range(len(words) - 1):
-            bigram_counts[words[i]][words[i + 1]] += 1
+        words = sentence.split()  # Se divide la oración en una lista de palabras (tokens).
+        unigram_counts.update(words)  # Actualiza el contador de unigramas con las palabras de la oración.
+        total_words += len(words)  # Se incrementa el contador total de palabras.
+        
+        # Calcular los bigramas
+        for i in range(len(words) - 1):  # Para cada par de palabras consecutivas (bigramas) en la oración.
+            bigram_counts[words[i]][words[i + 1]] += 1  # Incrementa el contador del bigrama (palabra[i], palabra[i+1]).
 
-    # Calcular las probabilidades
-    unigram_probs = {word: count / total_words for word, count in unigram_counts.items()}
+    # Calcular las probabilidades de los unigramas
+    unigram_probs = {word: count / total_words for word, count in unigram_counts.items()}  # Calcula la probabilidad de cada palabra dividiendo su frecuencia entre el total de palabras.
+
+    # Calcular las probabilidades de los bigramas
     bigram_probs = {word1: {word2: count / unigram_counts[word1] for word2, count in word_counts.items()}
-                    for word1, word_counts in bigram_counts.items()}
+                    for word1, word_counts in bigram_counts.items()}  # Para cada palabra, calcula la probabilidad de cada palabra siguiente (bigramas).
 
-    return unigram_probs, bigram_probs
+    return unigram_probs, bigram_probs  # Retorna los diccionarios de probabilidades de unigramas y bigramas.
 
 # Función para calcular la probabilidad de una frase
 def calculate_probability(sentence, unigram_probs, bigram_probs):
-    words = sentence.split()
-    probability = 1.0
+    """
+    Esta función calcula la probabilidad de una frase basada en las probabilidades de unigramas y bigramas.
+    
+    sentence: La oración cuyo valor de probabilidad se desea calcular.
+    unigram_probs: El diccionario de probabilidades de unigramas.
+    bigram_probs: El diccionario de probabilidades de bigramas.
+    """
+    words = sentence.split()  # Divide la frase en palabras individuales.
+    probability = 1.0  # Inicializa la probabilidad total de la frase en 1 (porque las probabilidades se multiplican).
+
+    # Itera sobre las palabras de la frase (excepto la última, ya que no tiene un bigrama posterior)
     for i in range(len(words) - 1):
         if words[i] in bigram_probs and words[i + 1] in bigram_probs[words[i]]:
+            # Si el bigrama (palabra[i], palabra[i+1]) existe, multiplica la probabilidad por la probabilidad del bigrama.
             probability *= bigram_probs[words[i]][words[i + 1]]
         else:
-            probability *= unigram_probs.get(words[i + 1], 1e-10)  # Suavizado para palabras no vistas
-    return probability
+            # Si no existe el bigrama, usa la probabilidad del unigram como suavizado.
+            probability *= unigram_probs.get(words[i + 1], 1e-10)  # Suavizado para palabras no vistas: asigna una probabilidad muy baja (1e-10).
+
+    return probability  # Devuelve la probabilidad calculada de la frase.
 
 # Ejemplo de uso
 corpus = [
-    "el gato está sobre la mesa",
-    "el perro está bajo la mesa",
-    "el gato y el perro son amigos"
+    "el gato está sobre la mesa",  # Oración 1
+    "el perro está bajo la mesa",  # Oración 2
+    "el gato y el perro son amigos"  # Oración 3
 ]
 
+# Entrenar el modelo de lenguaje con el corpus de ejemplo
 unigram_probs, bigram_probs = train_language_model(corpus)
 
 # Calcular la probabilidad de una frase
-sentence = "el gato está sobre la mesa"
-probability = calculate_probability(sentence, unigram_probs, bigram_probs)
-print("Probabilidad de la frase:", probability)
+sentence = "el gato está sobre la mesa"  # Frase de prueba
+probability = calculate_probability(sentence, unigram_probs, bigram_probs)  # Calcula la probabilidad de la frase en base al modelo entrenado.
+print("Probabilidad de la frase:", probability)  # Imprime la probabilidad calculada de la frase.

@@ -1,3 +1,9 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Este código implementa una solución al problema de Sudoku utilizando el algoritmo de backtracking con forward checking.
+# El problema de Sudoku consiste en llenar un tablero 9x9 con números del 1 al 9, de tal manera que cada fila, columna y bloque 3x3 contenga todos los números sin repetición.
+# La solución utiliza backtracking para explorar todas las posibles asignaciones de números y forward checking para reducir el dominio de valores posibles.
+
 import numpy as np
 
 # Función para encontrar la siguiente celda vacía en el Sudoku
@@ -65,3 +71,4 @@ if forward_checking(sudoku):
     print(sudoku)
 else:
     print("No se encontró solución.")
+

@@ -1,33 +1,45 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa una red neuronal simple utilizando Keras.
-
+# Importa el conjunto de datos MNIST, que contiene imágenes de dígitos manuscritos
 from keras.datasets import mnist
+
+# Importa los módulos necesarios de Keras para crear una red neuronal
 from keras.models import Sequential
 from keras.layers import Dense, Flatten
 from keras.utils import to_categorical
 
-# Cargar datos de ejemplo (conjunto de datos MNIST)
+# Carga el conjunto de datos MNIST, dividiéndolo en entrenamiento y prueba
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
 
-# Preprocesar los datos
+# Preprocesa los datos de entrada, normalizando las imágenes a valores entre 0 y 1
 X_train = X_train.astype('float32') / 255
 X_test = X_test.astype('float32') / 255
+
+# Convierte las etiquetas de las clases (dígitos) en vectores binarios (one-hot encoding)
 y_train = to_categorical(y_train, 10)
 y_test = to_categorical(y_test, 10)
 
-# Inicializar el modelo
+# Inicializa el modelo secuencial (se apilan capas de manera lineal)
 model = Sequential()
+
+# Aplana las imágenes de entrada (28x28 píxeles) en un vector de 784 elementos
 model.add(Flatten(input_shape=(28, 28)))
+
+# Añade una capa densa (totalmente conectada) con 128 neuronas y activación ReLU
 model.add(Dense(128, activation='relu'))
+
+# Añade una capa de salida con 10 neuronas (una por cada clase) y activación softmax para clasificación
 model.add(Dense(10, activation='softmax'))
 
-# Compilar el modelo
+# Compila el modelo especificando el optimizador (Adam), la función de pérdida (categorical_crossentropy) y las métricas (accuracy)
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Entrenar el modelo
+# Entrena el modelo con los datos de entrenamiento, utilizando 5 épocas y tamaño de lote 32
+# 20% de los datos se usan para validación durante el entrenamiento
 model.fit(X_train, y_train, epochs=5, batch_size=32, validation_split=0.2)
 
-# Evaluar el modelo
+# Evalúa el modelo sobre el conjunto de prueba y obtiene la pérdida y precisión
 test_loss, test_accuracy = model.evaluate(X_test, y_test)
+
+# Muestra la precisión del modelo en el conjunto de prueba
 print("Precisión del modelo en el conjunto de prueba:", test_accuracy)

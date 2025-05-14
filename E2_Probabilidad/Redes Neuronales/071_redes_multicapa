@@ -1,49 +1,116 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa una red neuronal multicapa simple.
+# Este código implementa una red neuronal multicapa simple (Multilayer Perceptron - MLP)
+# con una sola capa oculta. Se entrena utilizando el algoritmo de retropropagación (backpropagation)
+# para aprender la función lógica AND. La red tiene dos entradas, una capa oculta con dos neuronas,
+# y una salida. Utiliza la función de activación sigmoide en ambas capas.
 
-import numpy as np
+# -------------------------------------------------------------
+# Importación de librerías
+import numpy as np  # NumPy se utiliza para operaciones matemáticas eficientes con arreglos (matrices, vectores, etc.).
 
-# Definir una función de activación simple (sigmoide)
+# -------------------------------------------------------------
+# Definición de funciones de activación
+
+# Función de activación sigmoide.
+# Esta función toma un valor y lo transforma en un rango entre 0 y 1, lo que permite
+# interpretar la salida como una probabilidad.
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    return 1 / (1 + np.exp(-x))  # Aplicación directa de la fórmula sigmoide: 1 / (1 + e^(-x))
 
-# Definir la derivada de la función de activación
+# Derivada de la función sigmoide.
+# Es necesaria para el cálculo del gradiente en la retropropagación.
+# Se asume que la entrada ya ha sido pasada por la función sigmoide.
 def sigmoid_derivative(x):
-    return x * (1 - x)
+    return x * (1 - x)  # Derivada de la sigmoide: σ(x) * (1 - σ(x))
 
-# Datos de entrada y salida esperada (AND lógico)
-inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-expected_output = np.array([[0], [0], [0], [1]])
+# -------------------------------------------------------------
+# Datos de entrenamiento
 
-# Inicializar pesos aleatoriamente
+# Datos de entrada para la compuerta lógica AND
+# Cada fila es un conjunto de entradas (x1, x2)
+inputs = np.array([
+    [0, 0],  # Entrada 1: 0 AND 0 -> 0
+    [0, 1],  # Entrada 2: 0 AND 1 -> 0
+    [1, 0],  # Entrada 3: 1 AND 0 -> 0
+    [1, 1]   # Entrada 4: 1 AND 1 -> 1
+])
+
+# Salidas esperadas correspondientes a la compuerta lógica AND
+expected_output = np.array([
+    [0],  # Salida esperada para entrada 1
+    [0],  # Salida esperada para entrada 2
+    [0],  # Salida esperada para entrada 3
+    [1]   # Salida esperada para entrada 4
+])
+
+# -------------------------------------------------------------
+# Inicialización de pesos
+
+# Se fija una semilla aleatoria para garantizar reproducibilidad de los resultados
 np.random.seed(42)
+
+# Inicialización aleatoria de los pesos de la capa de entrada a la capa oculta
+# Tiene dimensiones (2, 2): 2 entradas, 2 neuronas ocultas
 weights_input_hidden = np.random.rand(2, 2)
+
+# Inicialización aleatoria de los pesos de la capa oculta a la capa de salida
+# Tiene dimensiones (2, 1): 2 neuronas ocultas, 1 neurona de salida
 weights_hidden_output = np.random.rand(2, 1)
 
-# Tasa de aprendizaje
+# -------------------------------------------------------------
+# Definición de hiperparámetro
+
+# Tasa de aprendizaje: controla qué tanto se ajustan los pesos en cada iteración
 learning_rate = 0.5
 
-# Entrenamiento de la red
+# -------------------------------------------------------------
+# Entrenamiento de la red neuronal
+
+# Se entrena por 10,000 épocas (iteraciones)
 for epoch in range(10000):
-    # Propagación hacia adelante
+    # ---------------------------------------------------------
+    # Propagación hacia adelante (Forward Propagation)
+
+    # Cálculo de la entrada para la capa oculta: entradas * pesos de entrada
     hidden_layer_input = np.dot(inputs, weights_input_hidden)
+
+    # Salida de la capa oculta tras aplicar la función de activación
     hidden_layer_output = sigmoid(hidden_layer_input)
+
+    # Cálculo de la entrada para la capa de salida: salida oculta * pesos ocultos
     final_layer_input = np.dot(hidden_layer_output, weights_hidden_output)
+
+    # Salida final tras aplicar la función de activación
     final_output = sigmoid(final_layer_input)
 
-    # Cálculo del error
+    # ---------------------------------------------------------
+    # Cálculo del error y del gradiente (Backpropagation)
+
+    # Error de la salida: diferencia entre salida esperada y salida real
     error = expected_output - final_output
+
+    # Gradiente de la salida final (derivada * error)
     final_output_delta = error * sigmoid_derivative(final_output)
 
-    # Retropropagación del error
+    # Error propagado hacia atrás a la capa oculta
     hidden_layer_error = final_output_delta.dot(weights_hidden_output.T)
+
+    # Gradiente de la capa oculta
     hidden_layer_delta = hidden_layer_error * sigmoid_derivative(hidden_layer_output)
 
+    # ---------------------------------------------------------
     # Actualización de pesos
+
+    # Ajuste de pesos entre capa oculta y capa de salida
     weights_hidden_output += hidden_layer_output.T.dot(final_output_delta) * learning_rate
+
+    # Ajuste de pesos entre capa de entrada y capa oculta
     weights_input_hidden += inputs.T.dot(hidden_layer_delta) * learning_rate
 
-# Prueba de la red
+# -------------------------------------------------------------
+# Prueba de la red neuronal después del entrenamiento
+
+# Se imprime la salida final de la red para cada conjunto de entradas
 print("Salida de la red después del entrenamiento:")
 print(final_output)

@@ -1,35 +1,46 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa una Máquina de Vectores Soporte (SVM) con kernel.
-
+# Importa función para generar datos en forma de círculos (clases no linealmente separables)
 from sklearn.datasets import make_circles
+
+# Importa función para dividir datos en entrenamiento y prueba
 from sklearn.model_selection import train_test_split
+
+# Importa el clasificador SVM (Máquina de Vectores de Soporte)
 from sklearn.svm import SVC
+
+# Importa métrica para medir precisión
 from sklearn.metrics import accuracy_score
+
+# Importa biblioteca para graficar
 import matplotlib.pyplot as plt
 
-# Generar datos de ejemplo
+# Genera 300 puntos con dos clases en círculos, añade ruido para realismo
 X, y = make_circles(n_samples=300, noise=0.1, random_state=42)
 
-# Dividir los datos en conjuntos de entrenamiento y prueba
+# Divide los datos: 70% entrenamiento, 30% prueba
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# Inicializar el modelo SVM con kernel RBF
+# Crea una SVM con kernel RBF (útil para separar clases no lineales)
 svm = SVC(kernel='rbf', random_state=42)
 
-# Entrenar el modelo
+# Entrena la SVM con los datos de entrenamiento
 svm.fit(X_train, y_train)
 
-# Hacer predicciones
+# Predice las clases del conjunto de prueba
 y_pred = svm.predict(X_test)
 
-# Evaluar el modelo
+# Calcula la precisión comparando predicciones con clases reales
 accuracy = accuracy_score(y_test, y_pred)
 print("Precisión del modelo SVM:", accuracy)
 
-# Graficar los resultados
+# Grafica los puntos de datos con colores según su clase
 plt.scatter(X[:, 0], X[:, 1], c=y, s=40, cmap='viridis', marker='o')
+
+# Añade título y etiquetas al gráfico
 plt.title('Clasificación utilizando SVM con Kernel RBF')
 plt.xlabel('Característica 1')
 plt.ylabel('Característica 2')
+
+# Muestra el gráfico
 plt.show()

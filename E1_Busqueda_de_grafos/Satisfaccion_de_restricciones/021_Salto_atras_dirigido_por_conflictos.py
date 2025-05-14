@@ -1,4 +1,13 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Este código implementa una solución al problema de coloreo de grafos utilizando el algoritmo de Salto Atrás Dirigido por Conflictos (CDBJ).
+# El problema de coloreo de grafos consiste en asignar colores a los nodos de un grafo de tal manera que ningún nodo adyacente tenga el mismo color.
+# La solución utiliza el algoritmo CDBJ para explorar las posibles asignaciones de colores y manejar conflictos.
+
+# Importamos la librería networkx para crear y manipular grafos
 import networkx as nx
+
+# Importamos matplotlib.pyplot para visualizar el grafo
 import matplotlib.pyplot as plt
 
 # Definir el grafo como un diccionario de adyacencias
@@ -35,14 +44,14 @@ def salto_atras_dirigido(nodo_actual, orden_nodos, conflictos):
 
             if salto_atras_dirigido(nodo_actual + 1, orden_nodos, conflictos):  # Intentar siguiente nodo
                 return True
-            
+
             del solucion[nodo]  # Deshacer asignación si falla
 
     # Si no se encontró color válido, hacer salto atrás dirigido
     if nodo_actual > 0:
         nodo_conflictivo = conflictos[nodo] if nodo in conflictos else nodo_actual - 1
         return salto_atras_dirigido(nodo_conflictivo, orden_nodos, conflictos)
-    
+
     return False  # No hay solución
 
 # Aplicar el algoritmo

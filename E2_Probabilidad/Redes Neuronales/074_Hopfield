@@ -1,45 +1,64 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa una red de Hopfield simple.
+# Este código implementa una red de Hopfield simple, que es un tipo de red neuronal recurrente utilizada para almacenamiento y recuperación de patrones.
+# En esta implementación, los patrones se entrenan en la red y luego se realiza una predicción sobre un patrón de entrada ruidoso.
+# La red de Hopfield se utiliza principalmente para problemas de memoria asociativa.
 
-import numpy as np
+import numpy as np  # Importa la librería numpy, que es fundamental para el manejo de matrices y operaciones algebraicas en redes neuronales.
 
 # Definir la clase Red de Hopfield
 class HopfieldNetwork:
     def __init__(self, size):
-        self.size = size
-        self.weights = np.zeros((size, size))
+        """
+        Inicializa la red de Hopfield con un tamaño específico.
+        size: Número total de neuronas en la red, que debe ser un número cuadrado para representar la red como una matriz de NxN.
+        """
+        self.size = size  # Almacena el tamaño de la red.
+        self.weights = np.zeros((size, size))  # Inicializa la matriz de pesos con ceros. La red tiene una matriz de pesos de tamaño (size, size).
 
     def train(self, patterns):
+        """
+        Entrena la red de Hopfield con los patrones de entrada proporcionados.
+        patterns: Lista de patrones que se usarán para entrenar la red.
+        """
         for pattern in patterns:
-            pattern = np.array(pattern).flatten()
+            # Convierte cada patrón en un vector plano (unidimensional) para ser procesado
+            pattern = np.array(pattern).flatten()  # Aplana el patrón a un vector unidimensional
             for i in range(self.size):
                 for j in range(self.size):
-                    if i != j:
-                        self.weights[i, j] += pattern[i] * pattern[j]
+                    if i != j:  # Los pesos de la diagonal deben ser cero (no se conecta una neurona consigo misma)
+                        self.weights[i, j] += pattern[i] * pattern[j]  # Calcula el peso entre las neuronas i y j. Suma el producto de las entradas.
 
     def predict(self, pattern, steps=5):
-        pattern = np.array(pattern).flatten()
-        for _ in range(steps):
-            for i in range(self.size):
-                sum_ = np.dot(self.weights[i, :], pattern)
-                pattern[i] = 1 if sum_ >= 0 else -1
-        return pattern.reshape((int(np.sqrt(self.size)), int(np.sqrt(self.size))))
+        """
+        Realiza una predicción sobre un patrón dado utilizando la red de Hopfield entrenada.
+        pattern: Patrón ruidoso de entrada para el cual se quiere recuperar el patrón almacenado.
+        steps: Número de iteraciones para actualizar el patrón, lo que equivale al número de ciclos de la red.
+        """
+        pattern = np.array(pattern).flatten()  # Aplana el patrón para que sea un vector unidimensional.
+        for _ in range(steps):  # Realiza un número de iteraciones (ciclos) para actualizar el patrón.
+            for i in range(self.size):  # Para cada neurona en el patrón:
+                sum_ = np.dot(self.weights[i, :], pattern)  # Calcula la suma ponderada de las entradas (producto punto entre los pesos y el patrón).
+                pattern[i] = 1 if sum_ >= 0 else -1  # Si la suma ponderada es positiva o cero, activa la neurona con valor 1; de lo contrario, activa con -1.
+        # Devuelve el patrón predicho reformado como una matriz cuadrada
+        return pattern.reshape((int(np.sqrt(self.size)), int(np.sqrt(self.size))))  # Reformatea el vector unidimensional en una matriz cuadrada.
 
 # Patrones de entrenamiento (3x3 píxeles)
 patterns = [
-    np.array([[1, -1, 1], [-1, -1, -1], [1, -1, 1]]),
-    np.array([[-1, 1, -1], [-1, 1, -1], [-1, 1, -1]])
+    np.array([[1, -1, 1], [-1, -1, -1], [1, -1, 1]]),  # Primer patrón
+    np.array([[-1, 1, -1], [-1, 1, -1], [-1, 1, -1]])  # Segundo patrón
 ]
 
 # Entrenar la red de Hopfield
-hopfield = HopfieldNetwork(size=9)
-hopfield.train(patterns)
+hopfield = HopfieldNetwork(size=9)  # Crea una red de Hopfield con 9 neuronas (3x3 = 9 neuronas).
+hopfield.train(patterns)  # Entrena la red utilizando los patrones proporcionados.
 
 # Patrón de prueba (ruidoso)
-test_pattern = np.array([[1, -1, 1], [-1, 1, -1], [1, -1, -1]])
+test_pattern = np.array([[1, -1, 1], [-1, 1, -1], [1, -1, -1]])  # Patrón ruidoso, que es similar pero con errores con respecto a los patrones entrenados.
 
-# Predecir el patrón más cercano
-predicted_pattern = hopfield.predict(test_pattern)
-print("Patrón predicho:")
-print(predicted_pattern)
+# Predecir el patrón más cercano utilizando la red de Hopfield
+predicted_pattern = hopfield.predict(test_pattern)  # Realiza una predicción sobre el patrón ruidoso.
+
+# Imprimir el patrón predicho
+print("Patrón predicho:")  
+print(predicted_pattern)  # Muestra el patrón predicho (patrón de salida).

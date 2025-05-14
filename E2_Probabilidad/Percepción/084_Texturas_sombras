@@ -1,39 +1,56 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código ilustra la aplicación de texturas y sombras utilizando matplotlib.
+# Este código ilustra cómo aplicar efectos visuales básicos —texturas y sombras— usando matplotlib.
+# Se genera una textura aleatoria para simular el fondo y se dibuja un círculo con una sombra desplazada,
+# demostrando conceptos básicos de gráficos por computador como superposición de capas.
 
+# Importa matplotlib para generar gráficos y formas
 import matplotlib.pyplot as plt
+
+# Importa numpy para crear la textura como una matriz de valores aleatorios
 import numpy as np
+
+# Importa la clase Circle para dibujar círculos
 from matplotlib.patches import Circle
 
-# Definir una función para aplicar una textura simple
+# Función para aplicar una textura de fondo
 def apply_texture(ax, texture_image):
+    # Muestra la textura sobre el eje actual, cubriendo de (0,0) a (10,10) con transparencia (alpha)
     ax.imshow(texture_image, extent=[0, 10, 0, 10], alpha=0.5)
 
-# Definir una función para aplicar sombras
+# Función para agregar una sombra a un objeto circular
 def apply_shadow(ax, obj):
+    # Crea un círculo gris (la sombra) desplazado respecto al original
     shadow = Circle((obj.center[0] + 1, obj.center[1] - 1), obj.radius, color='gray', alpha=0.5)
-    ax.add_patch(shadow)
+    ax.add_patch(shadow)  # Agrega la sombra al eje
 
-# Crear una figura y un eje
+# Crea una figura de 8x8 pulgadas y un eje donde se dibujará
 fig, ax = plt.subplots(figsize=(8, 8))
+
+# Define los límites del gráfico en ambos ejes (coordenadas de dibujo)
 ax.set_xlim(0, 10)
 ax.set_ylim(0, 10)
 
-# Crear un círculo con textura y sombra
+# Crea un círculo azul centrado en (5,5) con radio 2
 circle = Circle((5, 5), 2, color='blue')
-ax.add_patch(circle)
+ax.add_patch(circle)  # Agrega el círculo al gráfico
 
-# Aplicar textura
-texture_image = np.random.rand(100, 100)  # Textura aleatoria
+# Genera una textura aleatoria de 100x100 píxeles (valores entre 0 y 1)
+texture_image = np.random.rand(100, 100)
+
+# Aplica la textura al gráfico
 apply_texture(ax, texture_image)
 
-# Aplicar sombra
+# Aplica una sombra al círculo
 apply_shadow(ax, circle)
 
-# Mostrar el gráfico
+# Agrega título y etiquetas a los ejes
 plt.title('Texturas y Sombras: Círculo con Textura y Sombra')
 plt.xlabel('Eje X')
 plt.ylabel('Eje Y')
+
+# Activa la cuadrícula del gráfico
 plt.grid(True)
+
+# Muestra el gráfico final
 plt.show()

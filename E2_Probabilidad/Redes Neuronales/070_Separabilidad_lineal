@@ -1,49 +1,94 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código ilustra la separabilidad lineal utilizando un perceptrón.
+# Este código ilustra la separabilidad lineal utilizando un perceptrón. En este caso, se utiliza para resolver el problema lógico AND.
+# El perceptrón aprenderá a clasificar las entradas en dos clases (0 y 1) y se visualizará la línea de decisión que separa las clases.
 
-import numpy as np
-import matplotlib.pyplot as plt
+import numpy as np  # Importa la librería numpy, que es usada para trabajar con matrices y realizar operaciones matemáticas.
+
+import matplotlib.pyplot as plt  # Importa la librería matplotlib para graficar los datos y la línea de decisión.
 
 # Definir la clase Perceptrón
 class Perceptron:
+    """
+    La clase Perceptron representa un modelo simple de red neuronal.
+    Utiliza el algoritmo de aprendizaje supervisado para clasificar entradas según una función de activación (step function).
+    """
     def __init__(self, input_size, learning_rate=0.1):
-        self.weights = np.zeros(input_size)
-        self.bias = 0.0
-        self.learning_rate = learning_rate
+        """
+        Constructor de la clase Perceptron. Inicializa los pesos, el sesgo y la tasa de aprendizaje.
+
+        :param input_size: Número de entradas que recibe el perceptrón (en este caso, 2 para el problema AND).
+        :param learning_rate: Tasa de aprendizaje que ajusta el tamaño de la corrección de los pesos en cada iteración.
+        """
+        self.weights = np.zeros(input_size)  # Inicializa los pesos a cero, usando un arreglo de ceros de tamaño igual al número de entradas.
+        self.bias = 0.0  # Inicializa el sesgo (bias) a cero.
+        self.learning_rate = learning_rate  # Establece la tasa de aprendizaje.
 
     def activate(self, inputs):
-        weighted_sum = np.dot(inputs, self.weights) + self.bias
+        """
+        Calcula la salida del perceptrón para un conjunto de entradas dadas.
+
+        :param inputs: Conjunto de entradas para el perceptrón.
+        :return: 1 si la salida ponderada es mayor o igual a 0, de lo contrario, 0.
+        """
+        # Calcula la suma ponderada de las entradas multiplicadas por sus respectivos pesos, más el sesgo.
+        weighted_sum = np.dot(inputs, self.weights) + self.bias  # np.dot calcula el producto punto entre las entradas y los pesos.
+        # Si la suma ponderada es mayor o igual a 0, retorna 1, en caso contrario, 0.
         return 1 if weighted_sum >= 0 else 0
 
     def train(self, training_inputs, labels, epochs):
+        """
+        Entrena el perceptrón usando un conjunto de datos de entrada y etiquetas correspondientes.
+        Ajusta los pesos y el sesgo para minimizar el error en las predicciones.
+
+        :param training_inputs: Entradas de entrenamiento que se utilizarán para el ajuste de pesos.
+        :param labels: Las etiquetas correspondientes a las entradas (0 o 1).
+        :param epochs: Número de épocas o iteraciones para realizar el ajuste de los pesos.
+        """
+        # El entrenamiento se realiza durante varias épocas.
         for _ in range(epochs):
+            # Para cada entrada de entrenamiento y su etiqueta correspondiente.
             for inputs, label in zip(training_inputs, labels):
+                # Realiza una predicción utilizando las entradas.
                 prediction = self.activate(inputs)
-                self.weights += self.learning_rate * (label - prediction) * inputs
-                self.bias += self.learning_rate * (label - prediction)
+                # Actualiza los pesos y el sesgo utilizando el error de la predicción.
+                # La corrección es proporcional a la tasa de aprendizaje y a la diferencia entre la etiqueta real y la predicción.
+                self.weights += self.learning_rate * (label - prediction) * inputs  # Ajusta los pesos.
+                self.bias += self.learning_rate * (label - prediction)  # Ajusta el sesgo.
 
 # Datos de ejemplo (AND lógico)
-training_inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-labels = np.array([0, 0, 0, 1])
+# Las entradas del problema AND con sus respectivas salidas.
+training_inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])  # Las combinaciones posibles de entradas binarias.
+labels = np.array([0, 0, 0, 1])  # Las salidas esperadas para cada combinación (resultados del AND).
 
-# Entrenar el perceptrón
+# Crear una instancia del perceptrón con dos entradas y una tasa de aprendizaje de 0.1.
 perceptron = Perceptron(input_size=2, learning_rate=0.1)
+
+# Entrenar al perceptrón durante 10 épocas con las entradas y etiquetas definidas.
 perceptron.train(training_inputs, labels, epochs=10)
 
 # Graficar los datos y la línea de decisión
+
+# Crea una nueva figura para la visualización
 plt.figure(figsize=(8, 6))
+
+# Graficar las entradas del conjunto de entrenamiento
+# Utiliza un color azul para las salidas 0 y rojo para las salidas 1
 for i, input in enumerate(training_inputs):
     plt.scatter(input[0], input[1], c='blue' if labels[i] == 0 else 'red')
 
 # Graficar la línea de decisión
-x = np.linspace(-0.5, 1.5, 100)
-y = (-perceptron.weights[0] * x - perceptron.bias) / perceptron.weights[1]
-plt.plot(x, y, '-g', label='Línea de Decisión')
+# La línea de decisión se obtiene al despejar la ecuación de la línea a partir de la suma ponderada de las entradas.
+x = np.linspace(-0.5, 1.5, 100)  # Genera un rango de valores para la coordenada x.
+y = (-perceptron.weights[0] * x - perceptron.bias) / perceptron.weights[1]  # Ecuación de la recta de decisión.
+plt.plot(x, y, '-g', label='Línea de Decisión')  # Dibuja la línea de decisión en color verde.
 
+# Añadir título y etiquetas
 plt.title('Separabilidad Lineal con Perceptrón')
-plt.xlabel('Entrada 1')
-plt.ylabel('Entrada 2')
-plt.legend()
-plt.grid(True)
+plt.xlabel('Entrada 1')  # Etiqueta del eje x
+plt.ylabel('Entrada 2')  # Etiqueta del eje y
+plt.legend()  # Añadir leyenda para identificar la línea de decisión
+plt.grid(True)  # Habilitar la cuadrícula
+
+# Mostrar la gráfica
 plt.show()

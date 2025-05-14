@@ -1,37 +1,60 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa una gramática probabilística independiente del contexto simple.
+# Este código implementa una **Gramática Probabilística Independiente del Contexto (PCFG)** simple.
+# Una PCFG es un modelo formal utilizado para generar oraciones a partir de reglas gramaticales con pesos (probabilidades).
+# Cada símbolo no terminal se reemplaza por una producción de acuerdo con una probabilidad definida.
+# El código genera oraciones aleatorias en español simples, respetando la estructura gramatical.
 
-import random
+# -------------------------------------------------------------
+# Importación de librerías
 
-# Definir una gramática simple
+import random  # Se utiliza para seleccionar aleatoriamente reglas de producción de acuerdo a sus probabilidades.
+
+# -------------------------------------------------------------
+# Definición de la gramática
+
+# Diccionario que representa la gramática:
+# Cada clave es un símbolo no terminal y su valor es una lista de posibles producciones (tuplas).
 grammar = {
-    "S": [("NP", "VP"), ("VP",)],
-    "NP": [("Det", "N"), ("N",)],
-    "VP": [("V", "NP"), ("V",)],
-    "Det": [("el",), ("un",)],
-    "N": [("gato",), ("perro",), ("mesa",)],
-    "V": [("está",), ("come",)]
+    "S": [("NP", "VP"), ("VP",)],  # S (oración) puede ser un sintagma nominal seguido de un verbal, o solo verbal
+    "NP": [("Det", "N"), ("N",)],  # NP (sintagma nominal) puede tener determinante + sustantivo o solo sustantivo
+    "VP": [("V", "NP"), ("V",)],   # VP (sintagma verbal) puede tener verbo + sintagma nominal o solo verbo
+    "Det": [("el",), ("un",)],     # Det (determinante) puede ser 'el' o 'un'
+    "N": [("gato",), ("perro",), ("mesa",)],  # Nombres posibles
+    "V": [("está",), ("come",)]    # Verbos posibles
 }
 
-# Definir probabilidades para cada regla de producción
+# -------------------------------------------------------------
+# Definición de las probabilidades para cada conjunto de reglas
+
+# Este diccionario contiene la probabilidad de escoger cada producción para cada no terminal.
 probabilities = {
-    "S": [0.6, 0.4],
-    "NP": [0.7, 0.3],
-    "VP": [0.5, 0.5],
-    "Det": [0.5, 0.5],
-    "N": [0.4, 0.3, 0.3],
-    "V": [0.6, 0.4]
+    "S": [0.6, 0.4],       # 60% para ('NP', 'VP') y 40% para ('VP',)
+    "NP": [0.7, 0.3],      # 70% para ('Det', 'N') y 30% para ('N',)
+    "VP": [0.5, 0.5],      # 50% para ('V', 'NP') y 50% para ('V',)
+    "Det": [0.5, 0.5],     # Igual probabilidad para 'el' y 'un'
+    "N": [0.4, 0.3, 0.3],  # 40% 'gato', 30% 'perro', 30% 'mesa'
+    "V": [0.6, 0.4]        # 60% 'está', 40% 'come'
 }
 
-# Función para generar una oración
+# -------------------------------------------------------------
+# Función recursiva para generar una oración a partir del símbolo inicial
+
 def generate_sentence(grammar, probabilities, start_symbol="S"):
+    # Caso base: si el símbolo actual no es un no terminal (no está en la gramática), retornarlo tal cual
     if start_symbol not in grammar:
         return start_symbol
 
+    # Selecciona aleatoriamente una producción con base en las probabilidades asociadas
+    # random.choices permite especificar las probabilidades y devuelve una lista de una sola producción
     production = random.choices(grammar[start_symbol], probabilities[start_symbol], k=1)[0]
+
+    # Recorre cada símbolo en la producción y genera recursivamente la parte correspondiente
+    # Se unen todas las partes generadas con espacios para formar una oración completa
     return " ".join(generate_sentence(grammar, probabilities, symbol) for symbol in production)
 
-# Generar una oración aleatoria
-sentence = generate_sentence(grammar, probabilities)
-print("Oración generada:", sentence)
+# -------------------------------------------------------------
+# Generar y mostrar una oración aleatoria
+
+sentence = generate_sentence(grammar, probabilities)  # Genera la oración
+print("Oración generada:", sentence)  # Imprime el resultado final

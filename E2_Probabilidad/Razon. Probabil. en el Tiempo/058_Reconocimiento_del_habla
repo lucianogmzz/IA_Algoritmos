@@ -1,22 +1,30 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa un sistema básico de reconocimiento del habla utilizando la librería speech_recognition.
+# Este código implementa un sistema básico de reconocimiento de habla utilizando la librería speech_recognition.
+# El objetivo del código es capturar audio desde el micrófono, reconocer el habla mediante la API de Google y mostrar el texto reconocido.
+# La librería speech_recognition es una herramienta útil para trabajar con reconocimiento de voz en Python, compatible con varios motores de reconocimiento como Google Speech Recognition, CMU Sphinx, etc.
 
-import speech_recognition as sr
+import speech_recognition as sr  # Importamos la librería speech_recognition que se utiliza para la captura y el reconocimiento de voz.
 
 # Inicializar el reconocedor
-recognizer = sr.Recognizer()
+recognizer = sr.Recognizer()  # Creamos una instancia del objeto Recognizer que será utilizado para reconocer el habla.
 
 # Capturar audio desde el micrófono
-with sr.Microphone() as source:
-    print("Di algo...")
-    audio = recognizer.listen(source)
+with sr.Microphone() as source:  # Usamos el micrófono como fuente de audio.
+    print("Di algo...")  # Le pedimos al usuario que hable para capturar el audio.
+    audio = recognizer.listen(source)  # El método listen captura el audio del micrófono y lo almacena en la variable 'audio'.
 
 # Reconocer el habla utilizando el reconocedor de Google
 try:
-    text = recognizer.recognize_google(audio, language="es-ES")
-    print("Texto reconocido:", text)
+    # Usamos el servicio de Google Speech Recognition para convertir el audio en texto.
+    text = recognizer.recognize_google(audio, language="es-ES")  # Establecemos que el idioma del reconocimiento será español (es-ES).
+    print("Texto reconocido:", text)  # Mostramos el texto que se ha reconocido a partir del audio capturado.
+
+# Manejo de errores
 except sr.UnknownValueError:
-    print("No se pudo entender el audio")
+    print("No se pudo entender el audio")  # Si el reconocimiento de voz no entiende el audio, muestra un mensaje de error.
+except sr.RequestError as e:
+    print("Error en la solicitud al servicio de reconocimiento; {0}".format(e))  # Si hay un problema con la conexión al servicio de reconocimiento, muestra el error.
+
 except sr.RequestError as e:
     print("Error en la solicitud al servicio de reconocimiento; {0}".format(e))

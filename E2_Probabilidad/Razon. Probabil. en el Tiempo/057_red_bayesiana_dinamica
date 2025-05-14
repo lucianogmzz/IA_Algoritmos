@@ -1,72 +1,101 @@
-import numpy as np
-import matplotlib.pyplot as plt
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Este código implementa un filtro de Kalman, un algoritmo utilizado para estimar el estado de un sistema dinámico a partir de mediciones ruidosas.
+# El filtro de Kalman se utiliza ampliamente en navegación, control de vehículos autónomos y robótica, entre otros campos.
+# El objetivo principal es predecir y corregir el estado de un sistema usando un modelo dinámico y mediciones ruidosas.
+
+import numpy as np   # Importamos la librería numpy, que proporciona herramientas eficientes para la manipulación de matrices y vectores.
+import matplotlib.pyplot as plt  # Importamos matplotlib para graficar los resultados
 
 # Definir el modelo de espacio de estado
-def transition_model(x, noise=0.1):
-    return x + np.random.normal(0, noise)
+# F es la matriz de transición del estado, que nos indica cómo pasa el estado del sistema de un tiempo al siguiente.
+F = np.array([[1, 1], [0, 1]])           # Matriz de transición de estado (2x2)
+# H es la matriz de observación, que mapea el estado real al espacio de las mediciones.
+H = np.array([[1, 0]])                   # Matriz de observación (1x2)
+# Q es la matriz de covarianza del ruido del proceso. El ruido del proceso refleja la incertidumbre sobre cómo cambia el sistema con el tiempo.
+Q = np.array([[0.1, 0], [0, 0.1]])       # Covarianza del ruido del proceso (2x2)
+# R es la matriz de covarianza del ruido de medición. Este es el ruido en las mediciones obtenidas del sistema real.
+R = np.array([[1]])                      # Covarianza del ruido de medición (1x1)
 
-def observation_model(x):
-    return x  # Sin ruido aquí; el ruido se agrega una vez en la medición real
+# Estado inicial
+# x es el estado inicial, donde la primera componente es la posición y la segunda componente es la velocidad.
+x = np.array([0, 1]).reshape(-1, 1)      # Estado inicial como un vector columna de 2x1 (posición y velocidad)
+# P es la matriz de covarianza inicial, que representa nuestra incertidumbre sobre el estado inicial.
+P = np.array([[1, 0], [0, 1]])           # Covarianza inicial (2x2), se supone que no hay conocimiento previo sobre el estado.
 
-# Parámetros
-n_particles = 100
+# Número de pasos de tiempo para la simulación
 n_steps = 50
-process_noise = 0.1
-observation_noise = 1.0
 
-# Estado real inicial (escalar)
-x_real = 0.0
+# Almacenamiento de los estados, mediciones, predicciones y matrices de covarianza
+states = []  # Lista para guardar los estados reales del sistema en cada paso de tiempo
+measurements = []  # Lista para guardar las mediciones simuladas con ruido
+predictions = []  # Lista para guardar las predicciones de los estados
+P_list = []  # Lista para guardar las matrices de covarianza en cada paso de tiempo
 
-# Inicializar partículas
-particles = np.random.normal(x_real, 1.0, n_particles)
-weights = np.ones(n_particles) / n_particles
-
-# Almacenamiento de resultados
-true_states = [x_real]
-measurements = []
-estimates = []
-
+# Simulación del proceso
 for _ in range(n_steps):
-    # Evolución del estado real
-    x_real = transition_model(x_real, noise=process_noise)
-    true_states.append(x_real)
+    # Predicción
+    # Predicción del siguiente estado usando la matriz de transición (F) y el estado anterior (x).
+    x_pred = F @ x  # Producto de la matriz de transición F y el estado actual x (predicción del siguiente estado)
+    # Predicción de la matriz de covarianza utilizando el modelo de ruido del proceso (Q).
+    P_pred = F @ P @ F.T + Q  # Propagación de la covarianza, considerando la incertidumbre sobre el modelo dinámico
 
-    # Medición observada (con ruido)
-    z = observation_model(x_real) + np.random.normal(0, observation_noise)
-    measurements.append(z)
+    predictions.append(x_pred.copy())  # Guardamos la predicción del estado
 
-    # Predicción de partículas
-    particles = np.array([transition_model(p, noise=process_noise) for p in particles])
+    # Medición simulada
+    # z es una medición del estado real más ruido. La medición simulada está siendo obtenida a través de la matriz de observación H.
+    z = H @ x_pred + np.random.normal(0, np.sqrt(R[0, 0]), size=(1, 1))  # Mediciones con ruido de medición añadido
+    measurements.append(z.item())  # Guardamos la medición simulada
 
-    # Actualización de pesos
-    likelihoods = np.exp(-0.5 * ((z - observation_model(particles)) / observation_noise) ** 2)
-    weights *= likelihoods
-    weights += 1e-300  # evitar underflow
-    weights /= np.sum(weights)
+    # Filtrado (actualización)
+    # y es la diferencia entre la medición y la predicción.
+    y = z - H @ x_pred  # Residuo de la medición (la diferencia entre la medición y la predicción del modelo)
+    # S es la matriz de covarianza del residuo de la medición, usada para calcular el factor de ganancia de Kalman.
+    S = H @ P_pred @ H.T + R  # Covarianza del residuo de la medición
+    # K es el factor de ganancia de Kalman, que determina cuánto peso darle a la medición en relación con la predicción.
+    K = P_pred @ H.T @ np.linalg.inv(S)  # Ganancia de Kalman (decide cuánta corrección aplicar)
+    # Actualización del estado utilizando la medición y el factor de ganancia de Kalman.
+    x = x_pred + K @ y  # Corregir la predicción con la medición
+    # Actualización de la covarianza para reflejar la nueva incertidumbre sobre el estado corregido.
+    P = (np.eye(2) - K @ H) @ P_pred  # Actualización de la covarianza del estado después de aplicar la medición
 
-    # Estimación del estado
-    x_est = np.sum(particles * weights)
-    estimates.append(x_est)
+    states.append(x.copy())  # Guardamos el estado actualizado
+    P_list.append(P.copy())  # Guardamos la matriz de covarianza actualizada
 
-    # Re-muestreo (estratificado opcionalmente)
-    indices = np.random.choice(np.arange(n_particles), size=n_particles, p=weights)
-    particles = particles[indices]
-    weights = np.ones(n_particles) / n_particles  # reiniciar pesos
+# Añadir el estado inicial al principio de las listas de estados y predicciones
+states = [np.array([[0], [1]])] + states  # Estado inicial
+predictions = [np.array([[0], [1]])] + predictions  # Predicción inicial
+P_list = [np.array([[1, 0], [0, 1]])] + P_list  # Covarianza inicial
 
-# Convertir listas a arrays para graficar
-true_states = np.array(true_states)
-measurements = np.array(measurements)
-estimates = np.array(estimates)
+# Suavizado de estados utilizando el algoritmo de Rauch-Tung-Striebel (RTS)
+# Este paso realiza un suavizado de los estados para mejorar las estimaciones utilizando información futura.
+smoothed_states = states.copy()  # Copia de los estados para realizar el suavizado
+for t in reversed(range(n_steps)):  # Iteramos sobre los estados de atrás hacia adelante
+    P_curr = P_list[t]  # Covarianza actual
+    P_next = P_list[t+1]  # Covarianza del siguiente paso
+    x_curr = states[t]  # Estado actual
+    x_next_smooth = smoothed_states[t+1]  # Estado suavizado del siguiente paso
+
+    # C es el término de suavizado que combina la predicción y la medición futura.
+    C = P_curr @ F.T @ np.linalg.inv(F @ P_curr @ F.T + Q)  # Calcular la matriz C para el suavizado
+    smoothed_states[t] = x_curr + C @ (x_next_smooth - F @ x_curr)  # Actualización del estado suavizado
+
+# Convertir listas de estados y mediciones a arrays para facilitar el graficado
+states = np.hstack(states)  # Convertimos los estados en un array de numpy para graficarlos
+predictions = np.hstack(predictions)  # Convertimos las predicciones en un array de numpy
+smoothed_states = np.hstack(smoothed_states)  # Convertimos los estados suavizados en un array
+measurements = np.array(measurements)  # Convertimos las mediciones a un array
 
 # Graficar resultados
-plt.figure(figsize=(12, 6))
-plt.plot(true_states[1:], label='Estado Verdadero', color='black', linewidth=2)
-plt.plot(measurements, label='Mediciones', linestyle='None', marker='x', color='red')
-plt.plot(estimates, label='Estimaciones (Partículas)', linestyle='--', marker='o', color='blue')
+plt.figure(figsize=(12, 6))  # Establecemos el tamaño de la figura
+plt.plot(states[0], label='Estado Filtrado (Posición)', marker='o')  # Graficamos la posición filtrada
+plt.plot(measurements, label='Mediciones', linestyle='None', marker='x', color='red')  # Graficamos las mediciones ruidosas
+plt.plot(predictions[0], label='Predicciones', linestyle='--', marker='s', color='green')  # Graficamos las predicciones
+plt.plot(smoothed_states[0], label='Estado Suavizado', linestyle='-.', marker='d', color='purple')  # Graficamos el estado suavizado
 
-plt.title('Filtrado de Partículas: Estado Real vs Estimación')
-plt.xlabel('Paso de tiempo')
-plt.ylabel('Posición')
-plt.legend()
-plt.grid(True)
-plt.show()
+plt.title('Filtrado, Predicción y Suavizado')  # Título de la gráfica
+plt.xlabel('Paso de tiempo')  # Etiqueta del eje X
+plt.ylabel('Posición')  # Etiqueta del eje Y
+plt.legend()  # Mostramos la leyenda
+plt.grid(True)  # Activamos la cuadrícula
+plt.show()  # Mostramos la gráfica

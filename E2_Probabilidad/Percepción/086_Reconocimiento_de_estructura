@@ -1,37 +1,50 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa un sistema simple de reconocimiento de escritura utilizando OpenCV y scikit-learn.
+# Este código implementa un sistema básico de reconocimiento de escritura a mano.
+# Utiliza un conjunto de datos ficticio representado por vectores binarios que simulan caracteres simples.
+# El algoritmo de clasificación usado es K-Nearest Neighbors (KNN), entrenado con estos vectores para luego predecir caracteres nuevos.
+# Se mide la precisión del modelo con un conjunto de prueba para evaluar su desempeño.
 
+# Importar OpenCV (aunque no se usa en este código, podría utilizarse en una versión extendida)
 import cv2
+
+# Importar NumPy para manejo de arreglos numéricos
 import numpy as np
+
+# Importar el clasificador K-Nearest Neighbors desde scikit-learn
 from sklearn.neighbors import KNeighborsClassifier
+
+# Importar función para dividir los datos en entrenamiento y prueba
 from sklearn.model_selection import train_test_split
+
+# Importar función para evaluar precisión del modelo
 from sklearn.metrics import accuracy_score
 
-# Datos de ejemplo (caracteres escritos a mano)
-# Cada fila representa un carácter y cada columna representa un píxel
+# Crear un arreglo de ejemplo donde cada fila representa un carácter escrito a mano en forma de vector
 data = np.array([
-    [0, 0, 1, 1, 0, 0],  # Ejemplo de caracteres simples
-    [0, 1, 0, 0, 1, 0],
-    [1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 1]
+    [0, 0, 1, 1, 0, 0],  # Representación ficticia del carácter 'A'
+    [0, 1, 0, 0, 1, 0],  # Representación ficticia del carácter 'B'
+    [1, 1, 1, 1, 1, 1],  # Representación ficticia del carácter 'C'
+    [1, 0, 0, 0, 0, 1]   # Representación ficticia del carácter 'D'
 ])
 
-# Etiquetas correspondientes a los caracteres
+# Etiquetas de los caracteres correspondientes a cada fila del arreglo
 labels = np.array(['A', 'B', 'C', 'D'])
 
-# Dividir los datos en conjuntos de entrenamiento y prueba
+# Dividir el conjunto de datos en entrenamiento (50%) y prueba (50%)
 X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size=0.5, random_state=42)
 
-# Inicializar el clasificador KNN
+# Crear el modelo KNN con k=1 (considera el vecino más cercano)
 knn = KNeighborsClassifier(n_neighbors=1)
 
-# Entrenar el clasificador
+# Entrenar el modelo con los datos de entrenamiento
 knn.fit(X_train, y_train)
 
-# Hacer predicciones
+# Realizar predicciones con los datos de prueba
 y_pred = knn.predict(X_test)
 
-# Evaluar la precisión del clasificador
+# Calcular la precisión del modelo comparando predicciones y etiquetas reales
 accuracy = accuracy_score(y_test, y_pred)
+
+# Mostrar la precisión obtenida
 print("Precisión del reconocimiento de escritura:", accuracy)

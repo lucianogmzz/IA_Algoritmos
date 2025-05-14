@@ -1,58 +1,70 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa un Mapa Autoorganizado de Kohonen (SOM) simple.
+# Este código implementa un Mapa Autoorganizado de Kohonen (Self-Organizing Map, SOM),
+# una red neuronal no supervisada usada para proyecciones topológicas y reducción de dimensiones.
+# El SOM mapea datos de alta dimensión a una representación bidimensional (en este caso, un mapa 5x5).
+# Cada nodo del mapa tiene un vector de pesos que se ajusta en el entrenamiento para representar patrones del conjunto de datos.
 
-import numpy as np
-import matplotlib.pyplot as plt
+# -------------------------------------------------------------
+# Importación de librerías
 
-# Definir la clase SOM
+import numpy as np  # Usada para operaciones matemáticas, especialmente manejo de arrays y cálculos vectoriales.
+import matplotlib.pyplot as plt  # Usada para visualizar los resultados del SOM.
+
+# -------------------------------------------------------------
+# Definición de la clase SOM
+
 class SOM:
+    # Constructor de la clase
     def __init__(self, x, y, input_len, learning_rate=0.5):
-        self.x = x
-        self.y = y
-        self.learning_rate = learning_rate
+        self.x = x  # Número de columnas del mapa
+        self.y = y  # Número de filas del mapa
+        self.learning_rate = learning_rate  # Tasa de aprendizaje inicial
+        # Inicializa los pesos del mapa con valores aleatorios entre 0 y 1
+        # La forma del array es (x, y, input_len), donde cada nodo tiene un vector de pesos de tamaño input_len
         self.weights = np.random.rand(x, y, input_len)
 
+    # Método para entrenar el SOM
     def train(self, data, epochs):
+        # Itera sobre el número de épocas especificado
         for epoch in range(epochs):
+            # Itera sobre cada muestra de datos
             for sample in data:
+                # Encuentra la neurona ganadora (BMU - Best Matching Unit)
                 bmu = self.best_matching_unit(sample)
+                # Actualiza los pesos de la vecindad de la BMU
                 self.update_weights(sample, bmu, epoch)
 
+    # Método para encontrar la BMU (neurona cuyos pesos están más cerca del vector de entrada)
     def best_matching_unit(self, sample):
-        bmu_idx = np.array([0, 0])
-        min_dist = np.inf
+        bmu_idx = np.array([0, 0])  # Inicializa el índice de la BMU
+        min_dist = np.inf  # Distancia mínima inicializada con infinito
+        # Recorre cada nodo del mapa para encontrar la distancia más corta
         for i in range(self.x):
             for j in range(self.y):
-                w = self.weights[i, j, :]
-                d = np.linalg.norm(w - sample)
+                w = self.weights[i, j, :]  # Vector de pesos del nodo (i, j)
+                d = np.linalg.norm(w - sample)  # Calcula la distancia euclidiana entre el peso y la muestra
                 if d < min_dist:
-                    min_dist = d
-                    bmu_idx = np.array([i, j])
-        return bmu_idx
+                    min_dist = d  # Actualiza la distancia mínima
+                    bmu_idx = np.array([i, j])  # Guarda el índice del nodo más cercano
+        return bmu_idx  # Retorna el índice de la BMU
 
+    # Método para actualizar los pesos del mapa basándose en la BMU
     def update_weights(self, sample, bmu, epoch):
+        # Itera sobre todos los nodos del mapa
         for i in range(self.x):
             for j in range(self.y):
-                w = self.weights[i, j, :]
-                dist = np.linalg.norm(np.array([i, j]) - bmu)
+                w = self.weights[i, j, :]  # Obtiene los pesos actuales del nodo (i, j)
+                dist = np.linalg.norm(np.array([i, j]) - bmu)  # Calcula la distancia al nodo BMU en el mapa
+                # Actualiza solo los nodos dentro del radio de influencia (en este caso, distancia <= 1)
                 if dist <= 1:
+                    # Calcula la influencia del nodo BMU sobre este nodo
                     influence = np.exp(-dist) * self.learning_rate * np.exp(-epoch / 1000)
+                    # Aplica la fórmula de actualización: w_new = w_old + influencia * (entrada - w_old)
                     new_w = w + influence * (sample - w)
-                    self.weights[i, j, :] = new_w
+                    self.weights[i, j, :] = new_w  # Asigna el nuevo valor de los pesos
 
+# -------------------------------------------------------------
 # Datos de ejemplo
-data = np.random.rand(100, 3)
 
-# Entrenar el SOM
-som = SOM(5, 5, 3, learning_rate=0.5)
-som.train(data, epochs=100)
-
-# Visualizar los pesos del SOM
-plt.figure(figsize=(10, 10))
-for i in range(som.x):
-    for j in range(som.y):
-        plt.subplot(som.x, som.y, i * som.y + j + 1)
-        plt.imshow(som.weights[i, j, :].reshape(1, 3), cmap='viridis')
-        plt.axis('off')
-plt.show()
+# Genera 100 vectores

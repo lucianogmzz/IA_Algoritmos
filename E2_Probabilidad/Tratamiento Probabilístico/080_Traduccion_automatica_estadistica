@@ -1,50 +1,64 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa un sistema simple de traducción automática estadística.
+# Este código implementa un sistema muy básico de **traducción automática estadística (SMT)**.
+# En este enfoque, se aprenden probabilidades de traducción palabra a palabra a partir de datos paralelos de entrenamiento (oraciones en dos idiomas).
+# El modelo resultante permite traducir nuevas oraciones seleccionando la traducción más probable de cada palabra individualmente.
+# Este enfoque es una simplificación extrema de modelos estadísticos como IBM Model 1.
 
-from collections import defaultdict
-import numpy as np
+# -------------------------------------------------------------
+# Importación de librerías necesarias
 
-# Datos de entrenamiento (parejas de oraciones en dos idiomas)
+from collections import defaultdict  # Permite crear diccionarios con valores por defecto automáticos
+import numpy as np  # (No utilizada en este ejemplo, pero común en tareas numéricas y de aprendizaje automático)
+
+# -------------------------------------------------------------
+# Datos de entrenamiento: pares de oraciones alineadas palabra por palabra
+
 training_data = [
-    ("hello world", "hola mundo"),
+    ("hello world", "hola mundo"),       # Traducción alineada palabra por palabra
     ("goodbye world", "adiós mundo")
 ]
 
-# Función para entrenar el modelo de traducción
+# -------------------------------------------------------------
+# Función: Entrenar el modelo de traducción basado en conteo y normalización
+
 def train_translation_model(training_data):
+    # Diccionario de diccionarios para contar frecuencias de traducción: {palabra_en: {palabra_es: conteo}}
     translation_probs = defaultdict(lambda: defaultdict(float))
+    
+    # Recorre cada par de oraciones inglés-español
     for en_sentence, es_sentence in training_data:
+        # Divide las oraciones en palabras individuales
         en_words = en_sentence.split()
         es_words = es_sentence.split()
+
+        # Supone alineación palabra a palabra (posición 1 con 1, 2 con 2, etc.)
         for en_word, es_word in zip(en_words, es_words):
+            # Aumenta el contador de la traducción observada
             translation_probs[en_word][es_word] += 1
 
-    # Normalizar las probabilidades
+    # Normalización: convertir los conteos en probabilidades
     for en_word in translation_probs:
-        total = sum(translation_probs[en_word].values())
+        total = sum(translation_probs[en_word].values())  # Total de ocurrencias del término inglés
         for es_word in translation_probs[en_word]:
-            translation_probs[en_word][es_word] /= total
+            translation_probs[en_word][es_word] /= total  # Divide cada conteo por el total para obtener probabilidad
 
-    return translation_probs
+    return translation_probs  # Devuelve el modelo entrenado como un diccionario probabilístico
 
-# Función para traducir una oración
+# -------------------------------------------------------------
+# Función: Traducir una oración utilizando el modelo entrenado
+
 def translate_sentence(sentence, translation_probs):
-    words = sentence.split()
-    translation = []
+    words = sentence.split()  # Divide la oración en palabras
+    translation = []  # Lista para almacenar la traducción generada
+
     for word in words:
         if word in translation_probs:
-            # Seleccionar la traducción más probable
+            # Si existe traducción para la palabra, se selecciona la más probable
             best_translation = max(translation_probs[word], key=translation_probs[word].get)
             translation.append(best_translation)
         else:
-            translation.append(word)  # Mantener la palabra si no se conoce la traducción
-    return " ".join(translation)
+            # Si no hay traducción disponible, se conserva la palabra original
+            translation.append(word)
 
-# Entrenar el modelo de traducción
-translation_probs = train_translation_model(training_data)
-
-# Traducir una oración
-sentence = "hello world"
-translated_sentence = translate_sentence(sentence, translation_probs)
-print("Traducción de la oración:", translated_sentence)
+    return

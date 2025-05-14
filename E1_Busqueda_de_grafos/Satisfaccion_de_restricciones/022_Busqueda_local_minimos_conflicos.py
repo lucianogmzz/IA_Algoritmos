@@ -1,3 +1,10 @@
+# Luciano Alejandro Gómez Muñoz 22310214
+
+# Este código implementa una solución al problema de las N-Reinas utilizando el algoritmo de Mínimos-Conflictos.
+# El problema de las N-Reinas consiste en colocar N reinas en un tablero de ajedrez de N x N de tal manera que ninguna reina se ataque entre sí.
+# La solución utiliza el algoritmo de Mínimos-Conflictos para explorar las posibles asignaciones de reinas y minimizar los conflictos.
+
+# Importamos la librería random para generar números aleatorios
 import random
 
 # Función para contar conflictos en una posición de reina
@@ -5,7 +12,7 @@ def contar_conflictos(tablero, fila, columna):
     n = len(tablero)
     conflictos = 0
     for i in range(n):
-        if i != columna:  
+        if i != columna:
             # Verificar si hay una reina en la misma fila o en diagonales
             if tablero[i] == fila or abs(tablero[i] - fila) == abs(i - columna):
                 conflictos += 1
@@ -15,7 +22,7 @@ def contar_conflictos(tablero, fila, columna):
 def minimos_conflictos_n_reinas(n, max_iteraciones=1000):
     # Asignación inicial aleatoria (una reina en cada columna en cualquier fila)
     tablero = [random.randint(0, n-1) for _ in range(n)]
-    
+
     for _ in range(max_iteraciones):
         # Verificar si la solución es válida (sin conflictos)
         conflictos = [contar_conflictos(tablero, tablero[col], col) for col in range(n)]
@@ -52,4 +59,3 @@ if solucion:
         print(linea)
 else:
     print("No se encontró una solución.")
-

@@ -1,31 +1,48 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa varias funciones de activación comunes.
+# Este código implementa varias funciones de activación comunes utilizadas en redes neuronales.
+# Las funciones de activación son esenciales en las redes neuronales, ya que permiten introducir no linealidades en el modelo, lo que permite a las redes aprender representaciones complejas de los datos.
 
-import numpy as np
-import matplotlib.pyplot as plt
+import numpy as np  # Importa la librería numpy, utilizada para realizar operaciones numéricas como álgebra lineal y funciones matemáticas.
+import matplotlib.pyplot as plt  # Importa la librería matplotlib, utilizada para crear gráficos y visualizaciones.
 
 # Definir funciones de activación
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    """
+    La función sigmoide es una función matemática que toma un valor real y lo transforma en un valor entre 0 y 1.
+    Se utiliza comúnmente en problemas de clasificación binaria.
+    """
+    return 1 / (1 + np.exp(-x))  # np.exp(-x) calcula la exponencial de -x y luego aplica la fórmula de la sigmoide.
 
 def tanh(x):
-    return np.tanh(x)
+    """
+    La función tanh (hiperbólica tangente) transforma un valor real en un valor entre -1 y 1.
+    Es utilizada frecuentemente en redes neuronales por su capacidad para modelar tanto valores positivos como negativos.
+    """
+    return np.tanh(x)  # np.tanh(x) devuelve el valor de la tangente hiperbólica de x.
 
 def relu(x):
-    return np.maximum(0, x)
+    """
+    La función ReLU (Rectified Linear Unit) devuelve el valor de entrada si es mayor que 0, y 0 en caso contrario.
+    Es una de las funciones de activación más utilizadas en redes neuronales debido a su simplicidad y eficacia.
+    """
+    return np.maximum(0, x)  # np.maximum(0, x) devuelve el máximo entre 0 y el valor de x (cero si es negativo, x si es positivo).
 
 # Graficar las funciones de activación
-x = np.linspace(-10, 10, 100)
-plt.figure(figsize=(12, 6))
+x = np.linspace(-10, 10, 100)  # Genera 100 valores de x entre -10 y 10 de manera uniforme.
+plt.figure(figsize=(12, 6))  # Crea una figura para el gráfico con un tamaño de 12x6 pulgadas.
 
-plt.plot(x, sigmoid(x), label='Sigmoide', linestyle='--')
-plt.plot(x, tanh(x), label='Tanh', linestyle='-')
-plt.plot(x, relu(x), label='ReLU', linestyle='-.')
+# Graficar cada una de las funciones de activación
+plt.plot(x, sigmoid(x), label='Sigmoide', linestyle='--')  # Traza la función sigmoide con una línea discontinua.
+plt.plot(x, tanh(x), label='Tanh', linestyle='-')  # Traza la función tanh con una línea continua.
+plt.plot(x, relu(x), label='ReLU', linestyle='-.')  # Traza la función ReLU con una línea discontinua punteada.
 
-plt.title('Funciones de Activación')
-plt.xlabel('Entrada')
-plt.ylabel('Salida')
-plt.legend()
-plt.grid(True)
-plt.show()
+# Agregar título, etiquetas y leyenda al gráfico
+plt.title('Funciones de Activación')  # Título del gráfico.
+plt.xlabel('Entrada')  # Etiqueta del eje x.
+plt.ylabel('Salida')  # Etiqueta del eje y.
+plt.legend()  # Agrega una leyenda para identificar las funciones.
+plt.grid(True)  # Muestra una cuadrícula en el gráfico para mayor claridad.
+
+# Mostrar el gráfico
+plt.show()  # Muestra el gráfico con las tres funciones de activación.

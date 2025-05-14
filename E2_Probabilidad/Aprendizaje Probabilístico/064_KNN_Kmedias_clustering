@@ -1,38 +1,65 @@
 # Luciano Alejandro Gómez Muñoz 22310214 6E2
 
-# Este código implementa k-NN, k-Medias y Clustering utilizando datos de ejemplo.
-
+# Importa el conjunto de datos de ejemplo "iris" y una función para generar datos sintéticos.
 from sklearn.datasets import make_blobs, load_iris
+
+# Importa función para dividir los datos en entrenamiento y prueba.
 from sklearn.model_selection import train_test_split
+
+# Importa el clasificador k-NN (k-Nearest Neighbors).
 from sklearn.neighbors import KNeighborsClassifier
+
+# Importa el algoritmo de agrupamiento k-Medias (k-Means).
 from sklearn.cluster import KMeans
+
+# Importa métrica para medir precisión de clasificación.
 from sklearn.metrics import accuracy_score
+
+# Importa biblioteca para graficar.
 import matplotlib.pyplot as plt
 
-# Datos para k-NN
+# Carga el conjunto de datos Iris (flores), y separa características (X) y etiquetas (y).
 iris = load_iris()
 X, y = iris.data, iris.target
+
+# Divide los datos en conjunto de entrenamiento (70%) y prueba (30%).
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# k-NN
+# Inicializa el clasificador k-NN con k=3 vecinos.
 knn = KNeighborsClassifier(n_neighbors=3)
+
+# Entrena el modelo k-NN con los datos de entrenamiento.
 knn.fit(X_train, y_train)
+
+# Predice las etiquetas del conjunto de prueba.
 y_pred_knn = knn.predict(X_test)
+
+# Muestra la precisión del modelo k-NN comparando predicciones con valores reales.
 print("Precisión de k-NN:", accuracy_score(y_test, y_pred_knn))
 
-# Datos para k-Medias
+# Genera datos sintéticos para agrupamiento con 300 puntos distribuidos en 4 grupos.
 X_clustering, _ = make_blobs(n_samples=300, centers=4, random_state=42)
 
-# k-Medias
+# Inicializa el modelo de clustering k-Medias con 4 clústeres.
 kmeans = KMeans(n_clusters=4, random_state=42)
+
+# Aplica el algoritmo de k-Medias sobre los datos generados.
 kmeans.fit(X_clustering)
+
+# Obtiene las etiquetas de clúster asignadas a cada punto.
 labels_kmeans = kmeans.labels_
 
-# Graficar resultados de k-Medias
+# Dibuja un gráfico de dispersión coloreado según los clústeres.
 plt.scatter(X_clustering[:, 0], X_clustering[:, 1], c=labels_kmeans, s=40, cmap='viridis', marker='o')
+
+# Obtiene y dibuja los centroides de los clústeres en rojo.
 centers = kmeans.cluster_centers_
 plt.scatter(centers[:, 0], centers[:, 1], c='red', s=200, alpha=0.75, marker='X')
+
+# Añade título y etiquetas al gráfico.
 plt.title('Clustering utilizando k-Medias')
 plt.xlabel('Característica 1')
 plt.ylabel('Característica 2')
+
+# Muestra el gráfico en pantalla.
 plt.show()
